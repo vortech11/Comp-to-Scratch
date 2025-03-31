@@ -1,0 +1,15 @@
+create Stage{
+    script[
+        event_whenflagclicked;
+    ]
+    costumes[
+        blank.svg;
+    ]
+    sounds[]
+}
+
+create cat{
+    costumes[
+        cat.svg;
+    ]
+}
