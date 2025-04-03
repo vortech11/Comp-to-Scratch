@@ -1,0 +1,427 @@
+{
+    "motion_movesteps":{
+        "input": ["STEPS"]
+    },
+    "motion_turnright":{
+        "input": ["DEGREES"]
+    },
+    "motion_turnleft":{
+        "input": ["DEGREES"]
+    },
+    "motion_goto":{
+        "input": [""]
+    },
+    "motion_gotoxy":{
+        "input": ["X", "Y"]
+    },
+    "motion_glideto":{
+        "input": [""]
+    },
+    "motion_glidesecstoxy":{
+        "input": ["X", "Y"]
+    },
+    "motion_pointindirection":{
+        "input": ["DIRECTION"]
+    },
+    "motion_pointtowards":{
+        "input": ["TOWARDS"]
+    },
+    "motion_changexby":{
+        "input": ["DX"]
+    },
+    "motion_setx":{
+        "input": ["X"]
+    },
+    "motion_changeyby":{
+        "input": ["DY"]
+    },
+    "motion_sety":{
+        "input": ["Y"]
+    },
+    "motion_ifonedgebounce":{
+        "input": []
+    },
+    "motion_setrotationstyle":{
+        "input": ["STYLE"]
+    },
+    "motion_xposition":{
+        "input": []
+    },
+    "motion_yposition":{
+        "input": []
+    },
+    "motion_direction":{
+        "input": []
+    },
+    "looks_sayforsecs":{
+        "input": ["MESSAGE", "SECS"]
+    },
+    "looks_say":{
+        "input": ["MESSAGE"]
+    },
+    "looks_thinkforsecs":{
+        "input": ["MESSAGE", "SECS"]
+    },
+    "looks_think":{
+        "input": ["MESSAGE"]
+    },
+    "looks_switchcostumeto":{
+        "input": ["COSTUME"]
+    },
+    "looks_nextcostume":{
+        "input": [""]
+    },
+    "looks_switchbackdropto":{
+        "input": ["BACKDROP"]
+    },
+    "looks_switchbackdroptoandwait":{
+        "input": ["BACKDROP"]
+    },
+    "looks_nextbackdrop":{
+        "input": []
+    },
+    "looks_changesizeby":{
+        "input": ["CHANGE"]
+    },
+    "looks_setsizeto":{
+        "input": ["SIZE"]
+    },
+    "looks_changeeffectby":{
+        "input": ["EFFECT", "CHANGE"]
+    },
+    "looks_seteffectto":{
+        "input": ["EFFECT", "VALUE"]
+    },
+    "looks_cleargraphiceffects":{
+        "input": []
+    },
+    "looks_show":{
+        "input": []
+    },
+    "looks_hide":{
+        "input": []
+    },
+    "looks_gotofrontback":{
+        "input": [""]
+    },
+    "looks_goforwardbackwardlayers":{
+        "input": ["NUM"]
+    },
+    "looks_costumenumbername":{
+        "input": [""]
+    },
+    "looks_backdropnumbername":{
+        "input": [""]
+    },
+    "looks_size":{
+        "input": []
+    },
+    "sound_playuntildone":{
+        "input": ["SOUND_MENU"]
+    },
+    "sound_play":{
+        "input": ["SOUND_MENU"]
+    },
+    "sound_stopallsounds":{
+        "input": []
+    },
+    "sound_changeeffectby":{
+        "input": [""]
+    },
+    "sound_seteffectto":{
+        "input": [""]
+    },
+    "sound_cleareffects":{
+        "input": []
+    },
+    "sound_changevolumeby":{
+        "input": ["VOLUME"]
+    },
+    "sound_setvolumeto":{
+        "input": ["VOLUME"]
+    },
+    "sound_volume":{
+        "input": []
+    },
+    "event_whenflagclicked":{
+        "input": []
+    },
+    "event_whenkeypressed":{
+        "input": ["KEY_OPTION"]
+    },
+    "event_whenthisspriteclicked":{
+        "input": []
+    },
+    "event_whenstageclicked":{
+        "input": []
+    },
+    "event_whenbackdropswitchesto":{
+        "input": ["BACKDROP"]
+    },
+    "event_whengreaterthan":{
+        "input": ["VALUE"]
+    },
+    "event_whenbroadcastreceived":{
+        "input": ["BROADCAST_OPTION"]
+    },
+    "event_broadcast":{
+        "input": ["BROADCAST_INPUT"]
+    },
+    "event_broadcastandwait":{
+        "input": ["BROADCAST_INPUT"]
+    },
+    "control_wait":{
+        "input": ["DURATION"]
+    },
+    "control_repeat":{
+        "input": ["TIMES", "SUBSTACK"]
+    },
+    "control_forever":{
+        "input": ["SUBSTACK"]
+    },
+    "control_if":{
+        "input": ["CONDITION", "SUBSTACK"]
+    },
+    "control_if_else":{
+        "input": ["CONDITION", "SUBSTACK", "SUBSTACK2"]
+    },
+    "control_wait_until":{
+        "input": ["CONDITION"]
+    },
+    "control_repeat_until":{
+        "input": ["CONDITION", "SUBSTACK"]
+    },
+    "control_stop":{
+        "input": ["STOP_OPTION"]
+    },
+    "control_start_as_clone":{
+        "input": []
+    },
+    "control_create_clone_of":{
+        "input": ["CLONE_OPTION"]
+    },
+    "control_delete_this_clone":{
+        "input": []
+    },
+    "sensing_touchingobject":{
+        "input": ["TOUCHINGOBJECTMENU"]
+    },
+    "sensing_touchingcolor":{
+        "input": ["COLOR"]
+    },
+    "sensing_coloristouchingcolor":{
+        "input": ["COLOR", "COLOR2"]
+    },
+    "sensing_distanceto":{
+        "input": ["DISTANCETOMENU"]
+    },
+    "sensing_askandwait":{
+        "input": ["QUESTION"]
+    },
+    "sensing_answer":{
+        "input": []
+    },
+    "sensing_keypressed":{
+        "input": ["KEY_OPTION"]
+    },
+    "sensing_mousedown":{
+        "input": []
+    },
+    "sensing_mousex":{
+        "input": []
+    },
+    "sensing_mousey":{
+        "input": []
+    },
+    "sensing_setdragmode":{
+        "input": [""]
+    },
+    "sensing_loudness":{
+        "input": []
+    },
+    "sensing_timer":{
+        "input": []
+    },
+    "sensing_resettimer":{
+        "input": []
+    },
+    "sensing_of":{
+        "input": ["PROPERTY", "OBJECT"]
+    },
+    "sensing_current":{
+        "input": ["CURRENTMENU"]
+    },
+    "sensing_dayssince2000":{
+        "input": []
+    },
+    "sensing_username":{
+        "input": []
+    },
+    "operator_add":{
+        "input": ["NUM1", "NUM2"]
+    },
+    "operator_subtract":{
+        "input": ["NUM1", "NUM2"]
+    },
+    "operator_multiply":{
+        "input": ["NUM1", "NUM2"]
+    },
+    "operator_divide":{
+        "input": ["NUM1", "NUM2"]
+    },
+    "operator_random":{
+        "input": ["FROM", "TO"]
+    },
+    "operator_gt":{
+        "input": [""]
+    },
+    "operator_lt":{
+        "input": ["OPERAND1", "OPERAND2"]
+    },
+    "operator_equals":{
+        "input": ["OPERAND1", "OPERAND2"]
+    },
+    "operator_and":{
+        "input": ["OPERAND1", "OPERAND2"]
+    },
+    "operator_or":{
+        "input": ["OPERAND1", "OPERAND2"]
+    },
+    "operator_not":{
+        "input": ["OPERAND"]
+    },
+    "operator_join":{
+        "input": ["STRING1", "STRING2"]
+    },
+    "operator_letter_of":{
+        "input": ["LETTER", "STRING"]
+    },
+    "operator_length":{
+        "input": ["STRING"]
+    },
+    "operator_contains":{
+        "input": [""]
+    },
+    "operator_mod":{
+        "input": ["nUM1"]
+    },
+    "operator_round":{
+        "input": ["NUM"]
+    },
+    "operator_mathop":{
+        "input": ["OPERATOR", "NUM"]
+    },
+    
+    "data_variable":{
+        "input": [""]
+    },
+    "data_setvariableto":{
+        "input": [""]
+    },
+    "data_changevariableby":{
+        "input": [""]
+    },
+    "data_showvariable":{
+        "input": [""]
+    },
+    "data_hidevariable":{
+        "input": [""]
+    },
+    "data_listcontents":{
+        "input": [""]
+    },
+    "data_addtolist":{
+        "input": [""]
+    },
+    "data_deleteoflist":{
+        "input": [""]
+    },
+    "data_deletealloflist":{
+        "input": [""]
+    },
+    "data_insertatlist":{
+        "input": [""]
+    },
+    "data_replaceitemoflist":{
+        "input": [""]
+    },
+    "data_itemoflist":{
+        "input": [""]
+    },
+    "data_itemnumoflist":{
+        "input": [""]
+    },
+    "data_lengthoflist":{
+        "input": [""]
+    },
+    "data_listcontainsitem":{
+        "input": [""]
+    },
+    "data_showlist":{
+        "input": [""]
+    },
+    "data_hidelist":{
+        "input": [""]
+    },
+    "procedures_definition":{
+        "input": [""]
+    },
+    "procedures_call":{
+        "input": [""]
+    },
+    "argument_reporter_string_number":{
+        "input": [""]
+    },
+    "argument_reporter_boolean":{
+        "input": [""]
+    },
+    
+    "music_playDrumForBeats":{
+        "input": ["DRUM", "BEATS"]
+    },
+    "music_restForBeats":{
+        "input": ["BEATS"]
+    },
+    "music_playNoteForBeats":{
+        "input": ["NOTE", "BEATS"]
+    },
+    "music_setInstrument":{
+        "input": ["INSTUMENT"]
+    },
+    "music_setTempo":{
+        "input": ["TEMPO"]
+    },
+    "music_changeTempo":{
+        "input": ["TEMPO"]
+    },
+    "music_getTempo":{
+        "input": []
+    },
+    "pen_clear":{
+        "input": []
+    },
+    "pen_stamp":{
+        "input": []
+    },
+    "pen_penDown":{
+        "input": []
+    },
+    "pen_penUp":{
+        "input": []
+    },
+    "pen_setPenColorToColor":{
+        "input": ["COLOR"]
+    },
+    "pen_changePenColorParamBy":{
+        "input": [""]
+    },
+    "pen_setPenColorParamTo":{
+        "input": [""]
+    },
+    "pen_changePenSizeBy":{
+        "input": ["SIZE"]
+    },
+    "pen_setPenSizeTo":{
+        "input": ["SIZE"]
+    }
+}

@@ -46,7 +46,21 @@
             "variables": {},
             "lists": {},
             "broadcasts": {},
-            "blocks": {},
+            "blocks": {
+                "c4ca4238a0b923820dcc509a6f75849b": {
+                    "opcode": "motion_movesteps",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "STEPS": [1, [4, "10"]]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                }
+            },
             "comments": {},
             "currentCostume": 0,
             "costumes": [
