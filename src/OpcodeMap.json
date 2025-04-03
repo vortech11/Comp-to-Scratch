@@ -9,16 +9,16 @@
         "input": ["DEGREES"]
     },
     "motion_goto":{
-        "input": [""]
+        "input": ["TO"]
     },
     "motion_gotoxy":{
         "input": ["X", "Y"]
     },
     "motion_glideto":{
-        "input": [""]
+        "input": ["SECS", "TO"]
     },
     "motion_glidesecstoxy":{
-        "input": ["X", "Y"]
+        "input": ["SECS", "X", "Y"]
     },
     "motion_pointindirection":{
         "input": ["DIRECTION"]
@@ -102,16 +102,16 @@
         "input": []
     },
     "looks_gotofrontback":{
-        "input": [""]
+        "input": ["FRONT_BACK"]
     },
     "looks_goforwardbackwardlayers":{
-        "input": ["NUM"]
+        "input": ["FORWARD_BACKWARD", "NUM"]
     },
     "looks_costumenumbername":{
-        "input": [""]
+        "input": ["NUMBER_NAME"]
     },
     "looks_backdropnumbername":{
-        "input": [""]
+        "input": ["NUMBER_NAME"]
     },
     "looks_size":{
         "input": []
@@ -126,10 +126,10 @@
         "input": []
     },
     "sound_changeeffectby":{
-        "input": [""]
+        "input": ["EFFECT", "VALUE"]
     },
     "sound_seteffectto":{
-        "input": [""]
+        "input": ["EFFECT", "VALUE"]
     },
     "sound_cleareffects":{
         "input": []
@@ -234,7 +234,7 @@
         "input": []
     },
     "sensing_setdragmode":{
-        "input": [""]
+        "input": ["DRAG_MODE"]
     },
     "sensing_loudness":{
         "input": []
@@ -273,7 +273,7 @@
         "input": ["FROM", "TO"]
     },
     "operator_gt":{
-        "input": [""]
+        "input": ["OPERAND1", "OPERAND2"]
     },
     "operator_lt":{
         "input": ["OPERAND1", "OPERAND2"]
@@ -300,10 +300,10 @@
         "input": ["STRING"]
     },
     "operator_contains":{
-        "input": [""]
+        "input": ["STRING1", "STRING2"]
     },
     "operator_mod":{
-        "input": ["nUM1"]
+        "input": ["nUM1", "NUM2"]
     },
     "operator_round":{
         "input": ["NUM"]
@@ -313,55 +313,55 @@
     },
     
     "data_variable":{
-        "input": [""]
+        "input": ["VARIABLE"]
     },
     "data_setvariableto":{
-        "input": [""]
+        "input": ["VARIABLE", "VALUE"]
     },
     "data_changevariableby":{
-        "input": [""]
+        "input": ["VARIABLE", "VALUE"]
     },
     "data_showvariable":{
-        "input": [""]
+        "input": ["VARIABLE"]
     },
     "data_hidevariable":{
-        "input": [""]
+        "input": ["VARIABLE"]
     },
     "data_listcontents":{
-        "input": [""]
+        "input": ["LIST"]
     },
     "data_addtolist":{
-        "input": [""]
+        "input": ["ITEM", "LIST"]
     },
     "data_deleteoflist":{
-        "input": [""]
+        "input": ["INDEX", "LIST"]
     },
     "data_deletealloflist":{
-        "input": [""]
+        "input": ["LIST"]
     },
     "data_insertatlist":{
-        "input": [""]
+        "input": ["ITEM", "INDEX", "LIST"]
     },
     "data_replaceitemoflist":{
-        "input": [""]
+        "input": ["INDEX", "LIST", "ITEM"]
     },
     "data_itemoflist":{
-        "input": [""]
+        "input": ["INDEX", "LIST"]
     },
     "data_itemnumoflist":{
-        "input": [""]
+        "input": ["INDEX", "LIST"]
     },
     "data_lengthoflist":{
-        "input": [""]
+        "input": ["LIST"]
     },
     "data_listcontainsitem":{
-        "input": [""]
+        "input": ["LIST", "ITEM"]
     },
     "data_showlist":{
-        "input": [""]
+        "input": ["LIST"]
     },
     "data_hidelist":{
-        "input": [""]
+        "input": ["LIST"]
     },
     "procedures_definition":{
         "input": [""]
