@@ -1,427 +1,568 @@
 {
     "motion_movesteps":{
-        "input": ["STEPS"]
+        "input": ["STEPS"],
+        "blocktype" : "stack"
     },
     "motion_turnright":{
-        "input": ["DEGREES"]
+        "input": ["DEGREES"],
+        "blocktype" : "stack"
     },
     "motion_turnleft":{
-        "input": ["DEGREES"]
+        "input": ["DEGREES"],
+        "blocktype" : "stack"
     },
     "motion_goto":{
-        "input": ["TO"]
+        "input": ["TO"],
+        "blocktype" : "stack"
     },
     "motion_gotoxy":{
-        "input": ["X", "Y"]
+        "input": ["X", "Y"],
+        "blocktype" : "stack"
     },
     "motion_glideto":{
-        "input": ["SECS", "TO"]
+        "input": ["SECS", "TO"],
+        "blocktype" : "stack"
     },
     "motion_glidesecstoxy":{
-        "input": ["SECS", "X", "Y"]
+        "input": ["SECS", "X", "Y"],
+        "blocktype" : "stack"
     },
     "motion_pointindirection":{
-        "input": ["DIRECTION"]
+        "input": ["DIRECTION"],
+        "blocktype" : "stack"
     },
     "motion_pointtowards":{
-        "input": ["TOWARDS"]
+        "input": ["TOWARDS"],
+        "blocktype" : "stack"
     },
     "motion_changexby":{
-        "input": ["DX"]
+        "input": ["DX"],
+        "blocktype" : "stack"
     },
     "motion_setx":{
-        "input": ["X"]
+        "input": ["X"],
+        "blocktype" : "stack"
     },
     "motion_changeyby":{
-        "input": ["DY"]
+        "input": ["DY"],
+        "blocktype" : "stack"
     },
     "motion_sety":{
-        "input": ["Y"]
+        "input": ["Y"],
+        "blocktype" : "stack"
     },
     "motion_ifonedgebounce":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "motion_setrotationstyle":{
-        "input": ["STYLE"]
+        "input": ["STYLE"],
+        "blocktype" : "stack"
     },
     "motion_xposition":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "motion_yposition":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "motion_direction":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "looks_sayforsecs":{
-        "input": ["MESSAGE", "SECS"]
+        "input": ["MESSAGE", "SECS"],
+        "blocktype" : "stack"
     },
     "looks_say":{
-        "input": ["MESSAGE"]
+        "input": ["MESSAGE"],
+        "blocktype" : "stack"
     },
     "looks_thinkforsecs":{
-        "input": ["MESSAGE", "SECS"]
+        "input": ["MESSAGE", "SECS"],
+        "blocktype" : "stack"
     },
     "looks_think":{
-        "input": ["MESSAGE"]
+        "input": ["MESSAGE"],
+        "blocktype" : "stack"
     },
     "looks_switchcostumeto":{
-        "input": ["COSTUME"]
+        "input": ["COSTUME"],
+        "blocktype" : "stack"
     },
     "looks_nextcostume":{
-        "input": [""]
+        "input": [""],
+        "blocktype" : "stack"
     },
     "looks_switchbackdropto":{
-        "input": ["BACKDROP"]
+        "input": ["BACKDROP"],
+        "blocktype" : "stack"
     },
     "looks_switchbackdroptoandwait":{
-        "input": ["BACKDROP"]
+        "input": ["BACKDROP"],
+        "blocktype" : "stack"
     },
     "looks_nextbackdrop":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "looks_changesizeby":{
-        "input": ["CHANGE"]
+        "input": ["CHANGE"],
+        "blocktype" : "stack"
     },
     "looks_setsizeto":{
-        "input": ["SIZE"]
+        "input": ["SIZE"],
+        "blocktype" : "stack"
     },
     "looks_changeeffectby":{
-        "input": ["EFFECT", "CHANGE"]
+        "input": ["EFFECT", "CHANGE"],
+        "blocktype" : "stack"
     },
     "looks_seteffectto":{
-        "input": ["EFFECT", "VALUE"]
+        "input": ["EFFECT", "VALUE"],
+        "blocktype" : "stack"
     },
     "looks_cleargraphiceffects":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "looks_show":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "looks_hide":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "looks_gotofrontback":{
-        "input": ["FRONT_BACK"]
+        "input": ["FRONT_BACK"],
+        "blocktype" : "stack"
     },
     "looks_goforwardbackwardlayers":{
-        "input": ["FORWARD_BACKWARD", "NUM"]
+        "input": ["FORWARD_BACKWARD", "NUM"],
+        "blocktype" : "stack"
     },
     "looks_costumenumbername":{
-        "input": ["NUMBER_NAME"]
+        "input": ["NUMBER_NAME"],
+        "blocktype" : "reporter"
     },
     "looks_backdropnumbername":{
-        "input": ["NUMBER_NAME"]
+        "input": ["NUMBER_NAME"],
+        "blocktype" : "reporter"
     },
     "looks_size":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "sound_playuntildone":{
-        "input": ["SOUND_MENU"]
+        "input": ["SOUND_MENU"],
+        "blocktype" : "stack"
     },
     "sound_play":{
-        "input": ["SOUND_MENU"]
+        "input": ["SOUND_MENU"],
+        "blocktype" : "stack"
     },
     "sound_stopallsounds":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "sound_changeeffectby":{
-        "input": ["EFFECT", "VALUE"]
+        "input": ["EFFECT", "VALUE"],
+        "blocktype" : "stack"
     },
     "sound_seteffectto":{
-        "input": ["EFFECT", "VALUE"]
+        "input": ["EFFECT", "VALUE"],
+        "blocktype" : "stack"
     },
     "sound_cleareffects":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "sound_changevolumeby":{
-        "input": ["VOLUME"]
+        "input": ["VOLUME"],
+        "blocktype" : "stack"
     },
     "sound_setvolumeto":{
-        "input": ["VOLUME"]
+        "input": ["VOLUME"],
+        "blocktype" : "stack"
     },
     "sound_volume":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "event_whenflagclicked":{
-        "input": []
+        "input": [],
+        "blocktype" : "hat"
     },
     "event_whenkeypressed":{
-        "input": ["KEY_OPTION"]
+        "input": ["KEY_OPTION"],
+        "blocktype" : "hat"
     },
     "event_whenthisspriteclicked":{
-        "input": []
+        "input": [],
+        "blocktype" : "hat"
     },
     "event_whenstageclicked":{
-        "input": []
+        "input": [],
+        "blocktype" : "hat"
     },
     "event_whenbackdropswitchesto":{
-        "input": ["BACKDROP"]
+        "input": ["BACKDROP"],
+        "blocktype" : "hat"
     },
     "event_whengreaterthan":{
-        "input": ["VALUE"]
+        "input": ["VALUE"],
+        "blocktype" : "stack"
     },
     "event_whenbroadcastreceived":{
-        "input": ["BROADCAST_OPTION"]
+        "input": ["BROADCAST_OPTION"],
+        "blocktype" : "hat"
     },
     "event_broadcast":{
-        "input": ["BROADCAST_INPUT"]
+        "input": ["BROADCAST_INPUT"],
+        "blocktype" : "stack"
     },
     "event_broadcastandwait":{
-        "input": ["BROADCAST_INPUT"]
+        "input": ["BROADCAST_INPUT"],
+        "blocktype" : "stack"
     },
     "control_wait":{
-        "input": ["DURATION"]
+        "input": ["DURATION"],
+        "blocktype" : "stack"
     },
     "control_repeat":{
-        "input": ["TIMES", "SUBSTACK"]
+        "input": ["TIMES", "SUBSTACK"],
+        "blocktype" : "c-block"
     },
     "control_forever":{
-        "input": ["SUBSTACK"]
+        "input": ["SUBSTACK"],
+        "blocktype" : "c-block cap"
     },
     "control_if":{
-        "input": ["CONDITION", "SUBSTACK"]
+        "input": ["CONDITION", "SUBSTACK"],
+        "blocktype" : "c-block"
     },
     "control_if_else":{
-        "input": ["CONDITION", "SUBSTACK", "SUBSTACK2"]
+        "input": ["CONDITION", "SUBSTACK", "SUBSTACK2"],
+        "blocktype" : "if-block"
     },
     "control_wait_until":{
-        "input": ["CONDITION"]
+        "input": ["CONDITION"],
+        "blocktype" : "stack"
     },
     "control_repeat_until":{
-        "input": ["CONDITION", "SUBSTACK"]
+        "input": ["CONDITION", "SUBSTACK"],
+        "blocktype" : "c-block"
     },
     "control_stop":{
-        "input": ["STOP_OPTION"]
+        "input": ["STOP_OPTION"],
+        "blocktype" : "cap"
     },
     "control_start_as_clone":{
-        "input": []
+        "input": [],
+        "blocktype" : "hat"
     },
     "control_create_clone_of":{
-        "input": ["CLONE_OPTION"]
+        "input": ["CLONE_OPTION"],
+        "blocktype" : "stack"
     },
     "control_delete_this_clone":{
-        "input": []
+        "input": [],
+        "blocktype" : "cap"
     },
     "sensing_touchingobject":{
-        "input": ["TOUCHINGOBJECTMENU"]
+        "input": ["TOUCHINGOBJECTMENU"],
+        "blocktype" : "boolean"
     },
     "sensing_touchingcolor":{
-        "input": ["COLOR"]
+        "input": ["COLOR"],
+        "blocktype" : "boolean"
     },
     "sensing_coloristouchingcolor":{
-        "input": ["COLOR", "COLOR2"]
+        "input": ["COLOR", "COLOR2"],
+        "blocktype" : "boolean"
     },
     "sensing_distanceto":{
-        "input": ["DISTANCETOMENU"]
+        "input": ["DISTANCETOMENU"],
+        "blocktype" : "reporter"
     },
     "sensing_askandwait":{
-        "input": ["QUESTION"]
+        "input": ["QUESTION"],
+        "blocktype" : "stack"
     },
     "sensing_answer":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "sensing_keypressed":{
-        "input": ["KEY_OPTION"]
+        "input": ["KEY_OPTION"],
+        "blocktype" : "boolean"
     },
     "sensing_mousedown":{
-        "input": []
+        "input": [],
+        "blocktype" : "boolean"
     },
     "sensing_mousex":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "sensing_mousey":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "sensing_setdragmode":{
-        "input": ["DRAG_MODE"]
+        "input": ["DRAG_MODE"],
+        "blocktype" : "stack"
     },
     "sensing_loudness":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "sensing_timer":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "sensing_resettimer":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "sensing_of":{
-        "input": ["PROPERTY", "OBJECT"]
+        "input": ["PROPERTY", "OBJECT"],
+        "blocktype" : "reporter"
     },
     "sensing_current":{
-        "input": ["CURRENTMENU"]
+        "input": ["CURRENTMENU"],
+        "blocktype" : "reporter"
     },
     "sensing_dayssince2000":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "sensing_username":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "operator_add":{
-        "input": ["NUM1", "NUM2"]
+        "input": ["NUM1", "NUM2"],
+        "blocktype" : "reporter"
     },
     "operator_subtract":{
-        "input": ["NUM1", "NUM2"]
+        "input": ["NUM1", "NUM2"],
+        "blocktype" : "reporter"
     },
     "operator_multiply":{
-        "input": ["NUM1", "NUM2"]
+        "input": ["NUM1", "NUM2"],
+        "blocktype" : "reporter"
     },
     "operator_divide":{
-        "input": ["NUM1", "NUM2"]
+        "input": ["NUM1", "NUM2"],
+        "blocktype" : "reporter"
     },
     "operator_random":{
-        "input": ["FROM", "TO"]
+        "input": ["FROM", "TO"],
+        "blocktype" : "reporter"
     },
     "operator_gt":{
-        "input": ["OPERAND1", "OPERAND2"]
+        "input": ["OPERAND1", "OPERAND2"],
+        "blocktype" : "boolean"
     },
     "operator_lt":{
-        "input": ["OPERAND1", "OPERAND2"]
+        "input": ["OPERAND1", "OPERAND2"],
+        "blocktype" : "boolean"
     },
     "operator_equals":{
-        "input": ["OPERAND1", "OPERAND2"]
+        "input": ["OPERAND1", "OPERAND2"],
+        "blocktype" : "boolean"
     },
     "operator_and":{
-        "input": ["OPERAND1", "OPERAND2"]
+        "input": ["OPERAND1", "OPERAND2"],
+        "blocktype" : "boolean"
     },
     "operator_or":{
-        "input": ["OPERAND1", "OPERAND2"]
+        "input": ["OPERAND1", "OPERAND2"],
+        "blocktype" : "boolean"
     },
     "operator_not":{
-        "input": ["OPERAND"]
+        "input": ["OPERAND"],
+        "blocktype" : "boolean"
     },
     "operator_join":{
-        "input": ["STRING1", "STRING2"]
+        "input": ["STRING1", "STRING2"],
+        "blocktype" : "reporter"
     },
     "operator_letter_of":{
-        "input": ["LETTER", "STRING"]
+        "input": ["LETTER", "STRING"],
+        "blocktype" : "reporter"
     },
     "operator_length":{
-        "input": ["STRING"]
+        "input": ["STRING"],
+        "blocktype" : "reporter"
     },
     "operator_contains":{
-        "input": ["STRING1", "STRING2"]
+        "input": ["STRING1", "STRING2"],
+        "blocktype" : "boolean"
     },
     "operator_mod":{
-        "input": ["nUM1", "NUM2"]
+        "input": ["nUM1", "NUM2"],
+        "blocktype" : "reporter"
     },
     "operator_round":{
-        "input": ["NUM"]
+        "input": ["NUM"],
+        "blocktype" : "reporter"
     },
     "operator_mathop":{
-        "input": ["OPERATOR", "NUM"]
+        "input": ["OPERATOR", "NUM"],
+        "blocktype" : "reporter"
     },
     
     "data_variable":{
-        "input": ["VARIABLE"]
+        "input": ["VARIABLE"],
+        "blocktype" : "reporter"
     },
     "data_setvariableto":{
-        "input": ["VARIABLE", "VALUE"]
+        "input": ["VARIABLE", "VALUE"],
+        "blocktype" : "stack"
     },
     "data_changevariableby":{
-        "input": ["VARIABLE", "VALUE"]
+        "input": ["VARIABLE", "VALUE"],
+        "blocktype" : "stack"
     },
     "data_showvariable":{
-        "input": ["VARIABLE"]
+        "input": ["VARIABLE"],
+        "blocktype" : "stack"
     },
     "data_hidevariable":{
-        "input": ["VARIABLE"]
+        "input": ["VARIABLE"],
+        "blocktype" : "stack"
     },
     "data_listcontents":{
-        "input": ["LIST"]
+        "input": ["LIST"],
+        "blocktype" : "reporter"
     },
     "data_addtolist":{
-        "input": ["ITEM", "LIST"]
+        "input": ["ITEM", "LIST"],
+        "blocktype" : "stack"
     },
     "data_deleteoflist":{
-        "input": ["INDEX", "LIST"]
+        "input": ["INDEX", "LIST"],
+        "blocktype" : "stack"
     },
     "data_deletealloflist":{
-        "input": ["LIST"]
+        "input": ["LIST"],
+        "blocktype" : "stack"
     },
     "data_insertatlist":{
-        "input": ["ITEM", "INDEX", "LIST"]
+        "input": ["ITEM", "INDEX", "LIST"],
+        "blocktype" : "stack"
     },
     "data_replaceitemoflist":{
-        "input": ["INDEX", "LIST", "ITEM"]
+        "input": ["INDEX", "LIST", "ITEM"],
+        "blocktype" : "stack"
     },
     "data_itemoflist":{
-        "input": ["INDEX", "LIST"]
+        "input": ["INDEX", "LIST"],
+        "blocktype" : "reporter"
     },
     "data_itemnumoflist":{
-        "input": ["INDEX", "LIST"]
+        "input": ["INDEX", "LIST"],
+        "blocktype" : "reporter"
     },
     "data_lengthoflist":{
-        "input": ["LIST"]
+        "input": ["LIST"],
+        "blocktype" : "reporter"
     },
     "data_listcontainsitem":{
-        "input": ["LIST", "ITEM"]
+        "input": ["LIST", "ITEM"],
+        "blocktype" : "boolean"
     },
     "data_showlist":{
-        "input": ["LIST"]
+        "input": ["LIST"],
+        "blocktype" : "stack"
     },
     "data_hidelist":{
-        "input": ["LIST"]
+        "input": ["LIST"],
+        "blocktype" : "stack"
     },
     "procedures_definition":{
-        "input": [""]
+        "input": [""],
+        "blocktype" : "stack"
     },
     "procedures_call":{
-        "input": [""]
+        "input": [""],
+        "blocktype" : "stack"
     },
     "argument_reporter_string_number":{
-        "input": [""]
+        "input": [""],
+        "blocktype" : "stack"
     },
     "argument_reporter_boolean":{
-        "input": [""]
+        "input": [""],
+        "blocktype" : "stack"
     },
     
     "music_playDrumForBeats":{
-        "input": ["DRUM", "BEATS"]
+        "input": ["DRUM", "BEATS"],
+        "blocktype" : "stack"
     },
     "music_restForBeats":{
-        "input": ["BEATS"]
+        "input": ["BEATS"],
+        "blocktype" : "stack"
     },
     "music_playNoteForBeats":{
-        "input": ["NOTE", "BEATS"]
+        "input": ["NOTE", "BEATS"],
+        "blocktype" : "stack"
     },
     "music_setInstrument":{
-        "input": ["INSTUMENT"]
+        "input": ["INSTUMENT"],
+        "blocktype" : "stack"
     },
     "music_setTempo":{
-        "input": ["TEMPO"]
+        "input": ["TEMPO"],
+        "blocktype" : "stack"
     },
     "music_changeTempo":{
-        "input": ["TEMPO"]
+        "input": ["TEMPO"],
+        "blocktype" : "stack"
     },
     "music_getTempo":{
-        "input": []
+        "input": [],
+        "blocktype" : "reporter"
     },
     "pen_clear":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "pen_stamp":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "pen_penDown":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "pen_penUp":{
-        "input": []
+        "input": [],
+        "blocktype" : "stack"
     },
     "pen_setPenColorToColor":{
-        "input": ["COLOR"]
+        "input": ["COLOR"],
+        "blocktype" : "stack"
     },
     "pen_changePenColorParamBy":{
-        "input": [""]
+        "input": [""],
+        "blocktype" : "stack"
     },
     "pen_setPenColorParamTo":{
-        "input": [""]
+        "input": [""],
+        "blocktype" : "stack"
     },
     "pen_changePenSizeBy":{
-        "input": ["SIZE"]
+        "input": ["SIZE"],
+        "blocktype" : "stack"
     },
     "pen_setPenSizeTo":{
-        "input": ["SIZE"]
+        "input": ["SIZE"],
+        "blocktype" : "stack"
     }
 }
