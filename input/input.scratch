@@ -10,7 +10,7 @@ create Stage{
 
 create cat{
     script[
-        motion_movesteps
+        motion_pointindirection;
     ]
     costumes[
         cat.svg;

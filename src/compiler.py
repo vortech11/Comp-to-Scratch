@@ -91,6 +91,8 @@ while index < len(lineTokens):
             indent += character_is_bracket(lineTokens[index])
             if lineTokens[index] == "script":
                 blockIndex = 0
+                previousBlock = ""
+                isTopLevel = True
                 index += 1
                 indent += 1
                 while indent > 1:
@@ -98,18 +100,29 @@ while index < len(lineTokens):
                     if character_is_bracket(lineTokens[index]) != 0:
                         indent += character_is_bracket(lineTokens[index])
                     else:
-                        sprite["blocks"][gen_hash(blockIndex+1)] = {
-                            "opcode": lineTokens[index],
+                        blockName = gen_hash(blockIndex+1)
+                        opcode = lineTokens[index]
+                        
+                        sprite["blocks"][blockName] = {
+                            "opcode": opcode,
                             "next": None,
                             "parent": None,
                             "inputs": {},
                             "fields": {},
                             "shadow": False,
-                            "topLevel": True,
-                            "x": 0,
-                            "y": 0
+                            "topLevel": True
                         }
+                        if isTopLevel:
+                            sprite["blocks"][blockName]["x"] = 0
+                            sprite["blocks"][blockName]["y"] = 0
+                        else:
+                            sprite["blocks"][blockName]["parent"] = previousBlock
+                            sprite["blocks"][previousBlock]["next"] = blockName
+                            sprite["blocks"][blockName]["topLevel"] = False
+                        
+                        previousBlock = blockName
                         blockIndex += 1
+                        isTopLevel = False
                     
             if lineTokens[index] == "costumes":
                 index += 1

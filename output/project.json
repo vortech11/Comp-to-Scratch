@@ -48,11 +48,11 @@
             "broadcasts": {},
             "blocks": {
                 "c4ca4238a0b923820dcc509a6f75849b": {
-                    "opcode": "motion_movesteps",
+                    "opcode": "motion_pointindirection",
                     "next": null,
                     "parent": null,
                     "inputs": {
-                        "STEPS": [1, [4, "10"]]
+                        "DIRECTION": [1, [10, "90"]]
                     },
                     "fields": {},
                     "shadow": false,
