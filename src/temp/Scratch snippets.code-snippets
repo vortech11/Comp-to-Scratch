@@ -1,0 +1,956 @@
+{
+    "Create a sprite": {
+        "scope": "scratch",
+        "prefix": "create",
+        "body": ["create"],
+        "description": "Create a sprite"
+    },
+    "Scripts of a sprite": {
+        "scope": "scratch",
+        "prefix": "script",
+        "body": ["script[", "\t$0", "]"],
+        "description": "Define the scripts of a sprite"
+    },
+    "Costumes of a sprite": {
+        "scope": "scratch",
+        "prefix": "costumes",
+        "body": ["costumes[", "\t$0", "]"],
+        "description": "Define the costumes of a sprite"
+    },
+    "Sounds of a sprite": {
+        "scope": "scratch",
+        "prefix": "sounds",
+        "body": ["sounds[", "\t$0", "]"],
+        "description": "Define the sounds of a sprite"
+    },
+    "motion_movesteps": {
+        "scope": "scratch",
+        "prefix": "motion_movesteps",
+        "body": ["motion_movesteps($0);"],
+        "description": "Move X steps"
+    },
+    "motion_turnright": {
+        "scope": "scratch",
+        "prefix": "motion_turnright",
+        "body": ["motion_turnright($0);"],
+        "description": "Turn right X degrees"
+    },
+    "motion_turnleft": {
+        "scope": "scratch",
+        "prefix": "motion_turnleft",
+        "body": ["motion_turnleft($0);"],
+        "description": "Turn left X degrees"
+    },
+    "motion_goto": {
+        "scope": "scratch",
+        "prefix": "motion_goto",
+        "body": ["motion_goto($0);"],
+        "description": "Go to (menu)"
+    },
+    "motion_gotoxy": {
+        "scope": "scratch",
+        "prefix": "motion_gotoxy",
+        "body": ["motion_gotoxy($0);"],
+        "description": "Go to X, Y"
+    },
+    "motion_glideto": {
+        "scope": "scratch",
+        "prefix": "motion_glideto",
+        "body": ["motion_glideto($0);"],
+        "description": "Glide to (menu)"
+    },
+    "motion_glidesecstoxy": {
+        "scope": "scratch",
+        "prefix": "motion_glidesecstoxy",
+        "body": ["motion_glidesecstoxy($0);"],
+        "description": "Glide to X, Y"
+    },
+    "motion_pointindirection": {
+        "scope": "scratch",
+        "prefix": "motion_pointindirection",
+        "body": ["motion_pointindirection($0);"],
+        "description": "Move x steps"
+    },
+    "motion_pointtowards": {
+        "scope": "scratch",
+        "prefix": "motion_pointtowards",
+        "body": ["motion_pointtowards($0);"],
+        "description": "Move x steps"
+    },
+    "motion_changexby": {
+        "scope": "scratch",
+        "prefix": "motion_changexby",
+        "body": ["motion_changexby($0);"],
+        "description": "Move x steps"
+    },
+    "motion_setx": {
+        "scope": "scratch",
+        "prefix": "motion_setx",
+        "body": ["motion_setx($0);"],
+        "description": "Move x steps"
+    },
+    "motion_changeyby": {
+        "scope": "scratch",
+        "prefix": "motion_changeyby",
+        "body": ["motion_changeyby($0);"],
+        "description": "Move x steps"
+    },
+    "motion_sety": {
+        "scope": "scratch",
+        "prefix": "motion_sety",
+        "body": ["motion_sety($0);"],
+        "description": "Move x steps"
+    },
+    "motion_ifonedgebounce": {
+        "scope": "scratch",
+        "prefix": "motion_ifonedgebounce",
+        "body": ["motion_ifonedgebounce();$0"],
+        "description": "Move x steps"
+    },
+    "motion_setrotationstyle": {
+        "scope": "scratch",
+        "prefix": "motion_setrotationstyle",
+        "body": ["motion_setrotationstyle($0);"],
+        "description": "Move x steps"
+    },
+    "motion_xposition": {
+        "scope": "scratch",
+        "prefix": "motion_xposition",
+        "body": ["motion_xposition();$0"],
+        "description": "Move x steps"
+    },
+    "motion_yposition": {
+        "scope": "scratch",
+        "prefix": "motion_yposition",
+        "body": ["motion_yposition();$0"],
+        "description": "Move x steps"
+    },
+    "motion_direction": {
+        "scope": "scratch",
+        "prefix": "motion_direction",
+        "body": ["motion_direction();$0"],
+        "description": "Move x steps"
+    },
+    "motion_goto_menu": {
+        "scope": "scratch",
+        "prefix": "motion_goto_menu",
+        "body": ["motion_goto_menu($0);"],
+        "description": "Move x steps"
+    },
+    "motion_glideto_menu": {
+        "scope": "scratch",
+        "prefix": "motion_glideto_menu",
+        "body": ["motion_glideto_menu($0);"],
+        "description": "Move x steps"
+    },
+    "motion_pointtowards_menu": {
+        "scope": "scratch",
+        "prefix": "motion_pointtowards_menu",
+        "body": ["motion_pointtowards_menu($0);"],
+        "description": "Move x steps"
+    },
+    "looks_sayforsecs": {
+        "scope": "scratch",
+        "prefix": "looks_sayforsecs",
+        "body": ["looks_sayforsecs($0);"],
+        "description": "Move x steps"
+    },
+    "looks_say": {
+        "scope": "scratch",
+        "prefix": "looks_say",
+        "body": ["looks_say($0);"],
+        "description": "Move x steps"
+    },
+    "looks_thinkforsecs": {
+        "scope": "scratch",
+        "prefix": "looks_thinkforsecs",
+        "body": ["looks_thinkforsecs($0);"],
+        "description": "Move x steps"
+    },
+    "looks_think": {
+        "scope": "scratch",
+        "prefix": "looks_think",
+        "body": ["looks_think($0);"],
+        "description": "Move x steps"
+    },
+    "looks_switchcostumeto": {
+        "scope": "scratch",
+        "prefix": "looks_switchcostumeto",
+        "body": ["looks_switchcostumeto($0);"],
+        "description": "Move x steps"
+    },
+    "looks_nextcostume": {
+        "scope": "scratch",
+        "prefix": "looks_nextcostume",
+        "body": ["looks_nextcostume();$0"],
+        "description": "Move x steps"
+    },
+    "looks_switchbackdropto": {
+        "scope": "scratch",
+        "prefix": "looks_switchbackdropto",
+        "body": ["looks_switchbackdropto($0);"],
+        "description": "Move x steps"
+    },
+    "looks_switchbackdroptoandwait": {
+        "scope": "scratch",
+        "prefix": "looks_switchbackdroptoandwait",
+        "body": ["looks_switchbackdroptoandwait($0);"],
+        "description": "Move x steps"
+    },
+    "looks_nextbackdrop": {
+        "scope": "scratch",
+        "prefix": "looks_nextbackdrop",
+        "body": ["looks_nextbackdrop();$0"],
+        "description": "Move x steps"
+    },
+    "looks_changesizeby": {
+        "scope": "scratch",
+        "prefix": "looks_changesizeby",
+        "body": ["looks_changesizeby($0);"],
+        "description": "Move x steps"
+    },
+    "looks_setsizeto": {
+        "scope": "scratch",
+        "prefix": "looks_setsizeto",
+        "body": ["looks_setsizeto($0);"],
+        "description": "Move x steps"
+    },
+    "looks_changeeffectby": {
+        "scope": "scratch",
+        "prefix": "looks_changeeffectby",
+        "body": ["looks_changeeffectby($0);"],
+        "description": "Move x steps"
+    },
+    "looks_seteffectto": {
+        "scope": "scratch",
+        "prefix": "looks_seteffectto",
+        "body": ["looks_seteffectto($0);"],
+        "description": "Move x steps"
+    },
+    "looks_cleargraphiceffects": {
+        "scope": "scratch",
+        "prefix": "looks_cleargraphiceffects",
+        "body": ["looks_cleargraphiceffects();$0"],
+        "description": "Move x steps"
+    },
+    "looks_show": {
+        "scope": "scratch",
+        "prefix": "looks_show",
+        "body": ["looks_show();$0"],
+        "description": "Move x steps"
+    },
+    "looks_hide": {
+        "scope": "scratch",
+        "prefix": "looks_hide",
+        "body": ["looks_hide();$0"],
+        "description": "Move x steps"
+    },
+    "looks_gotofrontback": {
+        "scope": "scratch",
+        "prefix": "looks_gotofrontback",
+        "body": ["looks_gotofrontback($0);"],
+        "description": "Move x steps"
+    },
+    "looks_goforwardbackwardlayers": {
+        "scope": "scratch",
+        "prefix": "looks_goforwardbackwardlayers",
+        "body": ["looks_goforwardbackwardlayers($0);"],
+        "description": "Move x steps"
+    },
+    "looks_costumenumbername": {
+        "scope": "scratch",
+        "prefix": "looks_costumenumbername",
+        "body": ["looks_costumenumbername($0);"],
+        "description": "Move x steps"
+    },
+    "looks_backdropnumbername": {
+        "scope": "scratch",
+        "prefix": "looks_backdropnumbername",
+        "body": ["looks_backdropnumbername($0);"],
+        "description": "Move x steps"
+    },
+    "looks_size": {
+        "scope": "scratch",
+        "prefix": "looks_size",
+        "body": ["looks_size();$0"],
+        "description": "Move x steps"
+    },
+    "looks_costume": {
+        "scope": "scratch",
+        "prefix": "looks_costume",
+        "body": ["looks_costume($0);"],
+        "description": "Move x steps"
+    },
+    "looks_backdrops": {
+        "scope": "scratch",
+        "prefix": "looks_backdrops",
+        "body": ["looks_backdrops($0);"],
+        "description": "Move x steps"
+    },
+    "sound_playuntildone": {
+        "scope": "scratch",
+        "prefix": "sound_playuntildone",
+        "body": ["sound_playuntildone($0);"],
+        "description": "Move x steps"
+    },
+    "sound_play": {
+        "scope": "scratch",
+        "prefix": "sound_play",
+        "body": ["sound_play($0);"],
+        "description": "Move x steps"
+    },
+    "sound_stopallsounds": {
+        "scope": "scratch",
+        "prefix": "sound_stopallsounds",
+        "body": ["sound_stopallsounds();$0"],
+        "description": "Move x steps"
+    },
+    "sound_changeeffectby": {
+        "scope": "scratch",
+        "prefix": "sound_changeeffectby",
+        "body": ["sound_changeeffectby($0);"],
+        "description": "Move x steps"
+    },
+    "sound_seteffectto": {
+        "scope": "scratch",
+        "prefix": "sound_seteffectto",
+        "body": ["sound_seteffectto($0);"],
+        "description": "Move x steps"
+    },
+    "sound_cleareffects": {
+        "scope": "scratch",
+        "prefix": "sound_cleareffects",
+        "body": ["sound_cleareffects();$0"],
+        "description": "Move x steps"
+    },
+    "sound_changevolumeby": {
+        "scope": "scratch",
+        "prefix": "sound_changevolumeby",
+        "body": ["sound_changevolumeby($0);"],
+        "description": "Move x steps"
+    },
+    "sound_setvolumeto": {
+        "scope": "scratch",
+        "prefix": "sound_setvolumeto",
+        "body": ["sound_setvolumeto($0);"],
+        "description": "Move x steps"
+    },
+    "sound_volume": {
+        "scope": "scratch",
+        "prefix": "sound_volume",
+        "body": ["sound_volume();$0"],
+        "description": "Move x steps"
+    },
+    "sound_sounds_menu": {
+        "scope": "scratch",
+        "prefix": "sound_sounds_menu",
+        "body": ["sound_sounds_menu($0);"],
+        "description": "Move x steps"
+    },
+    "event_whenflagclicked": {
+        "scope": "scratch",
+        "prefix": "event_whenflagclicked",
+        "body": ["event_whenflagclicked();$0"],
+        "description": "Move x steps"
+    },
+    "event_whenkeypressed": {
+        "scope": "scratch",
+        "prefix": "event_whenkeypressed",
+        "body": ["event_whenkeypressed($0);"],
+        "description": "Move x steps"
+    },
+    "event_whenthisspriteclicked": {
+        "scope": "scratch",
+        "prefix": "event_whenthisspriteclicked",
+        "body": ["event_whenthisspriteclicked();$0"],
+        "description": "Move x steps"
+    },
+    "event_whenstageclicked": {
+        "scope": "scratch",
+        "prefix": "event_whenstageclicked",
+        "body": ["event_whenstageclicked();$0"],
+        "description": "Move x steps"
+    },
+    "event_whenbackdropswitchesto": {
+        "scope": "scratch",
+        "prefix": "event_whenbackdropswitchesto",
+        "body": ["event_whenbackdropswitchesto($0);"],
+        "description": "Move x steps"
+    },
+    "event_whengreaterthan": {
+        "scope": "scratch",
+        "prefix": "event_whengreaterthan",
+        "body": ["event_whengreaterthan($0);"],
+        "description": "Move x steps"
+    },
+    "event_whenbroadcastreceived": {
+        "scope": "scratch",
+        "prefix": "event_whenbroadcastreceived",
+        "body": ["event_whenbroadcastreceived($0);"],
+        "description": "Move x steps"
+    },
+    "event_broadcast": {
+        "scope": "scratch",
+        "prefix": "event_broadcast",
+        "body": ["event_broadcast($0);"],
+        "description": "Move x steps"
+    },
+    "event_broadcastandwait": {
+        "scope": "scratch",
+        "prefix": "event_broadcastandwait",
+        "body": ["event_broadcastandwait($0);"],
+        "description": "Move x steps"
+    },
+    "control_wait": {
+        "scope": "scratch",
+        "prefix": "control_wait",
+        "body": ["control_wait($0);"],
+        "description": "Move x steps"
+    },
+    "control_repeat": {
+        "scope": "scratch",
+        "prefix": "control_repeat",
+        "body": ["control_repeat($0);"],
+        "description": "Move x steps"
+    },
+    "control_forever": {
+        "scope": "scratch",
+        "prefix": "control_forever",
+        "body": ["control_forever($0);"],
+        "description": "Move x steps"
+    },
+    "control_if": {
+        "scope": "scratch",
+        "prefix": "control_if",
+        "body": ["control_if($0);"],
+        "description": "Move x steps"
+    },
+    "control_if_else": {
+        "scope": "scratch",
+        "prefix": "control_if_else",
+        "body": ["control_if_else($0);"],
+        "description": "Move x steps"
+    },
+    "control_wait_until": {
+        "scope": "scratch",
+        "prefix": "control_wait_until",
+        "body": ["control_wait_until($0);"],
+        "description": "Move x steps"
+    },
+    "control_repeat_until": {
+        "scope": "scratch",
+        "prefix": "control_repeat_until",
+        "body": ["control_repeat_until($0);"],
+        "description": "Move x steps"
+    },
+    "control_stop": {
+        "scope": "scratch",
+        "prefix": "control_stop",
+        "body": ["control_stop($0);"],
+        "description": "Move x steps"
+    },
+    "control_start_as_clone": {
+        "scope": "scratch",
+        "prefix": "control_start_as_clone",
+        "body": ["control_start_as_clone();$0"],
+        "description": "Move x steps"
+    },
+    "control_create_clone_of": {
+        "scope": "scratch",
+        "prefix": "control_create_clone_of",
+        "body": ["control_create_clone_of($0);"],
+        "description": "Move x steps"
+    },
+    "control_delete_this_clone": {
+        "scope": "scratch",
+        "prefix": "control_delete_this_clone",
+        "body": ["control_delete_this_clone();$0"],
+        "description": "Move x steps"
+    },
+    "control_create_clone_of_menu": {
+        "scope": "scratch",
+        "prefix": "control_create_clone_of_menu",
+        "body": ["control_create_clone_of_menu($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_touchingobject": {
+        "scope": "scratch",
+        "prefix": "sensing_touchingobject",
+        "body": ["sensing_touchingobject($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_touchingcolor": {
+        "scope": "scratch",
+        "prefix": "sensing_touchingcolor",
+        "body": ["sensing_touchingcolor($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_coloristouchingcolor": {
+        "scope": "scratch",
+        "prefix": "sensing_coloristouchingcolor",
+        "body": ["sensing_coloristouchingcolor($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_distanceto": {
+        "scope": "scratch",
+        "prefix": "sensing_distanceto",
+        "body": ["sensing_distanceto($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_askandwait": {
+        "scope": "scratch",
+        "prefix": "sensing_askandwait",
+        "body": ["sensing_askandwait($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_answer": {
+        "scope": "scratch",
+        "prefix": "sensing_answer",
+        "body": ["sensing_answer();$0"],
+        "description": "Move x steps"
+    },
+    "sensing_keypressed": {
+        "scope": "scratch",
+        "prefix": "sensing_keypressed",
+        "body": ["sensing_keypressed($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_mousedown": {
+        "scope": "scratch",
+        "prefix": "sensing_mousedown",
+        "body": ["sensing_mousedown();$0"],
+        "description": "Move x steps"
+    },
+    "sensing_mousex": {
+        "scope": "scratch",
+        "prefix": "sensing_mousex",
+        "body": ["sensing_mousex();$0"],
+        "description": "Move x steps"
+    },
+    "sensing_mousey": {
+        "scope": "scratch",
+        "prefix": "sensing_mousey",
+        "body": ["sensing_mousey();$0"],
+        "description": "Move x steps"
+    },
+    "sensing_setdragmode": {
+        "scope": "scratch",
+        "prefix": "sensing_setdragmode",
+        "body": ["sensing_setdragmode($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_loudness": {
+        "scope": "scratch",
+        "prefix": "sensing_loudness",
+        "body": ["sensing_loudness();$0"],
+        "description": "Move x steps"
+    },
+    "sensing_timer": {
+        "scope": "scratch",
+        "prefix": "sensing_timer",
+        "body": ["sensing_timer();$0"],
+        "description": "Move x steps"
+    },
+    "sensing_resettimer": {
+        "scope": "scratch",
+        "prefix": "sensing_resettimer",
+        "body": ["sensing_resettimer();$0"],
+        "description": "Move x steps"
+    },
+    "sensing_of": {
+        "scope": "scratch",
+        "prefix": "sensing_of",
+        "body": ["sensing_of($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_current": {
+        "scope": "scratch",
+        "prefix": "sensing_current",
+        "body": ["sensing_current($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_dayssince2000": {
+        "scope": "scratch",
+        "prefix": "sensing_dayssince2000",
+        "body": ["sensing_dayssince2000();$0"],
+        "description": "Move x steps"
+    },
+    "sensing_username": {
+        "scope": "scratch",
+        "prefix": "sensing_username",
+        "body": ["sensing_username();$0"],
+        "description": "Move x steps"
+    },
+    "sensing_touchingobjectmenu": {
+        "scope": "scratch",
+        "prefix": "sensing_touchingobjectmenu",
+        "body": ["sensing_touchingobjectmenu($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_distancetomenu": {
+        "scope": "scratch",
+        "prefix": "sensing_distancetomenu",
+        "body": ["sensing_distancetomenu($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_keyoptions": {
+        "scope": "scratch",
+        "prefix": "sensing_keyoptions",
+        "body": ["sensing_keyoptions($0);"],
+        "description": "Move x steps"
+    },
+    "sensing_of_object_menu": {
+        "scope": "scratch",
+        "prefix": "sensing_of_object_menu",
+        "body": ["sensing_of_object_menu($0);"],
+        "description": "Move x steps"
+    },
+    "operator_add": {
+        "scope": "scratch",
+        "prefix": "operator_add",
+        "body": ["operator_add($0);"],
+        "description": "Move x steps"
+    },
+    "operator_subtract": {
+        "scope": "scratch",
+        "prefix": "operator_subtract",
+        "body": ["operator_subtract($0);"],
+        "description": "Move x steps"
+    },
+    "operator_multiply": {
+        "scope": "scratch",
+        "prefix": "operator_multiply",
+        "body": ["operator_multiply($0);"],
+        "description": "Move x steps"
+    },
+    "operator_divide": {
+        "scope": "scratch",
+        "prefix": "operator_divide",
+        "body": ["operator_divide($0);"],
+        "description": "Move x steps"
+    },
+    "operator_random": {
+        "scope": "scratch",
+        "prefix": "operator_random",
+        "body": ["operator_random($0);"],
+        "description": "Move x steps"
+    },
+    "operator_gt": {
+        "scope": "scratch",
+        "prefix": "operator_gt",
+        "body": ["operator_gt($0);"],
+        "description": "Move x steps"
+    },
+    "operator_lt": {
+        "scope": "scratch",
+        "prefix": "operator_lt",
+        "body": ["operator_lt($0);"],
+        "description": "Move x steps"
+    },
+    "operator_equals": {
+        "scope": "scratch",
+        "prefix": "operator_equals",
+        "body": ["operator_equals($0);"],
+        "description": "Move x steps"
+    },
+    "operator_and": {
+        "scope": "scratch",
+        "prefix": "operator_and",
+        "body": ["operator_and($0);"],
+        "description": "Move x steps"
+    },
+    "operator_or": {
+        "scope": "scratch",
+        "prefix": "operator_or",
+        "body": ["operator_or($0);"],
+        "description": "Move x steps"
+    },
+    "operator_not": {
+        "scope": "scratch",
+        "prefix": "operator_not",
+        "body": ["operator_not($0);"],
+        "description": "Move x steps"
+    },
+    "operator_join": {
+        "scope": "scratch",
+        "prefix": "operator_join",
+        "body": ["operator_join($0);"],
+        "description": "Move x steps"
+    },
+    "operator_letter_of": {
+        "scope": "scratch",
+        "prefix": "operator_letter_of",
+        "body": ["operator_letter_of($0);"],
+        "description": "Move x steps"
+    },
+    "operator_length": {
+        "scope": "scratch",
+        "prefix": "operator_length",
+        "body": ["operator_length($0);"],
+        "description": "Move x steps"
+    },
+    "operator_contains": {
+        "scope": "scratch",
+        "prefix": "operator_contains",
+        "body": ["operator_contains($0);"],
+        "description": "Move x steps"
+    },
+    "operator_mod": {
+        "scope": "scratch",
+        "prefix": "operator_mod",
+        "body": ["operator_mod($0);"],
+        "description": "Move x steps"
+    },
+    "operator_round": {
+        "scope": "scratch",
+        "prefix": "operator_round",
+        "body": ["operator_round($0);"],
+        "description": "Move x steps"
+    },
+    "operator_mathop": {
+        "scope": "scratch",
+        "prefix": "operator_mathop",
+        "body": ["operator_mathop($0);"],
+        "description": "Move x steps"
+    },
+    "data_variable": {
+        "scope": "scratch",
+        "prefix": "data_variable",
+        "body": ["data_variable($0);"],
+        "description": "Move x steps"
+    },
+    "data_setvariableto": {
+        "scope": "scratch",
+        "prefix": "data_setvariableto",
+        "body": ["data_setvariableto($0);"],
+        "description": "Move x steps"
+    },
+    "data_changevariableby": {
+        "scope": "scratch",
+        "prefix": "data_changevariableby",
+        "body": ["data_changevariableby($0);"],
+        "description": "Move x steps"
+    },
+    "data_showvariable": {
+        "scope": "scratch",
+        "prefix": "data_showvariable",
+        "body": ["data_showvariable($0);"],
+        "description": "Move x steps"
+    },
+    "data_hidevariable": {
+        "scope": "scratch",
+        "prefix": "data_hidevariable",
+        "body": ["data_hidevariable($0);"],
+        "description": "Move x steps"
+    },
+    "data_listcontents": {
+        "scope": "scratch",
+        "prefix": "data_listcontents",
+        "body": ["data_listcontents($0);"],
+        "description": "Move x steps"
+    },
+    "data_addtolist": {
+        "scope": "scratch",
+        "prefix": "data_addtolist",
+        "body": ["data_addtolist($0);"],
+        "description": "Move x steps"
+    },
+    "data_deleteoflist": {
+        "scope": "scratch",
+        "prefix": "data_deleteoflist",
+        "body": ["data_deleteoflist($0);"],
+        "description": "Move x steps"
+    },
+    "data_deletealloflist": {
+        "scope": "scratch",
+        "prefix": "data_deletealloflist",
+        "body": ["data_deletealloflist($0);"],
+        "description": "Move x steps"
+    },
+    "data_insertatlist": {
+        "scope": "scratch",
+        "prefix": "data_insertatlist",
+        "body": ["data_insertatlist($0);"],
+        "description": "Move x steps"
+    },
+    "data_replaceitemoflist": {
+        "scope": "scratch",
+        "prefix": "data_replaceitemoflist",
+        "body": ["data_replaceitemoflist($0);"],
+        "description": "Move x steps"
+    },
+    "data_itemoflist": {
+        "scope": "scratch",
+        "prefix": "data_itemoflist",
+        "body": ["data_itemoflist($0);"],
+        "description": "Move x steps"
+    },
+    "data_itemnumoflist": {
+        "scope": "scratch",
+        "prefix": "data_itemnumoflist",
+        "body": ["data_itemnumoflist($0);"],
+        "description": "Move x steps"
+    },
+    "data_lengthoflist": {
+        "scope": "scratch",
+        "prefix": "data_lengthoflist",
+        "body": ["data_lengthoflist($0);"],
+        "description": "Move x steps"
+    },
+    "data_listcontainsitem": {
+        "scope": "scratch",
+        "prefix": "data_listcontainsitem",
+        "body": ["data_listcontainsitem($0);"],
+        "description": "Move x steps"
+    },
+    "data_showlist": {
+        "scope": "scratch",
+        "prefix": "data_showlist",
+        "body": ["data_showlist($0);"],
+        "description": "Move x steps"
+    },
+    "data_hidelist": {
+        "scope": "scratch",
+        "prefix": "data_hidelist",
+        "body": ["data_hidelist($0);"],
+        "description": "Move x steps"
+    },
+    "procedures_definition": {
+        "scope": "scratch",
+        "prefix": "procedures_definition",
+        "body": ["procedures_definition($0);"],
+        "description": "Move x steps"
+    },
+    "procedures_call": {
+        "scope": "scratch",
+        "prefix": "procedures_call",
+        "body": ["procedures_call($0);"],
+        "description": "Move x steps"
+    },
+    "argument_reporter_string_number": {
+        "scope": "scratch",
+        "prefix": "argument_reporter_string_number",
+        "body": ["argument_reporter_string_number($0);"],
+        "description": "Move x steps"
+    },
+    "argument_reporter_boolean": {
+        "scope": "scratch",
+        "prefix": "argument_reporter_boolean",
+        "body": ["argument_reporter_boolean($0);"],
+        "description": "Move x steps"
+    },
+    "music_playDrumForBeats": {
+        "scope": "scratch",
+        "prefix": "music_playDrumForBeats",
+        "body": ["music_playDrumForBeats($0);"],
+        "description": "Move x steps"
+    },
+    "music_restForBeats": {
+        "scope": "scratch",
+        "prefix": "music_restForBeats",
+        "body": ["music_restForBeats($0);"],
+        "description": "Move x steps"
+    },
+    "music_playNoteForBeats": {
+        "scope": "scratch",
+        "prefix": "music_playNoteForBeats",
+        "body": ["music_playNoteForBeats($0);"],
+        "description": "Move x steps"
+    },
+    "music_setInstrument": {
+        "scope": "scratch",
+        "prefix": "music_setInstrument",
+        "body": ["music_setInstrument($0);"],
+        "description": "Move x steps"
+    },
+    "music_setTempo": {
+        "scope": "scratch",
+        "prefix": "music_setTempo",
+        "body": ["music_setTempo($0);"],
+        "description": "Move x steps"
+    },
+    "music_changeTempo": {
+        "scope": "scratch",
+        "prefix": "music_changeTempo",
+        "body": ["music_changeTempo($0);"],
+        "description": "Move x steps"
+    },
+    "music_getTempo": {
+        "scope": "scratch",
+        "prefix": "music_getTempo",
+        "body": ["music_getTempo();$0"],
+        "description": "Move x steps"
+    },
+    "music_menu_DRUM": {
+        "scope": "scratch",
+        "prefix": "music_menu_DRUM",
+        "body": ["music_menu_DRUM($0);"],
+        "description": "Move x steps"
+    },
+    "music_menu_INSTRUMENT": {
+        "scope": "scratch",
+        "prefix": "music_menu_INSTRUMENT",
+        "body": ["music_menu_INSTRUMENT($0);"],
+        "description": "Move x steps"
+    },
+    "pen_clear": {
+        "scope": "scratch",
+        "prefix": "pen_clear",
+        "body": ["pen_clear();$0"],
+        "description": "Move x steps"
+    },
+    "pen_stamp": {
+        "scope": "scratch",
+        "prefix": "pen_stamp",
+        "body": ["pen_stamp();$0"],
+        "description": "Move x steps"
+    },
+    "pen_penDown": {
+        "scope": "scratch",
+        "prefix": "pen_penDown",
+        "body": ["pen_penDown();$0"],
+        "description": "Move x steps"
+    },
+    "pen_penUp": {
+        "scope": "scratch",
+        "prefix": "pen_penUp",
+        "body": ["pen_penUp();$0"],
+        "description": "Move x steps"
+    },
+    "pen_setPenColorToColor": {
+        "scope": "scratch",
+        "prefix": "pen_setPenColorToColor",
+        "body": ["pen_setPenColorToColor($0);"],
+        "description": "Move x steps"
+    },
+    "pen_changePenColorParamBy": {
+        "scope": "scratch",
+        "prefix": "pen_changePenColorParamBy",
+        "body": ["pen_changePenColorParamBy($0);"],
+        "description": "Move x steps"
+    },
+    "pen_setPenColorParamTo": {
+        "scope": "scratch",
+        "prefix": "pen_setPenColorParamTo",
+        "body": ["pen_setPenColorParamTo($0);"],
+        "description": "Move x steps"
+    },
+    "pen_changePenSizeBy": {
+        "scope": "scratch",
+        "prefix": "pen_changePenSizeBy",
+        "body": ["pen_changePenSizeBy($0);"],
+        "description": "Move x steps"
+    },
+    "pen_setPenSizeTo": {
+        "scope": "scratch",
+        "prefix": "pen_setPenSizeTo",
+        "body": ["pen_setPenSizeTo($0);"],
+        "description": "Move x steps"
+    },
+    "pen_menu_colorParam": {
+        "scope": "scratch",
+        "prefix": "pen_menu_colorParam",
+        "body": ["pen_menu_colorParam($0);"],
+        "description": "Move x steps"
+    }
+}

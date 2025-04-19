@@ -1,568 +1,915 @@
 {
     "motion_movesteps":{
-        "input": ["STEPS"],
-        "blocktype" : "stack"
+        "inputs": ["STEPS"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move X steps"
     },
     "motion_turnright":{
-        "input": ["DEGREES"],
-        "blocktype" : "stack"
+        "inputs": ["DEGREES"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Turn right X degrees"
     },
     "motion_turnleft":{
-        "input": ["DEGREES"],
-        "blocktype" : "stack"
+        "inputs": ["DEGREES"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Turn left X degrees"
     },
     "motion_goto":{
-        "input": ["TO"],
-        "blocktype" : "stack"
+        "inputs": ["TO"],
+        "dropdownID": "motion_goto_menu",
+        "inputtype": ["menu"],
+        "blocktype" : "stack",
+        "description": "Go to (menu)"
     },
     "motion_gotoxy":{
-        "input": ["X", "Y"],
-        "blocktype" : "stack"
+        "inputs": ["X", "Y"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "stack",
+        "description": "Go to X, Y"
     },
     "motion_glideto":{
-        "input": ["SECS", "TO"],
-        "blocktype" : "stack"
+        "inputs": ["SECS", "TO"],
+        "inputtype": ["text", "menu"],
+        "dropdownID": "motion_glideto_menu",
+        "blocktype" : "stack",
+        "description": "Glide to (menu)"
     },
     "motion_glidesecstoxy":{
-        "input": ["SECS", "X", "Y"],
-        "blocktype" : "stack"
+        "inputs": ["SECS", "X", "Y"],
+        "inputtype": ["text", "text", "text"],
+        "blocktype" : "stack",
+        "description": "Glide to X, Y"
     },
     "motion_pointindirection":{
-        "input": ["DIRECTION"],
-        "blocktype" : "stack"
+        "inputs": ["DIRECTION"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "motion_pointtowards":{
-        "input": ["TOWARDS"],
-        "blocktype" : "stack"
+        "inputs": ["TOWARDS"],
+        "inputtype": ["menu"],
+        "dropdownID": "motion_pointtowards_menu",
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "motion_changexby":{
-        "input": ["DX"],
-        "blocktype" : "stack"
+        "inputs": ["DX"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "motion_setx":{
-        "input": ["X"],
-        "blocktype" : "stack"
+        "inputs": ["X"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "motion_changeyby":{
-        "input": ["DY"],
-        "blocktype" : "stack"
+        "inputs": ["DY"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "motion_sety":{
-        "input": ["Y"],
-        "blocktype" : "stack"
+        "inputs": ["Y"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "motion_ifonedgebounce":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "motion_setrotationstyle":{
-        "input": ["STYLE"],
-        "blocktype" : "stack"
+        "inputs": ["STYLE"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "motion_xposition":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "motion_yposition":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "motion_direction":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "motion_goto_menu":{
+        "inputs": ["TO"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "motion_glideto_menu":{
+        "inputs": ["TO"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "motion_pointtowards_menu":{
+        "inputs": ["TOWARDS"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "looks_sayforsecs":{
-        "input": ["MESSAGE", "SECS"],
-        "blocktype" : "stack"
+        "inputs": ["MESSAGE", "SECS"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_say":{
-        "input": ["MESSAGE"],
-        "blocktype" : "stack"
+        "inputs": ["MESSAGE"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_thinkforsecs":{
-        "input": ["MESSAGE", "SECS"],
-        "blocktype" : "stack"
+        "inputs": ["MESSAGE", "SECS"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_think":{
-        "input": ["MESSAGE"],
-        "blocktype" : "stack"
+        "inputs": ["MESSAGE"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_switchcostumeto":{
-        "input": ["COSTUME"],
-        "blocktype" : "stack"
+        "inputs": ["COSTUME"],
+        "inputtype": ["menu"],
+        "dropdownID": "looks_costume",
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_nextcostume":{
-        "input": [""],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_switchbackdropto":{
-        "input": ["BACKDROP"],
-        "blocktype" : "stack"
+        "inputs": ["BACKDROP"],
+        "inputtype": ["menu"],
+        "dropdownID": "looks_backdrops",
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_switchbackdroptoandwait":{
-        "input": ["BACKDROP"],
-        "blocktype" : "stack"
+        "inputs": ["BACKDROP"],
+        "inputtype": ["menu"],
+        "dropdownID": "looks_backdrops",
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_nextbackdrop":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_changesizeby":{
-        "input": ["CHANGE"],
-        "blocktype" : "stack"
+        "inputs": ["CHANGE"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_setsizeto":{
-        "input": ["SIZE"],
-        "blocktype" : "stack"
+        "inputs": ["SIZE"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_changeeffectby":{
-        "input": ["EFFECT", "CHANGE"],
-        "blocktype" : "stack"
+        "inputs": ["EFFECT", "CHANGE"],
+        "inputtype": ["dropdown", "text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_seteffectto":{
-        "input": ["EFFECT", "VALUE"],
-        "blocktype" : "stack"
+        "inputs": ["EFFECT", "VALUE"],
+        "inputtype": ["dropdown", "text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_cleargraphiceffects":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_show":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_hide":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_gotofrontback":{
-        "input": ["FRONT_BACK"],
-        "blocktype" : "stack"
+        "inputs": ["FRONT_BACK"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_goforwardbackwardlayers":{
-        "input": ["FORWARD_BACKWARD", "NUM"],
-        "blocktype" : "stack"
+        "inputs": ["FORWARD_BACKWARD", "NUM"],
+        "inputtype": ["dropdown", "text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "looks_costumenumbername":{
-        "input": ["NUMBER_NAME"],
-        "blocktype" : "reporter"
+        "inputs": ["NUMBER_NAME"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "looks_backdropnumbername":{
-        "input": ["NUMBER_NAME"],
-        "blocktype" : "reporter"
+        "inputs": ["NUMBER_NAME"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "looks_size":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "looks_costume":{
+        "inputs": ["COSTUME"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "looks_backdrops":{
+        "inputs": ["BACKDROP"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "sound_playuntildone":{
-        "input": ["SOUND_MENU"],
-        "blocktype" : "stack"
+        "inputs": ["SOUND_MENU"],
+        "inputtype": ["menu"],
+        "dropdownID": "sound_sounds_menu",
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sound_play":{
-        "input": ["SOUND_MENU"],
-        "blocktype" : "stack"
+        "inputs": ["SOUND_MENU"],
+        "inputtype": ["menu"],
+        "dropdownID": "sound_sounds_menu",
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sound_stopallsounds":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sound_changeeffectby":{
-        "input": ["EFFECT", "VALUE"],
-        "blocktype" : "stack"
+        "inputs": ["EFFECT", "VALUE"],
+        "inputtype": ["dropdown", "text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sound_seteffectto":{
-        "input": ["EFFECT", "VALUE"],
-        "blocktype" : "stack"
+        "inputs": ["EFFECT", "VALUE"],
+        "inputtype": ["dropdown", "text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sound_cleareffects":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sound_changevolumeby":{
-        "input": ["VOLUME"],
-        "blocktype" : "stack"
+        "inputs": ["VOLUME"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sound_setvolumeto":{
-        "input": ["VOLUME"],
-        "blocktype" : "stack"
+        "inputs": ["VOLUME"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sound_volume":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "sound_sounds_menu":{
+        "inputs": ["SOUND_MENU"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "event_whenflagclicked":{
-        "input": [],
-        "blocktype" : "hat"
+        "inputs": [],
+        "blocktype" : "hat",
+        "description": "Move x steps"
     },
     "event_whenkeypressed":{
-        "input": ["KEY_OPTION"],
-        "blocktype" : "hat"
+        "inputs": ["KEY_OPTION"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "hat",
+        "description": "Move x steps"
     },
     "event_whenthisspriteclicked":{
-        "input": [],
-        "blocktype" : "hat"
+        "inputs": [],
+        "blocktype" : "hat",
+        "description": "Move x steps"
     },
     "event_whenstageclicked":{
-        "input": [],
-        "blocktype" : "hat"
+        "inputs": [],
+        "blocktype" : "hat",
+        "description": "Move x steps"
     },
     "event_whenbackdropswitchesto":{
-        "input": ["BACKDROP"],
-        "blocktype" : "hat"
+        "inputs": ["BACKDROP"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "hat",
+        "description": "Move x steps"
     },
     "event_whengreaterthan":{
-        "input": ["VALUE"],
-        "blocktype" : "stack"
+        "inputs": ["VALUE"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "event_whenbroadcastreceived":{
-        "input": ["BROADCAST_OPTION"],
-        "blocktype" : "hat"
+        "inputs": ["BROADCAST_OPTION"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "hat",
+        "description": "Move x steps"
     },
     "event_broadcast":{
-        "input": ["BROADCAST_INPUT"],
-        "blocktype" : "stack"
+        "inputs": ["BROADCAST_inputs"],
+        "inputtype": ["broadcast"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "event_broadcastandwait":{
-        "input": ["BROADCAST_INPUT"],
-        "blocktype" : "stack"
+        "inputs": ["BROADCAST_inputs"],
+        "inputtype": ["broadcast"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "control_wait":{
-        "input": ["DURATION"],
-        "blocktype" : "stack"
+        "inputs": ["DURATION"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "control_repeat":{
-        "input": ["TIMES", "SUBSTACK"],
-        "blocktype" : "c-block"
+        "inputs": ["TIMES", "SUBSTACK"],
+        "inputtype": ["text"],
+        "blocktype" : "c-block",
+        "description": "Move x steps"
     },
     "control_forever":{
-        "input": ["SUBSTACK"],
-        "blocktype" : "c-block cap"
+        "inputs": ["SUBSTACK"],
+        "inputtype": ["text"],
+        "blocktype" : "c-block cap",
+        "description": "Move x steps"
     },
     "control_if":{
-        "input": ["CONDITION", "SUBSTACK"],
-        "blocktype" : "c-block"
+        "inputs": ["CONDITION", "SUBSTACK"],
+        "inputtype": ["boolean"],
+        "blocktype" : "c-block",
+        "description": "Move x steps"
     },
     "control_if_else":{
-        "input": ["CONDITION", "SUBSTACK", "SUBSTACK2"],
-        "blocktype" : "if-block"
+        "inputs": ["CONDITION", "SUBSTACK", "SUBSTACK2"],
+        "inputtype": ["boolean"],
+        "blocktype" : "if-block",
+        "description": "Move x steps"
     },
     "control_wait_until":{
-        "input": ["CONDITION"],
-        "blocktype" : "stack"
+        "inputs": ["CONDITION"],
+        "inputtype": ["boolean"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "control_repeat_until":{
-        "input": ["CONDITION", "SUBSTACK"],
-        "blocktype" : "c-block"
+        "inputs": ["CONDITION", "SUBSTACK"],
+        "inputtype": ["boolean"],
+        "blocktype" : "c-block",
+        "description": "Move x steps"
     },
     "control_stop":{
-        "input": ["STOP_OPTION"],
-        "blocktype" : "cap"
+        "inputs": ["STOP_OPTION"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "cap",
+        "description": "Move x steps"
     },
     "control_start_as_clone":{
-        "input": [],
-        "blocktype" : "hat"
+        "inputs": [],
+        "blocktype" : "hat",
+        "description": "Move x steps"
     },
     "control_create_clone_of":{
-        "input": ["CLONE_OPTION"],
-        "blocktype" : "stack"
+        "inputs": ["CLONE_OPTION"],
+        "inputtype": ["menu"],
+        "dropdownID": "control_create_clone_of_menu",
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "control_delete_this_clone":{
-        "input": [],
-        "blocktype" : "cap"
+        "inputs": [],
+        "blocktype" : "cap",
+        "description": "Move x steps"
+    },
+    "control_create_clone_of_menu":{
+        "inputs": ["CLONE_OPTION"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "sensing_touchingobject":{
-        "input": ["TOUCHINGOBJECTMENU"],
-        "blocktype" : "boolean"
+        "inputs": ["TOUCHINGOBJECTMENU"],
+        "inputtype": ["menu"],
+        "dropdownID": "sensing_touchingobjectmenu",
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "sensing_touchingcolor":{
-        "input": ["COLOR"],
-        "blocktype" : "boolean"
+        "inputs": ["COLOR"],
+        "inputtype": ["color"],
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "sensing_coloristouchingcolor":{
-        "input": ["COLOR", "COLOR2"],
-        "blocktype" : "boolean"
+        "inputs": ["COLOR", "COLOR2"],
+        "inputtype": ["color", "color"],
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "sensing_distanceto":{
-        "input": ["DISTANCETOMENU"],
-        "blocktype" : "reporter"
+        "inputs": ["DISTANCETOMENU"],
+        "inputtype": ["menu"],
+        "dropdownID": "sensing_distancemenu",
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "sensing_askandwait":{
-        "input": ["QUESTION"],
-        "blocktype" : "stack"
+        "inputs": ["QUESTION"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sensing_answer":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sensing_keypressed":{
-        "input": ["KEY_OPTION"],
-        "blocktype" : "boolean"
+        "inputs": ["KEY_OPTION"],
+        "inputtype": ["menu"],
+        "dropdownID": "sensing_keyoptions",
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "sensing_mousedown":{
-        "input": [],
-        "blocktype" : "boolean"
+        "inputs": [],
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "sensing_mousex":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "sensing_mousey":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "sensing_setdragmode":{
-        "input": ["DRAG_MODE"],
-        "blocktype" : "stack"
+        "inputs": ["DRAG_MODE"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sensing_loudness":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "sensing_timer":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "sensing_resettimer":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "sensing_of":{
-        "input": ["PROPERTY", "OBJECT"],
-        "blocktype" : "reporter"
+        "inputs": ["PROPERTY", "OBJECT"],
+        "inputtype": ["dropdown", "menu"],
+        "dropdownID": "sensing_of_object_menu",
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "sensing_current":{
-        "input": ["CURRENTMENU"],
-        "blocktype" : "reporter"
+        "inputs": ["CURRENTMENU"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "sensing_dayssince2000":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "sensing_username":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "sensing_touchingobjectmenu":{
+        "inputs": ["TOUCHINGOBJECTMENU"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "sensing_distancetomenu":{
+        "inputs": ["DISTANCETOMENU"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "sensing_keyoptions":{
+        "inputs": ["KEY_OPTION"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "sensing_of_object_menu":{
+        "inputs": ["OBJECT"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "operator_add":{
-        "input": ["NUM1", "NUM2"],
-        "blocktype" : "reporter"
+        "inputs": ["NUM1", "NUM2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "operator_subtract":{
-        "input": ["NUM1", "NUM2"],
-        "blocktype" : "reporter"
+        "inputs": ["NUM1", "NUM2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "operator_multiply":{
-        "input": ["NUM1", "NUM2"],
-        "blocktype" : "reporter"
+        "inputs": ["NUM1", "NUM2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "operator_divide":{
-        "input": ["NUM1", "NUM2"],
-        "blocktype" : "reporter"
+        "inputs": ["NUM1", "NUM2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "operator_random":{
-        "input": ["FROM", "TO"],
-        "blocktype" : "reporter"
+        "inputs": ["FROM", "TO"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "operator_gt":{
-        "input": ["OPERAND1", "OPERAND2"],
-        "blocktype" : "boolean"
+        "inputs": ["OPERAND1", "OPERAND2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "operator_lt":{
-        "input": ["OPERAND1", "OPERAND2"],
-        "blocktype" : "boolean"
+        "inputs": ["OPERAND1", "OPERAND2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "operator_equals":{
-        "input": ["OPERAND1", "OPERAND2"],
-        "blocktype" : "boolean"
+        "inputs": ["OPERAND1", "OPERAND2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "operator_and":{
-        "input": ["OPERAND1", "OPERAND2"],
-        "blocktype" : "boolean"
+        "inputs": ["OPERAND1", "OPERAND2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "operator_or":{
-        "input": ["OPERAND1", "OPERAND2"],
-        "blocktype" : "boolean"
+        "inputs": ["OPERAND1", "OPERAND2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "operator_not":{
-        "input": ["OPERAND"],
-        "blocktype" : "boolean"
+        "inputs": ["OPERAND"],
+        "inputtype": ["text"],
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "operator_join":{
-        "input": ["STRING1", "STRING2"],
-        "blocktype" : "reporter"
+        "inputs": ["STRING1", "STRING2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "operator_letter_of":{
-        "input": ["LETTER", "STRING"],
-        "blocktype" : "reporter"
+        "inputs": ["LETTER", "STRING"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "operator_length":{
-        "input": ["STRING"],
-        "blocktype" : "reporter"
+        "inputs": ["STRING"],
+        "inputtype": ["text"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "operator_contains":{
-        "input": ["STRING1", "STRING2"],
-        "blocktype" : "boolean"
+        "inputs": ["STRING1", "STRING2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "operator_mod":{
-        "input": ["nUM1", "NUM2"],
-        "blocktype" : "reporter"
+        "inputs": ["NUM1", "NUM2"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "operator_round":{
-        "input": ["NUM"],
-        "blocktype" : "reporter"
+        "inputs": ["NUM"],
+        "inputtype": ["text"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "operator_mathop":{
-        "input": ["OPERATOR", "NUM"],
-        "blocktype" : "reporter"
+        "inputs": ["OPERATOR", "NUM"],
+        "inputtype": ["dropdown", "text"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     
     "data_variable":{
-        "input": ["VARIABLE"],
-        "blocktype" : "reporter"
+        "inputs": ["VARIABLE"],
+        "inputtype": ["variable"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "data_setvariableto":{
-        "input": ["VARIABLE", "VALUE"],
-        "blocktype" : "stack"
+        "inputs": ["VARIABLE", "VALUE"],
+        "inputtype": ["dropdown", "text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "data_changevariableby":{
-        "input": ["VARIABLE", "VALUE"],
-        "blocktype" : "stack"
+        "inputs": ["VARIABLE", "VALUE"],
+        "inputtype": ["dropdown", "text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "data_showvariable":{
-        "input": ["VARIABLE"],
-        "blocktype" : "stack"
+        "inputs": ["VARIABLE"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "data_hidevariable":{
-        "input": ["VARIABLE"],
-        "blocktype" : "stack"
+        "inputs": ["VARIABLE"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "data_listcontents":{
-        "input": ["LIST"],
-        "blocktype" : "reporter"
+        "inputs": ["LIST"],
+        "inputtype": ["list"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "data_addtolist":{
-        "input": ["ITEM", "LIST"],
-        "blocktype" : "stack"
+        "inputs": ["ITEM", "LIST"],
+        "inputtype": ["text", "dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "data_deleteoflist":{
-        "input": ["INDEX", "LIST"],
-        "blocktype" : "stack"
+        "inputs": ["INDEX", "LIST"],
+        "inputtype": ["text", "dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "data_deletealloflist":{
-        "input": ["LIST"],
-        "blocktype" : "stack"
+        "inputs": ["LIST"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "data_insertatlist":{
-        "input": ["ITEM", "INDEX", "LIST"],
-        "blocktype" : "stack"
+        "inputs": ["ITEM", "INDEX", "LIST"],
+        "inputtype": ["text", "text", "dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "data_replaceitemoflist":{
-        "input": ["INDEX", "LIST", "ITEM"],
-        "blocktype" : "stack"
+        "inputs": ["INDEX", "LIST", "ITEM"],
+        "inputtype": ["text", "dropdown", "text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "data_itemoflist":{
-        "input": ["INDEX", "LIST"],
-        "blocktype" : "reporter"
+        "inputs": ["INDEX", "LIST"],
+        "inputtype": ["text", "dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "data_itemnumoflist":{
-        "input": ["INDEX", "LIST"],
-        "blocktype" : "reporter"
+        "inputs": ["INDEX", "LIST"],
+        "inputtype": ["text", "dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "data_lengthoflist":{
-        "input": ["LIST"],
-        "blocktype" : "reporter"
+        "inputs": ["LIST"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "data_listcontainsitem":{
-        "input": ["LIST", "ITEM"],
-        "blocktype" : "boolean"
+        "inputs": ["LIST", "ITEM"],
+        "inputtype": ["dropdown", "text"],
+        "blocktype" : "boolean",
+        "description": "Move x steps"
     },
     "data_showlist":{
-        "input": ["LIST"],
-        "blocktype" : "stack"
+        "inputs": ["LIST"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "data_hidelist":{
-        "input": ["LIST"],
-        "blocktype" : "stack"
+        "inputs": ["LIST"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "procedures_definition":{
-        "input": [""],
-        "blocktype" : "stack"
+        "inputs": [""],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "procedures_call":{
-        "input": [""],
-        "blocktype" : "stack"
+        "inputs": [""],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "argument_reporter_string_number":{
-        "input": [""],
-        "blocktype" : "stack"
+        "inputs": [""],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "argument_reporter_boolean":{
-        "input": [""],
-        "blocktype" : "stack"
+        "inputs": [""],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     
     "music_playDrumForBeats":{
-        "input": ["DRUM", "BEATS"],
-        "blocktype" : "stack"
+        "inputs": ["DRUM", "BEATS"],
+        "inputtype": ["menu", "text"],
+        "dropdownID": "music_menu_DRUM",
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "music_restForBeats":{
-        "input": ["BEATS"],
-        "blocktype" : "stack"
+        "inputs": ["BEATS"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "music_playNoteForBeats":{
-        "input": ["NOTE", "BEATS"],
-        "blocktype" : "stack"
+        "inputs": ["NOTE", "BEATS"],
+        "inputtype": ["text", "text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "music_setInstrument":{
-        "input": ["INSTUMENT"],
-        "blocktype" : "stack"
+        "inputs": ["INSTUMENT"],
+        "inputtype": ["menu"],
+        "dropdownID": "music_menu_INSTRUMENT",
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "music_setTempo":{
-        "input": ["TEMPO"],
-        "blocktype" : "stack"
+        "inputs": ["TEMPO"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "music_changeTempo":{
-        "input": ["TEMPO"],
-        "blocktype" : "stack"
+        "inputs": ["TEMPO"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "music_getTempo":{
-        "input": [],
-        "blocktype" : "reporter"
+        "inputs": [],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "music_menu_DRUM":{
+        "inputs": ["DRUM"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
+    },
+    "music_menu_INSTRUMENT":{
+        "inputs": ["INSTRUMENT"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     },
     "pen_clear":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "pen_stamp":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "pen_penDown":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "pen_penUp":{
-        "input": [],
-        "blocktype" : "stack"
+        "inputs": [],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "pen_setPenColorToColor":{
-        "input": ["COLOR"],
-        "blocktype" : "stack"
+        "inputs": ["COLOR"],
+        "inputtype": ["color"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "pen_changePenColorParamBy":{
-        "input": [""],
-        "blocktype" : "stack"
+        "inputs": ["COLOR_PARAM", "VALUE"],
+        "inputtype": ["menu", "text"],
+        "dropdownID": "pen_menu_colorParam",
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "pen_setPenColorParamTo":{
-        "input": [""],
-        "blocktype" : "stack"
+        "inputs": ["COLOR_PARAM", "VALUE"],
+        "inputtype": ["menu", "text"],
+        "dropdownID": "pen_menu_colorParam",
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "pen_changePenSizeBy":{
-        "input": ["SIZE"],
-        "blocktype" : "stack"
+        "inputs": ["SIZE"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
     },
     "pen_setPenSizeTo":{
-        "input": ["SIZE"],
-        "blocktype" : "stack"
+        "inputs": ["SIZE"],
+        "inputtype": ["text"],
+        "blocktype" : "stack",
+        "description": "Move x steps"
+    },
+    "pen_menu_colorParam":{
+        "inputs": ["colorParam"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "description": "Move x steps"
     }
 }

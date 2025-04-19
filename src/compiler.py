@@ -1,8 +1,12 @@
+print("importing...")
+
 import json
 import zipfile
 import hashlib
 import shutil
 import pathlib
+
+opcodeMap = json.load(open("src/OpcodeMap.json"))
 
 print("starting...")
 
@@ -10,16 +14,23 @@ extension = ".scratch"
 inname = "input"
 outname = "output"
 
+delimiters = [" ", ";", ","]
+
+specialChar = ["\"", "+", "-", "*", "/"]
+
+openbrackets = ["(", "{", "["]
+closebrackets = [")", "}", "]"]
+
 def character_is_delimiter(line, index):
-    delimiters = [" ", ";"]
+    global delimiters
     if line[index] in delimiters:
         if line[-1] != "": return True
     else:
         return False
     
 def character_is_bracket(character):
-    openbrackets = ["(", "{", "["]
-    closebrackets = [")", "}", "]"]
+    global openbrackets
+    global closebrackets
     if character in closebrackets:
         return -1
     elif character in openbrackets:
@@ -32,6 +43,57 @@ def gen_hash(string):
         string = str(string)
     return hashlib.md5(string.encode()).hexdigest()
 
+def createBlock(opcode, inputs, parent):
+    global blockIndex
+    global sprite
+
+    global opcodeMap
+
+    block = {
+                "opcode": opcode,
+                "next": None,
+                "parent": None,
+                "inputs": {},
+                "fields": {},
+                "shadow": False,
+                "topLevel": True
+            }
+    
+    if parent == None:
+        block["x"] = 0
+        block["y"] = 0
+    else:
+        block["topLevel"] = False
+        block["parent"] = parent
+
+        sprite["blocks"][parent]["next"] = "block" + str(blockIndex)
+
+    blockIndex += 1
+
+    blockInfo = opcodeMap[opcode]
+
+    if len(inputs) != 0:
+        blockInputType = blockInfo["inputtype"]
+        blockInputs = blockInfo["inputs"]
+
+        for x, inputType in enumerate(blockInputType):
+            input = blockInputs[x]
+            if inputType == "dropdown":
+                block["fields"][input] = [inputs[x], None]
+            elif inputType == "menu":
+                sprite["blocks"][blockIndex + 1] = createBlock(blockInfo["dropdownID"], [inputs[x]], "block" + str(blockIndex))
+                block["inputs"][input] = [1, blockIndex]
+            elif inputType == "broadcast":
+                block["inputs"][input] = [1, [11, inputs[x]]]
+            elif inputType == "color":
+                block["inputs"][input] = [1, [9, inputs[x]]]
+            elif inputType == "text":
+                block["inputs"][input] = [1, [10, inputs[x]]]
+
+    return block
+        
+
+
 with open("input/" + inname+extension, "r") as file:
     lineTokens = [""]
     for line in file.readlines():
@@ -41,13 +103,15 @@ with open("input/" + inname+extension, "r") as file:
             elif character == "\n": comment = 0
             elif comment == 1: continue
             elif character_is_delimiter(line, index): lineTokens.append("")
-            elif character_is_bracket(character) != 0: 
+            elif character in (specialChar + openbrackets + closebrackets): 
                 if lineTokens[-1] == "": lineTokens[-1] += character
                 else: lineTokens.append(character)
                 lineTokens.append("")
             else: lineTokens[-1] += character
 
 lineTokens = [token for token in lineTokens if token != ""]
+
+print(lineTokens)
 
 output = {"targets":[], "monitors":[], "extensions":[], "meta":{
                 "semver": "3.0.0",
@@ -60,6 +124,8 @@ filesToBeCompressed = ["output/project.json"]
 
 index = 0
 indent = 0
+blockIndex = 1
+
 while index < len(lineTokens):
     if lineTokens[index] == "create":
         sprite = {"isStage":True, "name":"Stage", "variables":{}, "lists":{}, 
@@ -90,7 +156,7 @@ while index < len(lineTokens):
             index += 1
             indent += character_is_bracket(lineTokens[index])
             if lineTokens[index] == "script":
-                blockIndex = 0
+                blockIndex = 1
                 previousBlock = ""
                 isTopLevel = True
                 index += 1
@@ -100,29 +166,33 @@ while index < len(lineTokens):
                     if character_is_bracket(lineTokens[index]) != 0:
                         indent += character_is_bracket(lineTokens[index])
                     else:
-                        blockName = gen_hash(blockIndex+1)
                         opcode = lineTokens[index]
-                        
-                        sprite["blocks"][blockName] = {
-                            "opcode": opcode,
-                            "next": None,
-                            "parent": None,
-                            "inputs": {},
-                            "fields": {},
-                            "shadow": False,
-                            "topLevel": True
-                        }
+
+                        blockSyntax = opcodeMap[opcode]
+                        blockType = blockSyntax["blocktype"]
+                        blockInputs = blockSyntax["inputs"]
+  
+                        if(blockType == "hat"):
+                            isTopLevel = True
+
+
+                        index += 2
+                        inputValues = []
+                        for input in blockInputs:
+                            inputValues.append(lineTokens[index])
+                            index += 1
+
                         if isTopLevel:
-                            sprite["blocks"][blockName]["x"] = 0
-                            sprite["blocks"][blockName]["y"] = 0
+                            previous = None
                         else:
-                            sprite["blocks"][blockName]["parent"] = previousBlock
-                            sprite["blocks"][previousBlock]["next"] = blockName
-                            sprite["blocks"][blockName]["topLevel"] = False
-                        
-                        previousBlock = blockName
-                        blockIndex += 1
-                        isTopLevel = False
+                            previous = "block" + str(blockIndex-1)
+
+                        sprite["blocks"]["block" + str(blockIndex-1)] = createBlock(opcode, inputValues, previous)
+
+                        if(blockType == "cap"):
+                            isTopLevel = True
+                        else:
+                            isTopLevel = False
                     
             if lineTokens[index] == "costumes":
                 index += 1

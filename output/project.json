@@ -6,19 +6,7 @@
             "variables": {},
             "lists": {},
             "broadcasts": {},
-            "blocks": {
-                "c4ca4238a0b923820dcc509a6f75849b": {
-                    "opcode": "event_whenflagclicked",
-                    "next": null,
-                    "parent": null,
-                    "inputs": {},
-                    "fields": {},
-                    "shadow": false,
-                    "topLevel": true,
-                    "x": 0,
-                    "y": 0
-                }
-            },
+            "blocks": {},
             "comments": {},
             "currentCostume": 0,
             "costumes": [
@@ -47,18 +35,97 @@
             "lists": {},
             "broadcasts": {},
             "blocks": {
-                "c4ca4238a0b923820dcc509a6f75849b": {
-                    "opcode": "motion_pointindirection",
-                    "next": null,
+                "block1": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "block2",
                     "parent": null,
-                    "inputs": {
-                        "DIRECTION": [1, [10, "90"]]
-                    },
+                    "inputs": {},
                     "fields": {},
                     "shadow": false,
                     "topLevel": true,
                     "x": 0,
                     "y": 0
+                },
+                "block2": {
+                    "opcode": "motion_movesteps",
+                    "next": null,
+                    "parent": "block1",
+                    "inputs": { "STEPS": [1, [10, "5"]] },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "block3": {
+                    "opcode": "event_whenkeypressed",
+                    "next": "block4",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": { "KEY_OPTION": ["space", null] },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "block4": {
+                    "opcode": "motion_gotoxy",
+                    "next": null,
+                    "parent": "block3",
+                    "inputs": { "X": [1, [10, "3"]], "Y": [1, [10, "4"]] },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "cat.svg",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "d077f244def8a70e5ea758bd8352fcd8",
+                    "md5ext": "d077f244def8a70e5ea758bd8352fcd8.svg",
+                    "rotationCenterX": 0,
+                    "rotationCenterY": 0
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "man",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "block1": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "block2",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "block2": {
+                    "opcode": "motion_movesteps",
+                    "next": null,
+                    "parent": "block1",
+                    "inputs": { "STEPS": [1, [10, "10"]] },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
                 }
             },
             "comments": {},

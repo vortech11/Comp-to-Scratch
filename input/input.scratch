@@ -1,7 +1,5 @@
 create Stage{
-    script[
-        event_whenflagclicked;
-    ]
+    script[]
     costumes[
         blank.svg;
     ]
@@ -10,9 +8,22 @@ create Stage{
 
 create cat{
     script[
-        motion_pointindirection;
+        event_whenflagclicked();
+        motion_movesteps(5);
+        event_whenkeypressed(space);
+        motion_gotoxy(3, 4);
     ]
     costumes[
         cat.svg;
     ]
 }
+
+create man(
+    script[
+        event_whenflagclicked(); #when the flag is clicked,
+        motion_movesteps(10); # move 10 steps
+    ]
+    costumes[
+        cat.svg
+    ]
+)
