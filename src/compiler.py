@@ -16,7 +16,7 @@ outname = "output"
 
 delimiters = [" ", ";", ","]
 
-specialChar = ["\"", "+", "-", "*", "/"]
+specialChar = ["+", "-", "*", "/"]
 
 openbrackets = ["(", "{", "["]
 closebrackets = [")", "}", "]"]
@@ -97,11 +97,14 @@ def createBlock(opcode, inputs, parent):
 with open("input/" + inname+extension, "r") as file:
     lineTokens = [""]
     for line in file.readlines():
-        comment = 0
+        isComment = False
+        isString = False
         for index, character in enumerate(line):
-            if character == "#": comment = 1
-            elif character == "\n": comment = 0
-            elif comment == 1: continue
+            if character == "\"": isString = not isString
+            elif isString: lineTokens[-1] += character
+            elif character == "#": isComment = True
+            elif character == "\n": isComment = False
+            elif isComment: continue
             elif character_is_delimiter(line, index): lineTokens.append("")
             elif character in (specialChar + openbrackets + closebrackets): 
                 if lineTokens[-1] == "": lineTokens[-1] += character
@@ -159,22 +162,27 @@ while index < len(lineTokens):
                 blockIndex = 1
                 previousBlock = ""
                 isTopLevel = True
+                previous = None
                 index += 1
                 indent += 1
                 while indent > 1:
                     index += 1
                     if character_is_bracket(lineTokens[index]) != 0:
                         indent += character_is_bracket(lineTokens[index])
-                    else:
+                    elif lineTokens[index] in opcodeMap:
                         opcode = lineTokens[index]
 
                         blockSyntax = opcodeMap[opcode]
                         blockType = blockSyntax["blocktype"]
                         blockInputs = blockSyntax["inputs"]
-  
-                        if(blockType == "hat"):
+
+                        if blockType == "hat":
                             isTopLevel = True
 
+                        if isTopLevel:
+                            previous = None
+                        else:
+                            previous = "block" + str(blockIndex-1)
 
                         index += 2
                         inputValues = []
@@ -182,17 +190,21 @@ while index < len(lineTokens):
                             inputValues.append(lineTokens[index])
                             index += 1
 
+                        sprite["blocks"]["block" + str(blockIndex-1)] = createBlock(opcode, inputValues, previous)
+
+                        if blockType == "cap":
+                            isTopLevel = True
+                        else:
+                            isTopLevel = False
+                    else:
                         if isTopLevel:
                             previous = None
                         else:
                             previous = "block" + str(blockIndex-1)
-
-                        sprite["blocks"]["block" + str(blockIndex-1)] = createBlock(opcode, inputValues, previous)
-
-                        if(blockType == "cap"):
-                            isTopLevel = True
-                        else:
-                            isTopLevel = False
+                        print("hi")
+                        match lineTokens[index]:
+                            case "if":
+                                createBlock("control_if", [], previous)
                     
             if lineTokens[index] == "costumes":
                 index += 1
@@ -215,8 +227,9 @@ while index < len(lineTokens):
                                 "rotationCenterY": 0
                             }
                         )
-                        filesToBeCompressed.append("output/" + costumeName + ".svg")
-                        shutil.copyfile("input/" + costume + ".svg", "output/" + costumeName + ".svg")
+                        if not ("output/" + costumeName + ".svg") in filesToBeCompressed:
+                            filesToBeCompressed.append("output/" + costumeName + ".svg")
+                            shutil.copyfile("input/" + costume + ".svg", "output/" + costumeName + ".svg")
         
         output["targets"].append(sprite)
     elif character_is_bracket(lineTokens[index]) == -1:
