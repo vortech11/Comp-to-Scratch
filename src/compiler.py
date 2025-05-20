@@ -14,7 +14,7 @@ extension = ".scratch"
 inname = "input"
 outname = "output"
 
-delimiters = [" ", ";", ","]
+delimiters = [" ", ";"]
 
 specialChar = ["+", "-", "*", "/"]
 
@@ -43,56 +43,131 @@ def gen_hash(string):
         string = str(string)
     return hashlib.md5(string.encode()).hexdigest()
 
-def createBlock(opcode, inputs, parent):
+def createBlocks(blocks, parent, inputName=None):
     global blockIndex
     global sprite
 
     global opcodeMap
 
-    block = {
-                "opcode": opcode,
-                "next": None,
-                "parent": None,
-                "inputs": {},
-                "fields": {},
-                "shadow": False,
-                "topLevel": True
-            }
-    
-    if parent == None:
-        block["x"] = 0
-        block["y"] = 0
-    else:
-        block["topLevel"] = False
-        block["parent"] = parent
+    previous = parent
 
-        sprite["blocks"][parent]["next"] = "block" + str(blockIndex)
+    for index, item in enumerate(blocks):
+        if item[0] in opcodeMap:
 
-    blockIndex += 1
+            blockIndex += 1
 
-    blockInfo = opcodeMap[opcode]
+            blockName = "block" + str(blockIndex)
 
-    if len(inputs) != 0:
-        blockInputType = blockInfo["inputtype"]
-        blockInputs = blockInfo["inputs"]
+            opcode = item[0]
+            sprite["blocks"][blockName] = {
+                        "opcode": opcode,
+                        "next": None,
+                        "parent": None,
+                        "inputs": {},
+                        "fields": {},
+                        "shadow": False,
+                        "topLevel": True
+                    }
 
-        for x, inputType in enumerate(blockInputType):
-            input = blockInputs[x]
-            if inputType == "dropdown":
-                block["fields"][input] = [inputs[x], None]
-            elif inputType == "menu":
-                sprite["blocks"][blockIndex + 1] = createBlock(blockInfo["dropdownID"], [inputs[x]], "block" + str(blockIndex))
-                block["inputs"][input] = [1, blockIndex]
-            elif inputType == "broadcast":
-                block["inputs"][input] = [1, [11, inputs[x]]]
-            elif inputType == "color":
-                block["inputs"][input] = [1, [9, inputs[x]]]
-            elif inputType == "text":
-                block["inputs"][input] = [1, [10, inputs[x]]]
+            blockInfo = opcodeMap[opcode]
 
-    return block
+            blockType = blockInfo["blocktype"]
+
+            if blockType == "hat":
+                previous = None
+
+            if previous == None:
+                sprite["blocks"][blockName]["x"] = 0
+                sprite["blocks"][blockName]["y"] = 0
+            else:
+                sprite["blocks"][blockName]["topLevel"] = False
+                sprite["blocks"][blockName]["parent"] = previous
+
+                if inputName != None and index == 0:
+                    if blockType == "reporter":
+                        sprite["blocks"][previous]["inputs"][inputName] = [1, blockName]
+                    elif blockType in ["boolean", "stack", "text"]:
+                        sprite["blocks"][previous]["inputs"][inputName] = [1, blockName]
+                else:
+                    sprite["blocks"][previous]["next"] = blockName
+
+            if len(blockInfo["inputs"]) > 0:
+                blockInputType = blockInfo["inputtype"]
+                blockInputs = blockInfo["inputs"]
+                
+                for inputIndex in range(0, len(item)-1):
+                    match blockInputType[inputIndex]:
+                        case "dropdown":
+                            if "isMenu" in blockInfo:
+                                sprite["blocks"][blockName]["shadow"] = True
+                            else:
+                                sprite["blocks"][blockName]["fields"][blockInputs[inputIndex]] = [item[inputIndex+1][0], None]
+                        case "menu":
+                            createBlocks([[blockInfo["dropdownID"], [item[inputIndex+1][0]]]], blockName, blockInputs[inputIndex])
+                        case "broadcast":
+                            sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [11, item[inputIndex+1][0]]]
+                        case "color":
+                            sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [9, item[inputIndex+1][0]]]
+                        case "text":
+                            if isinstance(item[inputIndex+1][0], list):
+                                createBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
+                            else:
+                                sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [10, item[inputIndex+1][0]]]
+                        case "boolean":
+                            createBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
+                        case "substack":
+                            createBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
+
+            sprite["blocks"][blockName] = sprite["blocks"][blockName]
+            
+            if blockType in ["cap", "c-block cap"]:
+                previous = None
+            else:
+                previous = blockName
+
         
+def createBranches():
+    global index
+    global lineTokens
 
+    commands = []
+
+    while index < len(lineTokens):
+        token = lineTokens[index]
+        if token in openbrackets:
+            index += 1
+            commands.append(createBranches())
+        elif token in closebrackets:
+            index += 1
+            return commands
+        else:
+            commands.append(token)
+            index += 1
+    
+    return commands
+
+# Thank you chatgpt for something that might cause me horrible headache in the future! 
+def parse_commands(command_list):
+    def parse_block(lst):
+        result : list = []
+        current : list = []
+        if len(lst) > 1:
+            for item in lst:
+                if isinstance(item, str):
+                    if current:
+                        result.append(current)
+                    current = [item]
+                elif isinstance(item, list):
+                    # Always recursively parse lists, even if it's just ["5"] or ["hi"]
+                    parsed = parse_block(item)
+                    current.append(parsed)
+            if current:
+                result.append(current)
+            return result
+        else:
+            return lst
+
+    return parse_block(command_list)
 
 with open("input/" + inname+extension, "r") as file:
     lineTokens = [""]
@@ -106,13 +181,21 @@ with open("input/" + inname+extension, "r") as file:
             elif character == "\n": isComment = False
             elif isComment: continue
             elif character_is_delimiter(line, index): lineTokens.append("")
+            elif character == ",":
+                lineTokens.append("]")
+                lineTokens.append("[")
+                lineTokens.append("")
             elif character in (specialChar + openbrackets + closebrackets): 
-                if lineTokens[-1] == "": lineTokens[-1] += character
-                else: lineTokens.append(character)
+                lineTokens.append(character)
                 lineTokens.append("")
             else: lineTokens[-1] += character
 
 lineTokens = [token for token in lineTokens if token != ""]
+
+tokenList = []
+index = 0
+
+lineTokens = createBranches()
 
 print(lineTokens)
 
@@ -153,83 +236,31 @@ while index < len(lineTokens):
             sprite["layerOrder"] = 1
         sprite["name"] = lineTokens[index]
         index += 1
-        indent += 1
 
-        while indent > 0:
-            index += 1
-            indent += character_is_bracket(lineTokens[index])
-            if lineTokens[index] == "script":
-                blockIndex = 1
-                previousBlock = ""
-                isTopLevel = True
-                previous = None
-                index += 1
-                indent += 1
-                while indent > 1:
-                    index += 1
-                    if character_is_bracket(lineTokens[index]) != 0:
-                        indent += character_is_bracket(lineTokens[index])
-                    elif lineTokens[index] in opcodeMap:
-                        opcode = lineTokens[index]
+        spriteData = parse_commands(lineTokens[index])
 
-                        blockSyntax = opcodeMap[opcode]
-                        blockType = blockSyntax["blocktype"]
-                        blockInputs = blockSyntax["inputs"]
+        for attribute in spriteData:
+            if attribute[0] == "script":
+                createBlocks(attribute[1], None)
 
-                        if blockType == "hat":
-                            isTopLevel = True
-
-                        if isTopLevel:
-                            previous = None
-                        else:
-                            previous = "block" + str(blockIndex-1)
-
-                        index += 2
-                        inputValues = []
-                        for input in blockInputs:
-                            inputValues.append(lineTokens[index])
-                            index += 1
-
-                        sprite["blocks"]["block" + str(blockIndex-1)] = createBlock(opcode, inputValues, previous)
-
-                        if blockType == "cap":
-                            isTopLevel = True
-                        else:
-                            isTopLevel = False
-                    else:
-                        if isTopLevel:
-                            previous = None
-                        else:
-                            previous = "block" + str(blockIndex-1)
-                        print("hi")
-                        match lineTokens[index]:
-                            case "if":
-                                createBlock("control_if", [], previous)
-                    
-            if lineTokens[index] == "costumes":
-                index += 1
-                indent += 1
-                while indent > 1:
-                    index += 1
-                    if character_is_bracket(lineTokens[index]) != 0:
-                        indent += character_is_bracket(lineTokens[index])
-                    else:
-                        costume = pathlib.Path(lineTokens[index]).stem
-                        costumeName = hashlib.md5(costume.encode()).hexdigest()
+            if attribute[0] == "costumes":
+                for costumeName in attribute[1]:
+                        costumePath = pathlib.Path(costumeName).stem
+                        encodedName = hashlib.md5(costumePath.encode()).hexdigest()
                         sprite["costumes"].append(
                             {
-                                "name": lineTokens[index],
+                                "name": costumeName,
                                 "bitmapResolution": 1,
                                 "dataFormat": "svg",
-                                "assetId": costumeName,
-                                "md5ext": costumeName + ".svg",
+                                "assetId": encodedName,
+                                "md5ext": encodedName + ".svg",
                                 "rotationCenterX": 0,
                                 "rotationCenterY": 0
                             }
                         )
-                        if not ("output/" + costumeName + ".svg") in filesToBeCompressed:
-                            filesToBeCompressed.append("output/" + costumeName + ".svg")
-                            shutil.copyfile("input/" + costume + ".svg", "output/" + costumeName + ".svg")
+                        if not ("output/" + encodedName + ".svg") in filesToBeCompressed:
+                            filesToBeCompressed.append("output/" + encodedName + ".svg")
+                            shutil.copyfile("input/" + costumePath + ".svg", "output/" + encodedName + ".svg")
         
         output["targets"].append(sprite)
     elif character_is_bracket(lineTokens[index]) == -1:

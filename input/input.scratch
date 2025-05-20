@@ -9,9 +9,18 @@ create Stage{
 create cat{
     script[
         event_whenflagclicked();
-        motion_movesteps(5);
+        motion_movesteps(operator_add(5, 10));
+        
         event_whenkeypressed("space");
         motion_gotoxy(3, 4);
+        motion_pointtowards("_mouse_");
+        control_if(operator_equals(1, 1)){
+            motion_movesteps(5);
+            looks_say("hi");
+            control_if(operator_gt(7, 2)){
+                looks_say(5);
+            }
+        }
     ]
     costumes[
         "cat.svg"

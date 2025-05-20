@@ -110,18 +110,21 @@
         "inputs": ["TO"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     },
     "motion_glideto_menu":{
         "inputs": ["TO"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     },
     "motion_pointtowards_menu":{
         "inputs": ["TOWARDS"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     },
     "looks_sayforsecs":{
@@ -316,6 +319,7 @@
         "inputs": ["SOUND_MENU"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     },
     "event_whenflagclicked":{
@@ -377,25 +381,25 @@
     },
     "control_repeat":{
         "inputs": ["TIMES", "SUBSTACK"],
-        "inputtype": ["text"],
+        "inputtype": ["text", "substack"],
         "blocktype" : "c-block",
         "description": "Move x steps"
     },
     "control_forever":{
         "inputs": ["SUBSTACK"],
-        "inputtype": ["text"],
+        "inputtype": ["substack"],
         "blocktype" : "c-block cap",
         "description": "Move x steps"
     },
     "control_if":{
         "inputs": ["CONDITION", "SUBSTACK"],
-        "inputtype": ["boolean"],
+        "inputtype": ["boolean", "substack"],
         "blocktype" : "c-block",
         "description": "Move x steps"
     },
     "control_if_else":{
         "inputs": ["CONDITION", "SUBSTACK", "SUBSTACK2"],
-        "inputtype": ["boolean"],
+        "inputtype": ["boolean", "substack"],
         "blocktype" : "if-block",
         "description": "Move x steps"
     },
@@ -407,7 +411,7 @@
     },
     "control_repeat_until":{
         "inputs": ["CONDITION", "SUBSTACK"],
-        "inputtype": ["boolean"],
+        "inputtype": ["boolean", "substack"],
         "blocktype" : "c-block",
         "description": "Move x steps"
     },
@@ -438,6 +442,7 @@
         "inputs": ["CLONE_OPTION"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     },
     "sensing_touchingobject":{
@@ -547,24 +552,28 @@
         "inputs": ["TOUCHINGOBJECTMENU"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     },
     "sensing_distancetomenu":{
         "inputs": ["DISTANCETOMENU"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     },
     "sensing_keyoptions":{
         "inputs": ["KEY_OPTION"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     },
     "sensing_of_object_menu":{
         "inputs": ["OBJECT"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     },
     "operator_add":{
@@ -846,12 +855,14 @@
         "inputs": ["DRUM"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     },
     "music_menu_INSTRUMENT":{
         "inputs": ["INSTRUMENT"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     },
     "pen_clear":{
@@ -910,6 +921,7 @@
         "inputs": ["colorParam"],
         "inputtype": ["dropdown"],
         "blocktype" : "reporter",
+        "isMenu": true,
         "description": "Move x steps"
     }
 }
