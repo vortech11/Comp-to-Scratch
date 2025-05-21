@@ -399,7 +399,7 @@
     },
     "control_if_else":{
         "inputs": ["CONDITION", "SUBSTACK", "SUBSTACK2"],
-        "inputtype": ["boolean", "substack"],
+        "inputtype": ["boolean", "substack", "substack"],
         "blocktype" : "if-block",
         "description": "Move x steps"
     },
