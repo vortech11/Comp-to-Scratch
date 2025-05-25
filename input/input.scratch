@@ -1,9 +1,9 @@
 create Stage{
-    script[]
+    script[];
     costumes[
         "blank.svg"
-    ]
-    sounds[]
+    ];
+    sounds[];
 }
 
 create cat{
@@ -19,21 +19,27 @@ create cat{
             looks_say("hi");
             control_if(operator_gt(7, 2)){
                 looks_say(5);
-            }
+            };
+        };
+        control_if_else(operator_equals(5, 9)){
+
         }
-    ]
+        {
+            
+        };
+    ];
     costumes[
         "cat.svg"
-    ]
+    ];
 }
 
 create man(
     script[
         event_whenflagclicked(); #when the flag is clicked,
         motion_movesteps(10); # move 10 steps
-    ]
+    ];
     costumes[
         "cat.svg",
         "blank.svg"
-    ]
+    ];
 )

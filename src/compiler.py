@@ -14,9 +14,9 @@ extension = ".scratch"
 inname = "input"
 outname = "output"
 
-delimiters = [" ", ";"]
+delimiters = [" "]
 
-specialChar = ["+", "-", "*", "/"]
+specialChar = [";", "+", "-", "*", "/"]
 
 openbrackets = ["(", "{", "["]
 closebrackets = [")", "}", "]"]
@@ -146,21 +146,21 @@ def createBranches():
     
     return commands
 
-# Thank you chatgpt for something that might cause me horrible headache in the future! 
 def parse_commands(command_list):
     def parse_block(lst):
         result : list = []
         current : list = []
         if len(lst) > 1:
             for item in lst:
-                if isinstance(item, str):
+                if item == ";":
                     if current:
                         result.append(current)
-                    current = [item]
+                    current = []
                 elif isinstance(item, list):
-                    # Always recursively parse lists, even if it's just ["5"] or ["hi"]
                     parsed = parse_block(item)
                     current.append(parsed)
+                else:
+                    current.append(item)
             if current:
                 result.append(current)
             return result
