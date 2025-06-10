@@ -923,5 +923,89 @@
         "blocktype" : "reporter",
         "isMenu": true,
         "description": "Move x steps"
+    },
+    "ev3_motorTurnClockwise":{
+        "inputs": ["PORT", "TIME"],
+        "inputtype": ["menu", "text"],
+        "dropdownID": "ev3_menu_motorPorts",
+        "blocktype" : "stack",
+        "description": "Move x steps"
+    },
+    "ev3_motorTurnCounterClockwise":{
+        "inputs": ["PORT", "TIME"],
+        "inputtype": ["menu", "text"],
+        "blocktype" : "reporter",
+        "isMenu": true,
+        "description": "Move x steps"
+    },
+    "ev3_motorSetPower":{
+        "inputs": ["colorParam"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "isMenu": true,
+        "description": "Move x steps"
+    },
+    "ev3_getMotorPosition":{
+        "inputs": ["colorParam"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "isMenu": true,
+        "description": "Move x steps"
+    },
+    "ev3_whenButtonPressed":{
+        "inputs": ["colorParam"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "isMenu": true,
+        "description": "Move x steps"
+    },
+    "ev3_whenDistanceLessThan":{
+        "inputs": ["colorParam"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "isMenu": true,
+        "description": "Move x steps"
+    },
+    "ev3_whenBrightnessLessThan":{
+        "inputs": ["colorParam"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "isMenu": true,
+        "description": "Move x steps"
+    },
+    "ev3_buttonPressed":{
+        "inputs": ["colorParam"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "isMenu": true,
+        "description": "Move x steps"
+    },
+    "ev3_getDistance":{
+        "inputs": ["colorParam"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "isMenu": true,
+        "description": "Move x steps"
+    },
+    "ev3_getBrightness":{
+        "inputs": ["colorParam"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "isMenu": true,
+        "description": "Move x steps"
+    },
+    "ev3_beep":{
+        "inputs": ["colorParam"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "isMenu": true,
+        "description": "Move x steps"
+    },
+    "ev3_menu_motorPorts":{
+        "inputs": ["colorParam"],
+        "inputtype": ["dropdown"],
+        "blocktype" : "reporter",
+        "isMenu": true,
+        "description": "Move x steps"
     }
 }

@@ -1,0 +1,263 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": { "thing1": ["thing", "8"] },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "blank.svg",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 0,
+                    "rotationCenterY": 0
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "cat",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "ax.#F9u#[]9FMst~2UC!": {
+                    "opcode": "ev3_motorTurnClockwise",
+                    "next": "VWV2;f.~Ys{ydoJo@aaN",
+                    "parent": null,
+                    "inputs": {
+                        "PORT": [1, "5;`W%sm!O][k_um*fOd{"],
+                        "TIME": [1, [4, "1"]]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -155,
+                    "y": -11
+                },
+                "5;`W%sm!O][k_um*fOd{": {
+                    "opcode": "ev3_menu_motorPorts",
+                    "next": null,
+                    "parent": "ax.#F9u#[]9FMst~2UC!",
+                    "inputs": {},
+                    "fields": { "motorPorts": ["0", null] },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "VWV2;f.~Ys{ydoJo@aaN": {
+                    "opcode": "ev3_motorTurnCounterClockwise",
+                    "next": "55Fbozj$5A4eTsho(Da;",
+                    "parent": "ax.#F9u#[]9FMst~2UC!",
+                    "inputs": {
+                        "PORT": [1, "3Cat#G~{Acgi/l`?-Hr|"],
+                        "TIME": [1, [4, "1"]]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3Cat#G~{Acgi/l`?-Hr|": {
+                    "opcode": "ev3_menu_motorPorts",
+                    "next": null,
+                    "parent": "VWV2;f.~Ys{ydoJo@aaN",
+                    "inputs": {},
+                    "fields": { "motorPorts": ["0", null] },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "55Fbozj$5A4eTsho(Da;": {
+                    "opcode": "ev3_motorSetPower",
+                    "next": null,
+                    "parent": "VWV2;f.~Ys{ydoJo@aaN",
+                    "inputs": {
+                        "PORT": [1, "nom^`6}L|Qy|R.DQX|5Z"],
+                        "POWER": [1, [4, "100"]]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "nom^`6}L|Qy|R.DQX|5Z": {
+                    "opcode": "ev3_menu_motorPorts",
+                    "next": null,
+                    "parent": "55Fbozj$5A4eTsho(Da;",
+                    "inputs": {},
+                    "fields": { "motorPorts": ["0", null] },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "YxdSi4I#7dQ%=xnACOQF": {
+                    "opcode": "ev3_getMotorPosition",
+                    "next": null,
+                    "parent": null,
+                    "inputs": { "PORT": [1, "a3hR;1Z-px1/J@B9VM1!"] },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 299,
+                    "y": 132
+                },
+                "a3hR;1Z-px1/J@B9VM1!": {
+                    "opcode": "ev3_menu_motorPorts",
+                    "next": null,
+                    "parent": "YxdSi4I#7dQ%=xnACOQF",
+                    "inputs": {},
+                    "fields": { "motorPorts": ["0", null] },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "~#7}($=a=M/[)PeTlT^#": {
+                    "opcode": "ev3_whenButtonPressed",
+                    "next": null,
+                    "parent": null,
+                    "inputs": { "PORT": [1, "u55Q`~THTg*M0(+EVMs9"] },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -127,
+                    "y": 260
+                },
+                "u55Q`~THTg*M0(+EVMs9": {
+                    "opcode": "ev3_menu_sensorPorts",
+                    "next": null,
+                    "parent": "~#7}($=a=M/[)PeTlT^#",
+                    "inputs": {},
+                    "fields": { "sensorPorts": ["0", null] },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "j([f(:3!W3_W|/eZIY{X": {
+                    "opcode": "ev3_whenDistanceLessThan",
+                    "next": null,
+                    "parent": null,
+                    "inputs": { "DISTANCE": [1, [4, "5"]] },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -108,
+                    "y": 383
+                },
+                "1:G1a?`FmbDWg8eUITmr": {
+                    "opcode": "ev3_whenBrightnessLessThan",
+                    "next": null,
+                    "parent": null,
+                    "inputs": { "DISTANCE": [1, [4, "50"]] },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -100,
+                    "y": 505
+                },
+                "W:E$-rV=*xUaX54/O|cx": {
+                    "opcode": "ev3_buttonPressed",
+                    "next": null,
+                    "parent": null,
+                    "inputs": { "PORT": [1, "J4U}-}eCZrIW!X.T;dnv"] },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -151,
+                    "y": 619
+                },
+                "J4U}-}eCZrIW!X.T;dnv": {
+                    "opcode": "ev3_menu_sensorPorts",
+                    "next": null,
+                    "parent": "W:E$-rV=*xUaX54/O|cx",
+                    "inputs": {},
+                    "fields": { "sensorPorts": ["0", null] },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "@RW`Ad]ew^/)m_c1YQ,W": {
+                    "opcode": "ev3_getDistance",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -138,
+                    "y": 701
+                },
+                "bXGUKbm]4buuPZ6x-il6": {
+                    "opcode": "ev3_getBrightness",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -151,
+                    "y": 793
+                },
+                "3GIpoxzlw6P_q`3ooQQD": {
+                    "opcode": "ev3_beep",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "NOTE": [1, "];E_73n~;{KX=5zjmkQ-"],
+                        "TIME": [1, [4, "0.5"]]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -193,
+                    "y": 910
+                },
+                "];E_73n~;{KX=5zjmkQ-": {
+                    "opcode": "note",
+                    "next": null,
+                    "parent": "3GIpoxzlw6P_q`3ooQQD",
+                    "inputs": {},
+                    "fields": { "NOTE": ["60", null] },
+                    "shadow": true,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "cat.svg",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "rotationCenterX": 0,
+                    "rotationCenterY": 0
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": ["ev3"],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "11.1.0",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:139.0) Gecko/20100101 Firefox/139.0"
+    }
+}

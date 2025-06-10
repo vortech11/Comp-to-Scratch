@@ -16,10 +16,16 @@ outname = "output"
 
 delimiters = [" "]
 
-specialChar = [";", "+", "-", "*", "/"]
+specialChar = [";"]
+
+doubleChar = ["=", "+", "-", "*", "/"]
 
 openbrackets = ["(", "{", "["]
 closebrackets = [")", "}", "]"]
+
+
+spriteVars:dict = {} # { varname: [ varcode, initial value ] }
+globalVars = {}
 
 def character_is_delimiter(line, index):
     global delimiters
@@ -43,9 +49,48 @@ def gen_hash(string):
         string = str(string)
     return hashlib.md5(string.encode()).hexdigest()
 
+def initAtrobutes(opcode, previous, index, inputName=None):
+    global blockIndex
+    global sprite
+    global spriteVars
+    global opcodeMap
+
+    blockIndex += 1
+    blockName = "block" + str(blockIndex)
+    sprite["blocks"][blockName] = {
+                "opcode": opcode,
+                "next": None,
+                "parent": None,
+                "inputs": {},
+                "fields": {},
+                "shadow": False,
+                "topLevel": True
+            }
+    if previous == None:
+        sprite["blocks"][blockName]["x"] = 0
+        sprite["blocks"][blockName]["y"] = 0
+    else:
+        sprite["blocks"][blockName]["topLevel"] = False
+        sprite["blocks"][blockName]["parent"] = previous
+        
+        sprite["blocks"][previous]["next"] = blockName
+
+        if inputName != None and index == 0:
+            if opcodeMap[opcode]["blocktype"] == "reporter":  #I forgot why I made a distinction between these
+                sprite["blocks"][previous]["inputs"][inputName] = [1, blockName]
+            elif opcodeMap[opcode]["blocktype"] in ["boolean", "stack", "text"]:
+                sprite["blocks"][previous]["inputs"][inputName] = [1, blockName]
+        else:
+            sprite["blocks"][previous]["next"] = blockName
+
+    return blockName
+
+
+
 def createBlocks(blocks, parent, inputName=None):
     global blockIndex
     global sprite
+    global spriteVars
 
     global opcodeMap
 
@@ -54,20 +99,7 @@ def createBlocks(blocks, parent, inputName=None):
     for index, item in enumerate(blocks):
         if item[0] in opcodeMap:
 
-            blockIndex += 1
-
-            blockName = "block" + str(blockIndex)
-
             opcode = item[0]
-            sprite["blocks"][blockName] = {
-                        "opcode": opcode,
-                        "next": None,
-                        "parent": None,
-                        "inputs": {},
-                        "fields": {},
-                        "shadow": False,
-                        "topLevel": True
-                    }
 
             blockInfo = opcodeMap[opcode]
 
@@ -76,20 +108,7 @@ def createBlocks(blocks, parent, inputName=None):
             if blockType == "hat":
                 previous = None
 
-            if previous == None:
-                sprite["blocks"][blockName]["x"] = 0
-                sprite["blocks"][blockName]["y"] = 0
-            else:
-                sprite["blocks"][blockName]["topLevel"] = False
-                sprite["blocks"][blockName]["parent"] = previous
-
-                if inputName != None and index == 0:
-                    if blockType == "reporter":
-                        sprite["blocks"][previous]["inputs"][inputName] = [1, blockName]
-                    elif blockType in ["boolean", "stack", "text"]:
-                        sprite["blocks"][previous]["inputs"][inputName] = [1, blockName]
-                else:
-                    sprite["blocks"][previous]["next"] = blockName
+            blockName = initAtrobutes(opcode, previous, index, inputName)
 
             if len(blockInfo["inputs"]) > 0:
                 blockInputType = blockInfo["inputtype"]
@@ -112,18 +131,52 @@ def createBlocks(blocks, parent, inputName=None):
                             if isinstance(item[inputIndex+1][0], list):
                                 createBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
                             else:
-                                sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [10, item[inputIndex+1][0]]]
+                                if item[inputIndex+1][0] in spriteVars:
+                                    sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [12, item[inputIndex+1][0], spriteVars[item[inputIndex+1][0]][0]]]
+                                elif item[inputIndex+1][0] in globalVars:
+                                    sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [12, item[inputIndex+1][0], globalVars[item[inputIndex+1][0]][0]]]
+                                else:
+                                    sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [10, item[inputIndex+1][0]]]
                         case "boolean":
                             createBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
                         case "substack":
                             createBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
-
-            sprite["blocks"][blockName] = sprite["blocks"][blockName]
             
             if blockType in ["cap", "c-block cap"]:
                 previous = None
             else:
                 previous = blockName
+
+        elif item[0] == "var":
+            spriteVars[item[1]] = [item[1] + str(blockIndex), item[3]]
+
+            blockName = initAtrobutes("data_setvariableto", previous, index)
+            
+            sprite["blocks"][blockName]["inputs"]["VALUE"] = [1, [10, item[3]]]
+            sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[1], spriteVars[item[1]][0]]
+
+            previous = blockName
+        
+        elif item[1] == "=":
+            blockName = initAtrobutes("data_setvariableto", previous, index)
+            
+            sprite["blocks"][blockName]["inputs"]["VALUE"] = [1, [10, item[2]]]
+            if item[0] in spriteVars:
+                sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], spriteVars[item[0]][0]]
+            else:
+                sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], globalVars[item[0]][0]]
+            previous = blockName
+        
+        elif item[1] == "+=":
+            blockName = initAtrobutes("data_changevariableby", previous, index)
+            
+            sprite["blocks"][blockName]["inputs"]["VALUE"] = [1, [10, item[2]]]
+            if item[0] in spriteVars:
+                sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], spriteVars[item[0]][0]]
+            else:
+                sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], globalVars[item[0]][0]]
+            previous = blockName
+            
 
         
 def createBranches():
@@ -174,6 +227,7 @@ with open("input/" + inname+extension, "r") as file:
     for line in file.readlines():
         isComment = False
         isString = False
+        isDouble = False
         for index, character in enumerate(line):
             if character == "\"": isString = not isString
             elif isString: lineTokens[-1] += character
@@ -181,6 +235,17 @@ with open("input/" + inname+extension, "r") as file:
             elif character == "\n": isComment = False
             elif isComment: continue
             elif character_is_delimiter(line, index): lineTokens.append("")
+            elif isDouble == True:
+                if character in doubleChar:
+                    lineTokens[-1] += character
+                    lineTokens.append("")
+                    isDouble = False
+                else:
+                    lineTokens.append(character)
+                    isDouble = False
+            elif character in doubleChar: 
+                lineTokens.append(character)
+                isDouble = True
             elif character == ",":
                 lineTokens.append("]")
                 lineTokens.append("[")
@@ -197,7 +262,7 @@ index = 0
 
 lineTokens = createBranches()
 
-print(lineTokens)
+#print(lineTokens)
 
 output = {"targets":[], "monitors":[], "extensions":[], "meta":{
                 "semver": "3.0.0",
@@ -237,11 +302,19 @@ while index < len(lineTokens):
         sprite["name"] = lineTokens[index]
         index += 1
 
+        spriteVars = {}
+
         spriteData = parse_commands(lineTokens[index])
+        print(spriteData)
 
         for attribute in spriteData:
             if attribute[0] == "script":
                 createBlocks(attribute[1], None)
+                for item, value in spriteVars.items():
+                    sprite["variables"][value[0]] = [item, value[1]]
+                if sprite["isStage"]:
+                    globalVars = spriteVars
+                
 
             if attribute[0] == "costumes":
                 for costumeName in attribute[1]:
