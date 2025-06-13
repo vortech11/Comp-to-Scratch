@@ -1,6 +1,6 @@
 create Stage{
     script[
-        var thing = 8;
+        var thing = 2 + 4;
     ];
     costumes[
         "blank.svg"
@@ -14,8 +14,8 @@ create cat{
 
         motion_movesteps(operator_add(5, thing));
 
-        thing = 2;
-        thing += 3;
+        thing = 2 + 4;
+        thing += 10 * (2 / 3);
     ];
     costumes[
         "cat.svg"

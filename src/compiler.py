@@ -49,6 +49,64 @@ def gen_hash(string):
         string = str(string)
     return hashlib.md5(string.encode()).hexdigest()
 
+#thank you copilot for some trash
+def flatten_single_lists(obj):
+    """Recursively flatten lists that contain only a single list."""
+    if isinstance(obj, list):
+        # Flatten lists with a single list element
+        while isinstance(obj, list) and len(obj) == 1 and isinstance(obj[0], list):
+            obj = obj[0]
+        # Recursively process each element
+        return [flatten_single_lists(item) for item in obj]
+    return obj
+
+def convertParenths(expression):
+    print(expression)
+    expression = flatten_single_lists(expression)
+    print(expression)
+    output = []
+    for item in expression:
+        if isinstance(item, list):
+            output += ["["] + convertParenths(item) + ["]"]
+        else:
+            output.append(item)
+
+    return output
+
+def convertRPN(expression):
+    expression = convertParenths(expression)
+
+    output = []
+    stack = []
+
+    operatorMap = {
+        "*": 3,
+        "/": 3,
+        "+": 2,
+        "-": 2
+    }
+
+    for item in expression:
+        if not item in operatorMap:
+            if item in ["[", "]"]:
+                if item == "[":
+                    stack.append(item)
+                else:
+                    while (len(stack) > 0) and (not stack[-1] == "["):
+                        output.append(stack.pop())
+                    stack.pop()
+            else:
+                output.append(item)
+        else:
+            if (len(stack) < 1) or (stack[-1] == "[") or (operatorMap[item] > operatorMap[stack[-1]]):
+                stack.append(item)
+            else:
+                while (len(stack) > 0) and (operatorMap[item] <= operatorMap[stack[-1]]):
+                    output.append(stack.pop())
+                stack.append(item)
+    stack.reverse()
+    return output + stack
+
 def initAtrobutes(opcode, previous, index, inputName=None):
     global blockIndex
     global sprite
@@ -85,7 +143,44 @@ def initAtrobutes(opcode, previous, index, inputName=None):
 
     return blockName
 
+def createExpressionBlocks(expression, blockName, inputName):
+    operators = {
+        "*":"operator_multiply", 
+        "/":"operator_divide", 
+        "+":"operator_add", 
+        "-":"operator_subtract"
+    }
 
+    global blockIndex
+    global sprite
+    global spriteVars
+    global opcodeMap
+
+    parent = blockName
+
+    expression = convertRPN(expression)
+
+    stack = []
+    for item in expression:
+        if item in operators:
+            blockName = initAtrobutes(operators[item], parent, 0, inputName)
+            blockInputs = opcodeMap[operators[item]]["inputs"]
+            for index in [-1, -2]:
+                if isinstance(stack[index], list):
+                    sprite["blocks"][blockName]["inputs"][blockInputs[index]] = [1, stack[index][0]]
+                    sprite["blocks"][blockName]["parent"] = stack[index][0]
+                elif stack[index] in spriteVars:
+                    sprite["blocks"][blockName]["inputs"][blockInputs[index]] = [1, [12, item], spriteVars[stack[index][0]][0]]
+                elif stack[index] in globalVars:
+                    sprite["blocks"][blockName]["inputs"][blockInputs[index]] = [1, [12, item, globalVars[stack[index]][0]]]
+                else:
+                    sprite["blocks"][blockName]["inputs"][blockInputs[index]] = [1, [10, stack[index]]]
+
+            stack.pop()
+            stack.pop()
+            stack.append([blockName])
+        else:
+            stack.append(item)
 
 def createBlocks(blocks, parent, inputName=None):
     global blockIndex
@@ -151,16 +246,15 @@ def createBlocks(blocks, parent, inputName=None):
             spriteVars[item[1]] = [item[1] + str(blockIndex), item[3]]
 
             blockName = initAtrobutes("data_setvariableto", previous, index)
-            
-            sprite["blocks"][blockName]["inputs"]["VALUE"] = [1, [10, item[3]]]
+            createExpressionBlocks(item[3::], blockName, "VALUE")
             sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[1], spriteVars[item[1]][0]]
 
             previous = blockName
         
         elif item[1] == "=":
             blockName = initAtrobutes("data_setvariableto", previous, index)
-            
-            sprite["blocks"][blockName]["inputs"]["VALUE"] = [1, [10, item[2]]]
+
+            createExpressionBlocks(item[2::], blockName, "VALUE")
             if item[0] in spriteVars:
                 sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], spriteVars[item[0]][0]]
             else:
@@ -170,7 +264,7 @@ def createBlocks(blocks, parent, inputName=None):
         elif item[1] == "+=":
             blockName = initAtrobutes("data_changevariableby", previous, index)
             
-            sprite["blocks"][blockName]["inputs"]["VALUE"] = [1, [10, item[2]]]
+            createExpressionBlocks(item[2::], blockName, "VALUE")
             if item[0] in spriteVars:
                 sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], spriteVars[item[0]][0]]
             else:
@@ -235,6 +329,9 @@ with open("input/" + inname+extension, "r") as file:
             elif character == "\n": isComment = False
             elif isComment: continue
             elif character_is_delimiter(line, index): lineTokens.append("")
+            elif character in (specialChar + openbrackets + closebrackets): 
+                lineTokens.append(character)
+                lineTokens.append("")
             elif isDouble == True:
                 if character in doubleChar:
                     lineTokens[-1] += character
@@ -249,9 +346,6 @@ with open("input/" + inname+extension, "r") as file:
             elif character == ",":
                 lineTokens.append("]")
                 lineTokens.append("[")
-                lineTokens.append("")
-            elif character in (specialChar + openbrackets + closebrackets): 
-                lineTokens.append(character)
                 lineTokens.append("")
             else: lineTokens[-1] += character
 
