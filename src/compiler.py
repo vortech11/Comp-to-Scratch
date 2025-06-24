@@ -5,14 +5,14 @@ import zipfile
 import hashlib
 import shutil
 import pathlib
+import sys
 
 opcodeMap = json.load(open("src/OpcodeMap.json"))
 
 print("starting...")
 
 extension = ".scratch"
-inname = "input"
-outname = "output"
+outputFolderName = "build"
 
 delimiters = [" "]
 
@@ -24,8 +24,10 @@ openbrackets = ["(", "{", "["]
 closebrackets = [")", "}", "]"]
 
 
-spriteVars:dict = {} # { varname: [ varcode, initial value ] }
+spriteVars = {} # { varname: [ varcode, initial value ] }
+spriteLists = {}
 globalVars = {}
+globalLists = {}
 
 def character_is_delimiter(line, index):
     global delimiters
@@ -61,9 +63,7 @@ def flatten_single_lists(obj):
     return obj
 
 def convertParenths(expression):
-    print(expression)
     expression = flatten_single_lists(expression)
-    print(expression)
     output = []
     for item in expression:
         if isinstance(item, list):
@@ -131,7 +131,10 @@ def initAtrobutes(opcode, previous, index, inputName=None):
         sprite["blocks"][blockName]["topLevel"] = False
         sprite["blocks"][blockName]["parent"] = previous
         
-        sprite["blocks"][previous]["next"] = blockName
+        
+        # I also forgot why I didn't just delete this before, I mean it is somewhat redundant, idk
+        # If it causes problems, try it I guess
+        #sprite["blocks"][previous]["next"] = blockName
 
         if inputName != None and index == 0:
             if opcodeMap[opcode]["blocktype"] == "reporter":  #I forgot why I made a distinction between these
@@ -142,6 +145,32 @@ def initAtrobutes(opcode, previous, index, inputName=None):
             sprite["blocks"][previous]["next"] = blockName
 
     return blockName
+
+def varTypeTree(value, blockName, inputName):
+    global sprite
+    global opcodeMap
+    
+    global spriteVars
+    global globalVars
+    
+    global spriteLists
+    global globalLists
+    
+    if value in spriteVars:
+        outputValue = [1, [12, value, spriteVars[value][0]]]
+    elif value in globalVars:
+        outputValue = [1, [12, value, globalVars[value][0]]]
+    elif value in spriteLists:
+        outputValue = [1, [13, value, spriteLists[value][0]]]
+    elif value in globalLists:
+        outputValue = [1, [13, value, globalLists[value][0]]]
+    else:
+        outputValue = [1, [10, value]]
+        
+    sprite["blocks"][blockName]["inputs"][inputName] = outputValue
+    
+    
+    
 
 def createExpressionBlocks(expression, blockName, inputName):
     operators = {
@@ -161,31 +190,31 @@ def createExpressionBlocks(expression, blockName, inputName):
     expression = convertRPN(expression)
 
     stack = []
-    for item in expression:
-        if item in operators:
-            blockName = initAtrobutes(operators[item], parent, 0, inputName)
-            blockInputs = opcodeMap[operators[item]]["inputs"]
-            for index in [-1, -2]:
-                if isinstance(stack[index], list):
-                    sprite["blocks"][blockName]["inputs"][blockInputs[index]] = [1, stack[index][0]]
-                    sprite["blocks"][blockName]["parent"] = stack[index][0]
-                elif stack[index] in spriteVars:
-                    sprite["blocks"][blockName]["inputs"][blockInputs[index]] = [1, [12, item], spriteVars[stack[index][0]][0]]
-                elif stack[index] in globalVars:
-                    sprite["blocks"][blockName]["inputs"][blockInputs[index]] = [1, [12, item, globalVars[stack[index]][0]]]
-                else:
-                    sprite["blocks"][blockName]["inputs"][blockInputs[index]] = [1, [10, stack[index]]]
+    if len(expression) == 1:
+        varTypeTree(expression[0], blockName, inputName)
+    else:
+        for item in expression:
+            if item in operators:
+                blockName = initAtrobutes(operators[item], parent, 0, inputName)
+                blockInputs = opcodeMap[operators[item]]["inputs"]
+                for index in range(-1, (len(blockInputs) + 1) * -1, -1):
+                    if isinstance(stack[index], list):
+                        sprite["blocks"][blockName]["inputs"][blockInputs[abs(index) - 1]] = [1, stack[index][0]]
+                        sprite["blocks"][blockName]["parent"] = stack[index][0]
+                    else:
+                        varTypeTree(stack[index], blockName, blockInputs[abs(index) - 1])
 
-            stack.pop()
-            stack.pop()
-            stack.append([blockName])
-        else:
-            stack.append(item)
+                stack.pop()
+                stack.pop()
+                stack.append([blockName])
+            else:
+                stack.append(item)
 
 def createBlocks(blocks, parent, inputName=None):
     global blockIndex
     global sprite
     global spriteVars
+    global spriteLists
 
     global opcodeMap
 
@@ -224,14 +253,10 @@ def createBlocks(blocks, parent, inputName=None):
                             sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [9, item[inputIndex+1][0]]]
                         case "text":
                             if isinstance(item[inputIndex+1][0], list):
-                                createBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
+                                #createBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
+                                createExpressionBlocks(item[inputIndex+1][0], blockName, blockInputs[inputIndex])
                             else:
-                                if item[inputIndex+1][0] in spriteVars:
-                                    sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [12, item[inputIndex+1][0], spriteVars[item[inputIndex+1][0]][0]]]
-                                elif item[inputIndex+1][0] in globalVars:
-                                    sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [12, item[inputIndex+1][0], globalVars[item[inputIndex+1][0]][0]]]
-                                else:
-                                    sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [10, item[inputIndex+1][0]]]
+                                varTypeTree(item[inputIndex+1][0], blockName, blockInputs[inputIndex])
                         case "boolean":
                             createBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
                         case "substack":
@@ -269,6 +294,15 @@ def createBlocks(blocks, parent, inputName=None):
                 sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], spriteVars[item[0]][0]]
             else:
                 sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], globalVars[item[0]][0]]
+            previous = blockName
+            
+        elif item[0] == "list":
+            spriteLists[item[1]] = [item[1] + str(blockIndex), [item[3]]]
+
+            blockName = initAtrobutes("data_addtolist", previous, index)
+            createExpressionBlocks(item[3::], blockName, "ITEM")
+            sprite["blocks"][blockName]["fields"]["LIST"] = [item[1], spriteLists[item[1]][0]]
+
             previous = blockName
             
 
@@ -316,7 +350,13 @@ def parse_commands(command_list):
 
     return parse_block(command_list)
 
-with open("input/" + inname+extension, "r") as file:
+assert len(sys.argv) > 1, "No file Selected!"
+
+assert pathlib.Path(sys.argv[1]).exists(), f"File '{sys.argv[1]}' does not exist."
+
+(pathlib.Path(sys.argv[1]).parent / outputFolderName).mkdir(exist_ok=True)
+
+with open(sys.argv[1], "r") as file:
     lineTokens = [""]
     for line in file.readlines():
         isComment = False
@@ -365,7 +405,7 @@ output = {"targets":[], "monitors":[], "extensions":[], "meta":{
             }
         }
 
-filesToBeCompressed = ["output/project.json"]
+filesToBeCompressed = [outputFolderName + "/project.json"]
 
 index = 0
 indent = 0
@@ -397,6 +437,7 @@ while index < len(lineTokens):
         index += 1
 
         spriteVars = {}
+        spriteLists = {}
 
         spriteData = parse_commands(lineTokens[index])
         print(spriteData)
@@ -406,8 +447,12 @@ while index < len(lineTokens):
                 createBlocks(attribute[1], None)
                 for item, value in spriteVars.items():
                     sprite["variables"][value[0]] = [item, value[1]]
+                for item, value in spriteLists.items():
+                    sprite["lists"][value[0]] = [item, value[1]]
+                
                 if sprite["isStage"]:
                     globalVars = spriteVars
+                    globalLists = spriteLists
                 
 
             if attribute[0] == "costumes":
@@ -425,9 +470,12 @@ while index < len(lineTokens):
                                 "rotationCenterY": 0
                             }
                         )
-                        if not ("output/" + encodedName + ".svg") in filesToBeCompressed:
-                            filesToBeCompressed.append("output/" + encodedName + ".svg")
-                            shutil.copyfile("input/" + costumePath + ".svg", "output/" + encodedName + ".svg")
+                        if not (outputFolderName + "/" + encodedName + ".svg") in filesToBeCompressed:
+                            filesToBeCompressed.append(outputFolderName + "/" + encodedName + ".svg")
+                            
+                            
+                            shutil.copyfile(pathlib.Path(sys.argv[1]).parent / (costumePath + ".svg"), 
+                                            pathlib.Path(sys.argv[1]).parent / outputFolderName / (encodedName + ".svg"))
         
         output["targets"].append(sprite)
     elif character_is_bracket(lineTokens[index]) == -1:
@@ -436,11 +484,11 @@ while index < len(lineTokens):
     index += 1
 
 output = json.dumps(output)
-with open("output/project.json", "w") as file:
+with open(pathlib.Path(sys.argv[1]).parent / outputFolderName / "project.json", "w") as file:
     file.write(output)
 
-with zipfile.ZipFile("output/test.sb3", "w") as myzip:
+with zipfile.ZipFile(pathlib.Path(sys.argv[1]).parent / outputFolderName / "test.sb3", "w") as myzip:
     for file in filesToBeCompressed:
-        myzip.write(file)
+        myzip.write(pathlib.Path(sys.argv[1]).parent / file, pathlib.Path(file).name)
 
 print("Done!")
