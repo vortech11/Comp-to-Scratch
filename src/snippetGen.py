@@ -5,9 +5,9 @@ opcodeMap = json.load(open("src/OpcodeMap.json"))
 snippetOutput = {
     "Create a sprite": {
 		"scope": "scratch",
-		"prefix": "create",
+		"prefix": "sprite",
 		"body": [
-			"create"
+			"sprite"
 		],
 		"description": "Create a sprite"
 	},

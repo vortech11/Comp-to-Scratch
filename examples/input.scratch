@@ -1,4 +1,4 @@
-create Stage{
+sprite Stage{
     script[];
     costumes[
         "blank.svg"
@@ -6,7 +6,7 @@ create Stage{
     sounds[];
 }
 
-create cat{
+sprite cat{
     script[
         event_whenflagclicked();
         motion_movesteps(5 + 10);
@@ -33,7 +33,7 @@ create cat{
     ];
 }
 
-create man(
+sprite man(
     script[
         event_whenflagclicked(); #when the flag is clicked,
         motion_movesteps(10); # move 10 steps

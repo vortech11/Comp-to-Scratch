@@ -4,8 +4,9 @@ import json
 import zipfile
 import hashlib
 import shutil
-import pathlib
+from pathlib import Path
 import sys
+import warnings
 
 from scriptHandler import createBlocks
 
@@ -18,7 +19,7 @@ outputFolderName = "build"
 
 delimiters = [" "]
 
-specialChar = [";"]
+specialChar = [";", "."]
 
 doubleChar = ["=", "+", "-", "*", "/"]
 
@@ -96,11 +97,50 @@ def parse_commands(command_list):
 
     return parse_block(command_list)
 
+def encodeAsset(assetType, assetPath, isDefault):
+    assetName = Path(assetPath).stem
+    assetExt = Path(assetPath).suffix
+    encodedName = hashlib.md5(assetName.encode()).hexdigest()
+    if assetType == "costume":
+        sprite["costumes"].append(
+            {
+                "name": assetName,
+                "bitmapResolution": 1,
+                "dataFormat": assetExt.removeprefix("."),
+                "assetId": encodedName,
+                "md5ext": encodedName + assetExt,
+                "rotationCenterX": 0,
+                "rotationCenterY": 0
+            }
+        )
+    elif assetType == "sound":
+        
+        sprite["sounds"].append(
+            {        
+                "name": assetName,
+                "assetId": encodedName,
+                "dataFormat": assetExt.removeprefix("."),
+                "format": "",
+                "rate": 48000,
+                "sampleCount": 40682,
+                "md5ext": encodedName + assetExt
+            }
+        )
+    if not (outputFolderName + "/" + encodedName + ".svg") in filesToBeCompressed:
+        filesToBeCompressed.append(outputFolderName + "/" + encodedName + ".svg")
+
+        if isDefault:
+            shutil.copyfile(Path.cwd() / "src/Default Assets" / assetPath, 
+                            Path(sys.argv[1]).parent / outputFolderName / (encodedName + ".svg"))
+        else:
+            shutil.copyfile(Path(sys.argv[1]).parent / assetPath, 
+                            Path(sys.argv[1]).parent / outputFolderName / (encodedName + ".svg"))
+
 assert len(sys.argv) > 1, "No file Selected!"
 
-assert pathlib.Path(sys.argv[1]).exists(), f"File '{sys.argv[1]}' does not exist."
+assert Path(sys.argv[1]).exists(), f"File '{sys.argv[1]}' does not exist."
 
-(pathlib.Path(sys.argv[1]).parent / outputFolderName).mkdir(exist_ok=True)
+(Path(sys.argv[1]).parent / outputFolderName).mkdir(exist_ok=True)
 
 with open(sys.argv[1], "r") as file:
     lineTokens = [""]
@@ -158,7 +198,7 @@ indent = 0
 blockIndex = 1
 
 while index < len(lineTokens):
-    if lineTokens[index] == "create":
+    if lineTokens[index] == "sprite":
         sprite = {"isStage":True, "name":"Stage", "variables":{}, "lists":{}, 
                   "broadcasts":{}, "blocks":{}, "comments":{}, "currentCostume":0, 
                   "costumes":[], "sounds":[], "volume":100, "layerOrder":0}
@@ -184,13 +224,17 @@ while index < len(lineTokens):
 
         spriteVars = {}
         spriteLists = {}
+        
+        costumesInit = False
 
         spriteData = parse_commands(lineTokens[index])
         print(spriteData)
 
         for attribute in spriteData:
             if attribute[0] == "script":
-                sprite, blockIndex, spriteVars, spriteLists = createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, attribute[1], None)
+                sprite, blockIndex, spriteVars, spriteLists = createBlocks(sprite, blockIndex, 
+                                                                           spriteVars, globalVars, spriteLists, globalLists, 
+                                                                           attribute[1], None)
                 for item, value in spriteVars.items():
                     sprite["variables"][value[0]] = [item, value[1]]
                 for item, value in spriteLists.items():
@@ -202,26 +246,17 @@ while index < len(lineTokens):
                 
 
             if attribute[0] == "costumes":
-                for costumeName in attribute[1]:
-                        costumePath = pathlib.Path(costumeName).stem
-                        encodedName = hashlib.md5(costumePath.encode()).hexdigest()
-                        sprite["costumes"].append(
-                            {
-                                "name": costumeName,
-                                "bitmapResolution": 1,
-                                "dataFormat": "svg",
-                                "assetId": encodedName,
-                                "md5ext": encodedName + ".svg",
-                                "rotationCenterX": 0,
-                                "rotationCenterY": 0
-                            }
-                        )
-                        if not (outputFolderName + "/" + encodedName + ".svg") in filesToBeCompressed:
-                            filesToBeCompressed.append(outputFolderName + "/" + encodedName + ".svg")
+                for costumePath in attribute[1]:
+                    costumesInit = True
+                    encodeAsset("costume", costumePath, False)
+                    
                             
-                            
-                            shutil.copyfile(pathlib.Path(sys.argv[1]).parent / (costumePath + ".svg"), 
-                                            pathlib.Path(sys.argv[1]).parent / outputFolderName / (encodedName + ".svg"))
+            if attribute[0] == "sounds":
+                for sound in attribute[1]:
+                    encodeAsset("sound", sound, False)
+        
+        if not costumesInit:
+            encodeAsset("costume", "blank.svg", True)
         
         output["targets"].append(sprite)
     elif character_is_bracket(lineTokens[index]) == -1:
@@ -230,11 +265,11 @@ while index < len(lineTokens):
     index += 1
 
 output = json.dumps(output)
-with open(pathlib.Path(sys.argv[1]).parent / outputFolderName / "project.json", "w") as file:
+with open(Path(sys.argv[1]).parent / outputFolderName / "project.json", "w") as file:
     file.write(output)
 
-with zipfile.ZipFile(pathlib.Path(sys.argv[1]).parent / outputFolderName / "test.sb3", "w") as myzip:
+with zipfile.ZipFile(Path(sys.argv[1]).parent / outputFolderName / "test.sb3", "w") as myzip:
     for file in filesToBeCompressed:
-        myzip.write(pathlib.Path(sys.argv[1]).parent / file, pathlib.Path(file).name)
+        myzip.write(Path(sys.argv[1]).parent / file, Path(file).name)
 
 print("Done!")

@@ -88,9 +88,12 @@ def convertParenths(expression):
 
 def convertRPN(expression):
     expression = convertParenths(expression)
+    print(expression)
 
     output = []
     stack = []
+    
+    global opcodeMap
 
     operatorMap = {
         "*": 3,
@@ -99,8 +102,8 @@ def convertRPN(expression):
         "-": 2
     }
 
-    for item in expression:
-        if not item in operatorMap:
+    for index, item in enumerate(expression):
+        if not (item in operatorMap or item in opcodeMap):
             if item in ["[", "]"]:
                 if item == "[":
                     stack.append(item)
@@ -108,13 +111,17 @@ def convertRPN(expression):
                     while (len(stack) > 0) and (not stack[-1] == "["):
                         output.append(stack.pop())
                     stack.pop()
+                    
+                    if index + 1 < len(expression):
+                        if stack[-1] in opcodeMap and not expression[index + 1] == "[":
+                            output.append(stack.pop())
             else:
                 output.append(item)
         else:
             if (len(stack) < 1) or (stack[-1] == "[") or (operatorMap[item] > operatorMap[stack[-1]]):
                 stack.append(item)
             else:
-                while (len(stack) > 0) and (operatorMap[item] <= operatorMap[stack[-1]]):
+                while (len(stack) > 0) and (stack[-1] in operatorMap) and (operatorMap[item] <= operatorMap[stack[-1]]):
                     output.append(stack.pop())
                 stack.append(item)
     stack.reverse()
@@ -135,15 +142,24 @@ def createExpressionBlocks(expression, blockName, inputName):
     parent = blockName
 
     expression = convertRPN(expression)
+    
+    print(expression)
+    
 
     stack = []
     if len(expression) == 1:
         varTypeTree(expression[0], blockName, inputName)
     else:
         for item in expression:
-            if item in operators:
-                blockName = initAtrobutes(operators[item], parent, 0, inputName)
-                blockInputs = opcodeMap[operators[item]]["inputs"]
+            if item in operators or item in opcodeMap:
+                if item in operators:
+                    opcode = operators[item]
+                else:
+                    opcode = item
+                    
+                blockName = initAtrobutes(opcode, parent, 0, inputName)
+                blockInputs = opcodeMap[opcode]["inputs"]
+                
                 for index in range(-1, (len(blockInputs) + 1) * -1, -1):
                     if isinstance(stack[index], list):
                         sprite["blocks"][blockName]["inputs"][blockInputs[abs(index) - 1]] = [1, stack[index][0]]
@@ -151,14 +167,16 @@ def createExpressionBlocks(expression, blockName, inputName):
                     else:
                         varTypeTree(stack[index], blockName, blockInputs[abs(index) - 1])
 
-                stack.pop()
-                stack.pop()
+                for _ in range(len(blockInputs)):
+                    stack.pop()
                 stack.append([blockName])
             else:
                 stack.append(item)
 
 def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput, spriteListsInput, globalListsInput, blocks, parent, inputName=None):
+    
     global sprite
+    
     sprite = spriteInput
     global blockIndex
     blockIndex = blockIndexInput
@@ -228,32 +246,59 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
             createExpressionBlocks(item[3::], blockName, "VALUE")
             sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[1], spriteVars[item[1]][0]]
             previous = blockName
-    
-        elif item[1] == "=":
-            blockName = initAtrobutes("data_setvariableto", previous, index)
-            createExpressionBlocks(item[2::], blockName, "VALUE")
-            if item[0] in spriteVars:
-                sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], spriteVars[item[0]][0]]
-            else:
-                sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], globalVars[item[0]][0]]
-            previous = blockName
-    
-        elif item[1] == "+=":
-            blockName = initAtrobutes("data_changevariableby", previous, index)
+            
+        elif (item[0] in spriteVars) or (item[0] in globalVars):
+            
+            if item[1] == "=":
+                blockName = initAtrobutes("data_setvariableto", previous, index)
+                createExpressionBlocks(item[2::], blockName, "VALUE")
+                if item[0] in spriteVars:
+                    sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], spriteVars[item[0]][0]]
+                else:
+                    sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], globalVars[item[0]][0]]
+                previous = blockName
 
-            createExpressionBlocks(item[2::], blockName, "VALUE")
-            if item[0] in spriteVars:
-                sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], spriteVars[item[0]][0]]
-            else:
-                sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], globalVars[item[0]][0]]
-            previous = blockName
+            elif item[1] == "+=":
+                blockName = initAtrobutes("data_changevariableby", previous, index)
+
+                createExpressionBlocks(item[2::], blockName, "VALUE")
+                if item[0] in spriteVars:
+                    sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], spriteVars[item[0]][0]]
+                else:
+                    sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], globalVars[item[0]][0]]
+                previous = blockName
         
         elif item[0] == "list":
-            spriteLists[item[1]] = [item[1] + str(blockIndex), [item[3]]]
-            blockName = initAtrobutes("data_addtolist", previous, index)
-            createExpressionBlocks(item[3::], blockName, "ITEM")
+            spriteLists[item[1]] = [item[1] + str(blockIndex), []]
+            blockName = initAtrobutes("data_deletealloflist", previous, index)
             sprite["blocks"][blockName]["fields"]["LIST"] = [item[1], spriteLists[item[1]][0]]
             previous = blockName
+            for expression in item[3::]:
+                blockName = initAtrobutes("data_addtolist", previous, index)
+                createExpressionBlocks(expression, blockName, "ITEM")
+                sprite["blocks"][blockName]["fields"]["LIST"] = [item[1], spriteLists[item[1]][0]]
+                previous = blockName
+                
+        elif (item[0] in spriteLists) or (item[0] in globalLists):
+            
+            if item[1] == "=":
+                blockName = initAtrobutes("data_deletealloflist", previous, index)
+                sprite["blocks"][blockName]["fields"]["LIST"] = [item[0], spriteLists[item[0]][0]]
+                previous = blockName
+                if not (len(item[2::]) == 1 and len(item[2::][0])) == 0:
+                    for expression in item[2::]:
+                        blockName = initAtrobutes("data_addtolist", previous, index)
+                        createExpressionBlocks(expression, blockName, "ITEM")
+                        sprite["blocks"][blockName]["fields"]["LIST"] = [item[0], spriteLists[item[0]][0]]
+                        previous = blockName
+            
+            if item[1] == ".":
+                
+                if item[2] == "push":
+                    blockName = initAtrobutes("data_addtolist", previous, index)
+                    createExpressionBlocks(item[3], blockName, "ITEM")
+                    sprite["blocks"][blockName]["fields"]["LIST"] = [item[0], spriteLists[item[0]][0]]
+                    previous = blockName
             
     return sprite, blockIndex, spriteVars, spriteLists
     

@@ -1,0 +1,17 @@
+sprite Stage{
+    script[
+        #var thing = 2 + 4;
+    ];
+    costumes[];
+    sounds[];
+}
+
+sprite cat{
+    script[
+        event_whenflagclicked();
+        var thing = operator_round(5 + 3) * 2;
+    ];
+    costumes[
+        "pics/cat.svg"
+    ];
+}
