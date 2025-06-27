@@ -1,4 +1,6 @@
 import json
+from opcodeAlias import aliases
+
 opcodeMap = json.load(open("src/OpcodeMap.json"))
 
 global operatorMap
@@ -300,9 +302,12 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
     previous = parent
 
     for index, item in enumerate(blocks):
-        if item[0] in opcodeMap:
+        if item[0] in opcodeMap or item[0] in aliases:
 
-            opcode = item[0]
+            if item[0] in aliases:
+                opcode = aliases[item[0]]
+            else:
+                opcode = item[0]
 
             blockInfo = opcodeMap[opcode]
 
@@ -402,7 +407,7 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
                 blockName = initAtrobutes("data_deletealloflist", previous, index)
                 sprite["blocks"][blockName]["fields"]["LIST"] = [item[0], spriteLists[item[0]][0]]
                 previous = blockName
-                if not (len(item[2::]) == 1 and len(item[2::][0])) == 0:
+                if not (len(item[2::]) == 1 and len(item[2::][0]) == 0):
                     for expression in item[2::]:
                         blockName = initAtrobutes("data_addtolist", previous, index)
                         createExpressionBlocks(expression, blockName, "ITEM")

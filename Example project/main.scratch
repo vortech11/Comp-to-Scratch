@@ -4,13 +4,15 @@ sprite cat{
     script[
         event_whenflagclicked();
         var thing = 7;
-        control_if ((5 + 7) * thing == 3) {
+        list waht;
+        waht = [ 5, 6, 23];
+        if ((5 + 7) * thing == 3) {
 
         };
 
         while(5 == 7){
 
-        }
+        };
     ];
     costumes[
         "pics/cat.svg"

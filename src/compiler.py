@@ -181,8 +181,6 @@ with open(sys.argv[1], "r") as file:
 
 lineTokens = [token for token in lineTokens if token != ""]
 
-print(lineTokens)
-
 outTokens = []
 lastOpenBracket = None
 for tokenIndex, item in enumerate(lineTokens):
@@ -194,7 +192,6 @@ for tokenIndex, item in enumerate(lineTokens):
         outTokens.append("]")
         lastOpenBracket = None
     elif item in inputDoubleDelimiter:
-        print(lastOpenBracket)
         if isinstance(lastOpenBracket, int):
             outTokens.insert(lastOpenBracket, "[")
             lastOpenBracket = "Close"
@@ -208,7 +205,7 @@ lineTokens = outTokens
 tokenList = []
 index = 0
 
-print(lineTokens)
+#print(lineTokens)
 
 lineTokens = createBranches()
 
