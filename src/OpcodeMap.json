@@ -400,7 +400,7 @@
     "control_if_else":{
         "inputs": ["CONDITION", "SUBSTACK", "SUBSTACK2"],
         "inputtype": ["boolean", "substack", "substack"],
-        "blocktype" : "if-block",
+        "blocktype" : "c-block",
         "description": "Move x steps"
     },
     "control_wait_until":{

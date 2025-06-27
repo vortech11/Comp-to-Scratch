@@ -41,10 +41,7 @@ def initAtrobutes(opcode, previous, index, inputName=None):
         #sprite["blocks"][previous]["next"] = blockName
 
         if inputName != None and index == 0:
-            if opcodeMap[opcode]["blocktype"] == "reporter":  #I forgot why I made a distinction between these
-                sprite["blocks"][previous]["inputs"][inputName] = [1, blockName]
-            elif opcodeMap[opcode]["blocktype"] in ["boolean", "stack", "text"]:
-                sprite["blocks"][previous]["inputs"][inputName] = [1, blockName]
+            sprite["blocks"][previous]["inputs"][inputName] = [1, blockName]
         else:
             sprite["blocks"][previous]["next"] = blockName
 
@@ -346,7 +343,6 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
                                 if flatten_single_lists(item[inputIndex+1])[0] in opcodeMap:
                                     createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
                             else:
-                                print(flatten_single_lists(item[inputIndex+1]))
                                 createBoolean(flatten_single_lists(item[inputIndex+1]), blockName, blockInputs[inputIndex])
                         case "substack":
                             createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
@@ -357,7 +353,7 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
                 previous = blockName
         
         elif item[0] == "var":
-            blockName = initAtrobutes("data_setvariableto", previous, index)
+            blockName = initAtrobutes("data_setvariableto", previous, index, inputName)
             spriteVars[item[1]] = [item[1] + str(blockIndex), 0]
             if len(item) > 3:
                 createExpressionBlocks(item[3::], blockName, "VALUE")
@@ -369,19 +365,19 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
         elif (item[0] in spriteVars) or (item[0] in globalVars):
             
             if item[1] == "=":
-                blockName = initAtrobutes("data_setvariableto", previous, index)
+                blockName = initAtrobutes("data_setvariableto", previous, index, inputName)
                 createExpressionBlocks(item[2::], blockName, "VALUE")
 
             elif item[1] == "+=":
-                blockName = initAtrobutes("data_changevariableby", previous, index)
+                blockName = initAtrobutes("data_changevariableby", previous, index, inputName)
                 createExpressionBlocks(item[2::], blockName, "VALUE")
                 
             elif item[1] == "++":
-                blockName = initAtrobutes("data_changevariableby", previous, index)
+                blockName = initAtrobutes("data_changevariableby", previous, index, inputName)
                 createExpressionBlocks(["1"], blockName, "VALUE")
             
             else:
-                blockName = initAtrobutes("data_setvariableto", previous, index)
+                blockName = initAtrobutes("data_setvariableto", previous, index, inputName)
                 createExpressionBlocks([item[0]], blockName, "VALUE")
                 
             if item[0] in spriteVars:
@@ -392,7 +388,7 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
         
         elif item[0] == "list":
             spriteLists[item[1]] = [item[1] + str(blockIndex), []]
-            blockName = initAtrobutes("data_deletealloflist", previous, index)
+            blockName = initAtrobutes("data_deletealloflist", previous, index, inputName)
             sprite["blocks"][blockName]["fields"]["LIST"] = [item[1], spriteLists[item[1]][0]]
             previous = blockName
             for expression in item[3::]:
@@ -404,7 +400,7 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
         elif (item[0] in spriteLists) or (item[0] in globalLists):
             
             if item[1] == "=":
-                blockName = initAtrobutes("data_deletealloflist", previous, index)
+                blockName = initAtrobutes("data_deletealloflist", previous, index, inputName)
                 sprite["blocks"][blockName]["fields"]["LIST"] = [item[0], spriteLists[item[0]][0]]
                 previous = blockName
                 if not (len(item[2::]) == 1 and len(item[2::][0]) == 0):
@@ -417,17 +413,18 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
             if item[1] == ".":
                 
                 if item[2] == "push":
-                    blockName = initAtrobutes("data_addtolist", previous, index)
+                    blockName = initAtrobutes("data_addtolist", previous, index, inputName)
                     createExpressionBlocks(item[3], blockName, "ITEM")
                     sprite["blocks"][blockName]["fields"]["LIST"] = [item[0], spriteLists[item[0]][0]]
                     previous = blockName
                     
         elif item[0] == "while":
-            blockName = initAtrobutes("control_repeat_until", previous, index)
+            blockName = initAtrobutes("control_repeat_until", previous, index, inputName)
             topBlock = blockName
             blockName = initAtrobutes("operator_not", blockName, 0, "CONDITION")
             createBoolean(flatten_single_lists(item[1]), blockName, "OPERAND")
             createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[2], topBlock, "SUBSTACK")
+            
             previous = topBlock
         
         elif item[0] == "import":
