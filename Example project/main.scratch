@@ -3,15 +3,14 @@ sprite Stage{}
 sprite cat{
     script[
         event_whenflagclicked();
-        motion_gotoxy(0, 0);
-        
-        list distances = [10, 3, 54, 7];
+        var thing = 7;
+        control_if ((5 + 7) * thing == 3) {
 
-        var i = 0;
-        while(i < len(distances)){
-            motion_movesteps(distances[i]);
-            i++;
         };
+
+        while(5 == 7){
+
+        }
     ];
     costumes[
         "pics/cat.svg"

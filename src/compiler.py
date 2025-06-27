@@ -23,7 +23,7 @@ delimiters = [" "]
 
 specialChar = [";", "."]
 
-inputDelimiter = [",", ">", "<", "==", ">=", "<=", "!="]
+inputDoubleDelimiter = [">", "<", "==", ">=", "<=", "!="]
 
 doubleChar = ["=", "+", "-", "*", "/", ">", "<", "!"]
 
@@ -179,25 +179,40 @@ with open(sys.argv[1], "r") as file:
                 lineTokens.append("")
             else: lineTokens[-1] += character
 
+lineTokens = [token for token in lineTokens if token != ""]
+
+print(lineTokens)
+
 outTokens = []
-for item in lineTokens:
-    if item in inputDelimiter:
+lastOpenBracket = None
+for tokenIndex, item in enumerate(lineTokens):
+    if item in openbrackets and lastOpenBracket != "Close":
+        outTokens.append("[")
+        lastOpenBracket = len(outTokens)
+    elif item in closebrackets and lastOpenBracket == "Close":
         outTokens.append("]")
-        if not item == ",":
-            outTokens.append(item)
+        outTokens.append("]")
+        lastOpenBracket = None
+    elif item in inputDoubleDelimiter:
+        print(lastOpenBracket)
+        if isinstance(lastOpenBracket, int):
+            outTokens.insert(lastOpenBracket, "[")
+            lastOpenBracket = "Close"
+        outTokens.append("]")
+        outTokens.append(item)
         outTokens.append("[")
     else:
         outTokens.append(item)
 lineTokens = outTokens
 
-lineTokens = [token for token in lineTokens if token != ""]
-
 tokenList = []
 index = 0
 
+print(lineTokens)
+
 lineTokens = createBranches()
 
-#print(lineTokens)
+
 
 output = {"targets":[], "monitors":[], "extensions":[], "meta":{
                 "semver": "3.0.0",

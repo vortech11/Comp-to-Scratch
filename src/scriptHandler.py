@@ -257,26 +257,26 @@ def createLogicOperator(opcode, expression, inputs, blockName):
     createExpressionBlocks(expression[0], blockName, inputs[1])
     createExpressionBlocks(expression[2], blockName, inputs[2])
                 
-def createBoolean(expression, blockName):
+def createBoolean(expression, blockName, inputName):
     match expression[1]:
                 case ">":
-                    createLogicOperator("operator_gt", expression, ["OPERAND", "OPERAND1", "OPERAND2"], blockName)
+                    createLogicOperator("operator_gt", expression, [inputName, "OPERAND1", "OPERAND2"], blockName)
                 case "<":
-                    createLogicOperator("operator_lt", expression, ["OPERAND", "OPERAND1", "OPERAND2"], blockName)
+                    createLogicOperator("operator_lt", expression, [inputName, "OPERAND1", "OPERAND2"], blockName)
                 case "==":
-                    createLogicOperator("operator_equals", expression, ["OPERAND", "OPERAND1", "OPERAND2"], blockName)
+                    createLogicOperator("operator_equals", expression, [inputName, "OPERAND1", "OPERAND2"], blockName)
                 case ">=":
-                    blockName = initAtrobutes("operator_or", blockName, 0, "OPERAND")
+                    blockName = initAtrobutes("operator_or", blockName, 0, inputName)
                     midBlock = blockName
                     createLogicOperator("operator_gt", expression, ["OPERAND1", "OPERAND1", "OPERAND2"], midBlock)
                     createLogicOperator("operator_equals", expression, ["OPERAND2", "OPERAND1", "OPERAND2"], midBlock)
                 case "<=":
-                    blockName = initAtrobutes("operator_or", blockName, 0, "OPERAND")
+                    blockName = initAtrobutes("operator_or", blockName, 0, inputName)
                     midBlock = blockName
                     createLogicOperator("operator_lt", expression, ["OPERAND1", "OPERAND1", "OPERAND2"], midBlock)
                     createLogicOperator("operator_equals", expression, ["OPERAND2", "OPERAND1", "OPERAND2"], midBlock)
                 case "!=":
-                    blockName = initAtrobutes("operator_not", blockName, 0, "OPERAND")
+                    blockName = initAtrobutes("operator_not", blockName, 0, inputName)
                     createLogicOperator("operator_equals", expression, ["OPERAND", "OPERAND1", "OPERAND2"], blockName)
 
 def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput, spriteListsInput, globalListsInput, blocks, parent, inputName=None):
@@ -337,7 +337,12 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
                             else:
                                 varTypeTree(item[inputIndex+1][0], blockName, blockInputs[inputIndex])
                         case "boolean":
-                            createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
+                            if not isinstance(flatten_single_lists(item[inputIndex+1])[0], list):
+                                if flatten_single_lists(item[inputIndex+1])[0] in opcodeMap:
+                                    createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
+                            else:
+                                print(flatten_single_lists(item[inputIndex+1]))
+                                createBoolean(flatten_single_lists(item[inputIndex+1]), blockName, blockInputs[inputIndex])
                         case "substack":
                             createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
             
@@ -416,8 +421,8 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
             blockName = initAtrobutes("control_repeat_until", previous, index)
             topBlock = blockName
             blockName = initAtrobutes("operator_not", blockName, 0, "CONDITION")
-            createBoolean(item[1:4], blockName)
-            createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[4], topBlock, "SUBSTACK")
+            createBoolean(flatten_single_lists(item[1]), blockName, "OPERAND")
+            createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[2], topBlock, "SUBSTACK")
             previous = topBlock
         
         elif item[0] == "import":
