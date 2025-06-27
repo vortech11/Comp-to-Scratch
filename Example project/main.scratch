@@ -1,15 +1,17 @@
-sprite Stage{
-    script[
-        #var thing = 2 + 4;
-    ];
-    costumes[];
-    sounds[];
-}
+sprite Stage{}
 
 sprite cat{
     script[
         event_whenflagclicked();
-        var thing = operator_round(5 + 3) * 2;
+        motion_gotoxy(0, 0);
+        
+        list distances = [10, 3, 54, 7];
+
+        var i = 0;
+        while(i < len(distances)){
+            motion_movesteps(distances[i]);
+            i++;
+        };
     ];
     costumes[
         "pics/cat.svg"

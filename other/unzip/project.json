@@ -3,39 +3,15 @@
         {
             "isStage": true,
             "name": "Stage",
-            "variables": { "thing1": ["thing", "2"] },
+            "variables": {},
             "lists": {},
             "broadcasts": {},
-            "blocks": {
-                "block2": {
-                    "opcode": "data_setvariableto",
-                    "next": "block3",
-                    "parent": null,
-                    "inputs": { "VALUE": [1, "block3"] },
-                    "fields": { "VARIABLE": ["thing", "thing1"] },
-                    "shadow": false,
-                    "topLevel": true,
-                    "x": 0,
-                    "y": 0
-                },
-                "block3": {
-                    "opcode": "operator_add",
-                    "next": null,
-                    "parent": "block2",
-                    "inputs": {
-                        "NUM2": [1, [10, "4"]],
-                        "NUM1": [1, [10, "2"]]
-                    },
-                    "fields": {},
-                    "shadow": false,
-                    "topLevel": false
-                }
-            },
+            "blocks": {},
             "comments": {},
             "currentCostume": 0,
             "costumes": [
                 {
-                    "name": "blank.svg",
+                    "name": "blank",
                     "bitmapResolution": 1,
                     "dataFormat": "svg",
                     "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
@@ -56,12 +32,12 @@
             "isStage": false,
             "name": "cat",
             "variables": {},
-            "lists": { "what4": ["what", ["3"]] },
+            "lists": {},
             "broadcasts": {},
             "blocks": {
-                "block4": {
+                "block2": {
                     "opcode": "event_whenflagclicked",
-                    "next": "jK:U*!r=Hu@Me(5)N]Kw",
+                    "next": null,
                     "parent": null,
                     "inputs": {},
                     "fields": {},
@@ -69,43 +45,13 @@
                     "topLevel": true,
                     "x": 0,
                     "y": 0
-                },
-                "block6": {
-                    "opcode": "data_setvariableto",
-                    "next": null,
-                    "parent": "jK:U*!r=Hu@Me(5)N]Kw",
-                    "inputs": { "VALUE": [2, "block7"] },
-                    "fields": { "VARIABLE": ["thing", "thing1"] },
-                    "shadow": false,
-                    "topLevel": false
-                },
-                "block7": {
-                    "opcode": "operator_add",
-                    "next": null,
-                    "parent": "block6",
-                    "inputs": {
-                        "NUM1": [1, [10, "2"]],
-                        "NUM2": [1, [10, "4"]]
-                    },
-                    "fields": {},
-                    "shadow": false,
-                    "topLevel": false
-                },
-                "jK:U*!r=Hu@Me(5)N]Kw": {
-                    "opcode": "data_addtolist",
-                    "next": "block6",
-                    "parent": "block4",
-                    "inputs": { "ITEM": [1, [10, "thing"]] },
-                    "fields": { "LIST": ["what", "what4"] },
-                    "shadow": false,
-                    "topLevel": false
                 }
             },
             "comments": {},
             "currentCostume": 0,
             "costumes": [
                 {
-                    "name": "cat.svg",
+                    "name": "cat",
                     "bitmapResolution": 1,
                     "dataFormat": "svg",
                     "assetId": "bcf454acf82e4504149f7ffe07081dbc",
@@ -131,6 +77,6 @@
     "meta": {
         "semver": "3.0.0",
         "vm": "11.1.0",
-        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:139.0) Gecko/20100101 Firefox/139.0"
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0"
     }
 }

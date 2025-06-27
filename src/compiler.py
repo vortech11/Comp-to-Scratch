@@ -10,6 +10,8 @@ import warnings
 
 from scriptHandler import createBlocks
 
+scratchCompVersion = "0.2"
+
 opcodeMap = json.load(open("src/OpcodeMap.json"))
 
 print("starting...")
@@ -21,7 +23,9 @@ delimiters = [" "]
 
 specialChar = [";", "."]
 
-doubleChar = ["=", "+", "-", "*", "/"]
+inputDelimiter = [",", ">", "<", "==", ">=", "<=", "!="]
+
+doubleChar = ["=", "+", "-", "*", "/", ">", "<", "!"]
 
 openbrackets = ["(", "{", "["]
 closebrackets = [")", "}", "]"]
@@ -175,6 +179,17 @@ with open(sys.argv[1], "r") as file:
                 lineTokens.append("")
             else: lineTokens[-1] += character
 
+outTokens = []
+for item in lineTokens:
+    if item in inputDelimiter:
+        outTokens.append("]")
+        if not item == ",":
+            outTokens.append(item)
+        outTokens.append("[")
+    else:
+        outTokens.append(item)
+lineTokens = outTokens
+
 lineTokens = [token for token in lineTokens if token != ""]
 
 tokenList = []
@@ -187,7 +202,7 @@ lineTokens = createBranches()
 output = {"targets":[], "monitors":[], "extensions":[], "meta":{
                 "semver": "3.0.0",
                 "vm": "11.0.0-beta.2",
-                "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0"
+                "agent": "Scratch Compiler v" + scratchCompVersion
             }
         }
 
