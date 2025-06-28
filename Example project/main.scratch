@@ -2,18 +2,23 @@ sprite Stage{}
 
 sprite cat{
     script[
-        start();
-        list distances;# = [10, 23, 56, 11];
-
-        var i = 0;
-        while (i < len(distances)) {
-            if(i != 1){
-                move(distances[i]);
+        func moveUnits(input1: text, input2: bool){
+            move(input1);
+            if(input2){
+                move("-100");
             };
-            i++;
         };
+
+        func moveUnits2(){
+            move(10);
+        };
+
+        start();
+        moveUnits(10 + 3, 6 == 7);
+        sleep("1");
+        moveUnits(10 + 3, 6 == 6);
     ];
     costumes[
         "pics/cat.svg"
-    ];
+    ]
 }

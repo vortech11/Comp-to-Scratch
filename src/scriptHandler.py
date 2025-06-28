@@ -1,15 +1,19 @@
 import json
 from opcodeAlias import aliases
+import warnings
 
 opcodeMap = json.load(open("src/OpcodeMap.json"))
 
-global operatorMap
 operatorMap = {
         "*": 3,
         "/": 3,
         "+": 2,
         "-": 2
     }
+
+funcSignatures = {} # { funcName: { inputNames: [ inputName ], inputDataTypes: [ dataType ], inputIds: [ inputId ] } }
+currentFunc = None # funcName
+
 
 def initAtrobutes(opcode, previous, index, inputName=None):
     global opcodeMap
@@ -58,6 +62,9 @@ def varTypeTree(value, blockName, inputName):
     global spriteLists
     global globalLists
     
+    global funcSignatures
+    global currentFunc
+    
     if value in spriteVars:
         outputValue = [1, [12, value, spriteVars[value][0]]]
     elif value in globalVars:
@@ -66,6 +73,14 @@ def varTypeTree(value, blockName, inputName):
         outputValue = [1, [13, value, spriteLists[value][0]]]
     elif value in globalLists:
         outputValue = [1, [13, value, globalLists[value][0]]]
+    elif currentFunc != None and value in funcSignatures[currentFunc]["inputNames"]:
+        if funcSignatures[currentFunc]["inputDataTypes"][funcSignatures[currentFunc]["inputNames"].index(value)] == "%s":
+            tempBlock = initAtrobutes("argument_reporter_string_number", blockName, 0, inputName)
+        else:
+            tempBlock = initAtrobutes("argument_reporter_boolean", blockName, 0, inputName)
+        sprite["blocks"][tempBlock]["inputs"] = {}
+        sprite["blocks"][tempBlock]["fields"]["VALUE"] = [value, None]
+        outputValue = [1, tempBlock]
     else:
         outputValue = [1, [10, value]]
         
@@ -257,26 +272,36 @@ def createLogicOperator(opcode, expression, inputs, blockName):
     createExpressionBlocks(expression[2], blockName, inputs[2])
                 
 def createBoolean(expression, blockName, inputName):
-    match expression[1]:
-                case ">":
-                    createLogicOperator("operator_gt", expression, [inputName, "OPERAND1", "OPERAND2"], blockName)
-                case "<":
-                    createLogicOperator("operator_lt", expression, [inputName, "OPERAND1", "OPERAND2"], blockName)
-                case "==":
-                    createLogicOperator("operator_equals", expression, [inputName, "OPERAND1", "OPERAND2"], blockName)
-                case ">=":
-                    blockName = initAtrobutes("operator_or", blockName, 0, inputName)
-                    midBlock = blockName
-                    createLogicOperator("operator_gt", expression, ["OPERAND1", "OPERAND1", "OPERAND2"], midBlock)
-                    createLogicOperator("operator_equals", expression, ["OPERAND2", "OPERAND1", "OPERAND2"], midBlock)
-                case "<=":
-                    blockName = initAtrobutes("operator_or", blockName, 0, inputName)
-                    midBlock = blockName
-                    createLogicOperator("operator_lt", expression, ["OPERAND1", "OPERAND1", "OPERAND2"], midBlock)
-                    createLogicOperator("operator_equals", expression, ["OPERAND2", "OPERAND1", "OPERAND2"], midBlock)
-                case "!=":
-                    blockName = initAtrobutes("operator_not", blockName, 0, inputName)
-                    createLogicOperator("operator_equals", expression, ["OPERAND", "OPERAND1", "OPERAND2"], blockName)
+    global funcSignatures
+    global currentFunc
+    
+    
+    if currentFunc != None and expression[0] in funcSignatures[currentFunc]["inputNames"]:
+        tempBlock = initAtrobutes("argument_reporter_boolean", blockName, 0, inputName)
+        sprite["blocks"][tempBlock]["inputs"] = {}
+        sprite["blocks"][tempBlock]["fields"]["VALUE"] = [expression, None]
+        sprite["blocks"][blockName]["inputs"][inputName] = [1, tempBlock]
+    else:
+        match expression[1]:
+            case ">":
+                createLogicOperator("operator_gt", expression, [inputName, "OPERAND1", "OPERAND2"], blockName)
+            case "<":
+                createLogicOperator("operator_lt", expression, [inputName, "OPERAND1", "OPERAND2"], blockName)
+            case "==":
+                createLogicOperator("operator_equals", expression, [inputName, "OPERAND1", "OPERAND2"], blockName)
+            case ">=":
+                blockName = initAtrobutes("operator_or", blockName, 0, inputName)
+                midBlock = blockName
+                createLogicOperator("operator_gt", expression, ["OPERAND1", "OPERAND1", "OPERAND2"], midBlock)
+                createLogicOperator("operator_equals", expression, ["OPERAND2", "OPERAND1", "OPERAND2"], midBlock)
+            case "<=":
+                blockName = initAtrobutes("operator_or", blockName, 0, inputName)
+                midBlock = blockName
+                createLogicOperator("operator_lt", expression, ["OPERAND1", "OPERAND1", "OPERAND2"], midBlock)
+                createLogicOperator("operator_equals", expression, ["OPERAND2", "OPERAND1", "OPERAND2"], midBlock)
+            case "!=":
+                blockName = initAtrobutes("operator_not", blockName, 0, inputName)
+                createLogicOperator("operator_equals", expression, ["OPERAND", "OPERAND1", "OPERAND2"], blockName)
 
 def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput, spriteListsInput, globalListsInput, blocks, parent, inputName=None):
     
@@ -295,6 +320,10 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
     globalLists = globalListsInput
 
     global opcodeMap
+    
+    global funcSignatures
+    
+    global currentFunc
 
     previous = parent
 
@@ -312,6 +341,7 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
 
             if blockType == "hat":
                 previous = None
+                currentFunc = None
 
             blockName = initAtrobutes(opcode, previous, index, inputName)
 
@@ -339,9 +369,8 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
                             else:
                                 varTypeTree(item[inputIndex+1][0], blockName, blockInputs[inputIndex])
                         case "boolean":
-                            if not isinstance(flatten_single_lists(item[inputIndex+1])[0], list):
-                                if flatten_single_lists(item[inputIndex+1])[0] in opcodeMap:
-                                    createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
+                            if not isinstance(flatten_single_lists(item[inputIndex+1])[0], list) and flatten_single_lists(item[inputIndex+1])[0] in opcodeMap:
+                                createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
                             else:
                                 createBoolean(flatten_single_lists(item[inputIndex+1]), blockName, blockInputs[inputIndex])
                         case "substack":
@@ -349,6 +378,7 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
             
             if blockType in ["cap", "c-block cap"]:
                 previous = None
+                currentFunc = None
             else:
                 previous = blockName
         
@@ -427,9 +457,72 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
             
             previous = topBlock
         
-        elif item[0] == "import":
-            ...
-        
+        elif item[0] == "func":
+            blockName = initAtrobutes("procedures_definition", None, 0)
+            topBlock = blockName
+            blockName = initAtrobutes("procedures_prototype", blockName, 0, "custom_block")
+            sprite["blocks"][blockName]["shadow"] = True
+            sprite["blocks"][blockName]["mutation"] = {
+                "tagName": "mutation", 
+                "children": [], 
+                "proccode": item[1], 
+                "argumentids": "[]", 
+                "argumentnames": "[]", 
+                "argumentdefaults": "[", 
+                "warp": "true"
+            }
+            
+            funcSignatures[item[1]] = { 
+                "inputNames": [], 
+                "inputDataTypes": [], 
+                "inputIds": [] 
+            }
+            if len(item[2]) != 0:
+                for i in range(len(item)-3):
+                    funcSignatures[item[1]]["inputNames"].append(flatten_single_lists(item[i+2])[0])
+                    funcSignatures[item[1]]["inputIds"].append(str(flatten_single_lists(item[i+2])[0]) + str(blockIndex))
+                    if flatten_single_lists(item[i+2])[1] == "text":
+                        sprite["blocks"][blockName]["mutation"]["proccode"] += " %s"
+                        sprite["blocks"][initAtrobutes("argument_reporter_string_number", blockName, 0, flatten_single_lists(item[i+2])[0])]["fields"]["VALUE"] = [flatten_single_lists(item[i+2])[0], None]
+                        funcSignatures[item[1]]["inputDataTypes"].append("%s")
+
+
+                    elif flatten_single_lists(item[i+2])[1] == "bool":
+                        sprite["blocks"][blockName]["mutation"]["proccode"] += " %b"
+                        sprite["blocks"][initAtrobutes("argument_reporter_boolean", blockName, 0, flatten_single_lists(item[i+2])[0])]["fields"]["VALUE"] = [flatten_single_lists(item[i+2])[0], None]
+                        funcSignatures[item[1]]["inputDataTypes"].append("%b")
+                    
+            sprite["blocks"][blockName]["mutation"]["argumentnames"] = "[" + ",".join(["\"" + str(element) + "\"" for element in funcSignatures[item[1]]["inputNames"]]) + "]"
+            sprite["blocks"][blockName]["mutation"]["argumentids"] = "[" + ",".join(["\"" + str(element) + "\"" for element in funcSignatures[item[1]]["inputIds"]]) + "]"
+            sprite["blocks"][blockName]["mutation"]["argumentdefaults"] = "[" + ",".join(["\"" + "false" + "\"" if element == "%b" else "\"\"" for element in funcSignatures[item[1]]["inputDataTypes"]]) + "]"
+
+            currentFunc = item[1]
+            
+            createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[-1], topBlock)
+            
+            previous = None
+            
+        elif item[0] in funcSignatures:
+            blockName = initAtrobutes("procedures_call", previous, index, inputName)
+            sprite["blocks"][blockName]["mutation"] = {
+                "tagName": "mutation", 
+                "children": [], 
+                "proccode": item[0] + " " + " ".join([element for element in funcSignatures[item[0]]["inputDataTypes"]]), 
+                "argumentids": "[" + ",".join(["\"" + str(element) + "\"" for element in funcSignatures[item[0]]["inputIds"]]) + "]", 
+                "warp": "true"
+            }
+
+            if len(item[1]) != 0:
+                for i in range(len(item)-1):        
+                    if funcSignatures[item[0]]["inputDataTypes"][i] == "%s":
+                        createExpressionBlocks(item[i+1], blockName, funcSignatures[item[0]]["inputIds"][i])
+                    else:
+                        createBoolean(flatten_single_lists(item[i+1]), blockName, funcSignatures[item[0]]["inputIds"][i])
+            
+            previous = blockName
+            
+        else:
+            warnings.warn(f"Comand {item} not recognized")
             
     return sprite, blockIndex, spriteVars, spriteLists
     

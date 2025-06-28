@@ -1,0 +1,21 @@
+sprite Stage{}
+
+sprite cat{
+    script[
+        start();
+        setxy(0, 0);
+        list distances = [10, 23, 56, 11];
+
+        var i = 0;
+        while (i < len(distances)) {
+            if(i != 1){
+                move(distances[i]);
+            };
+            sleep(".5");
+            i++;
+        };
+    ];
+    costumes[
+        "pics/cat.svg"
+    ];
+}

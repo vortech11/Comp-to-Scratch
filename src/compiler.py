@@ -19,7 +19,7 @@ print("starting...")
 extension = ".scratch"
 outputFolderName = "build"
 
-delimiters = [" "]
+delimiters = [" ", ":"]
 
 specialChar = [";", "."]
 
@@ -148,16 +148,16 @@ assert Path(sys.argv[1]).exists(), f"File '{sys.argv[1]}' does not exist."
 
 with open(sys.argv[1], "r") as file:
     lineTokens = [""]
+    isString = False
     for line in file.readlines():
         isComment = False
-        isString = False
         isDouble = False
         for index, character in enumerate(line):
             if character == "\"": isString = not isString
-            elif isString: lineTokens[-1] += character
             elif character == "#": isComment = True
             elif character == "\n": isComment = False
             elif isComment: continue
+            elif isString: lineTokens[-1] += character
             elif character_is_delimiter(line, index): lineTokens.append("")
             elif character in (specialChar + openbrackets + closebrackets): 
                 lineTokens.append(character)
@@ -178,6 +178,8 @@ with open(sys.argv[1], "r") as file:
                 lineTokens.append("[")
                 lineTokens.append("")
             else: lineTokens[-1] += character
+
+#print(lineTokens)
 
 lineTokens = [token for token in lineTokens if token != ""]
 
@@ -209,7 +211,7 @@ index = 0
 
 lineTokens = createBranches()
 
-
+#print(lineTokens)
 
 output = {"targets":[], "monitors":[], "extensions":[], "meta":{
                 "semver": "3.0.0",
