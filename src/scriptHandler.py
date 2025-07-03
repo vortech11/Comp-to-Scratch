@@ -115,7 +115,7 @@ def itemIsFunc(item):
         operatorMap,
         spriteLists,
         globalLists,
-        ["len"]
+        ["len", "indexOf"]
     ]
     
     for func in funcs:
@@ -205,6 +205,7 @@ def createExpressionBlocks(expression, blockName, inputName):
 
     expression = convertRPN(expression)
     
+    print(expression)
 
     stack = []
     if len(expression) == 1:
@@ -222,12 +223,17 @@ def createExpressionBlocks(expression, blockName, inputName):
                             opcode = None
                             stack.pop()
                             stack.append(item)
+                        elif expression[itemIndex+2] == "indexOf":
+                            opcode = None
+                            stack.append(item)
                         else:
                             opcode = "data_listcontents"
                     else:
                         opcode = "data_itemoflist"
                 elif item == "len":
                     opcode = "data_lengthoflist"
+                elif item == "indexOf":
+                    opcode = "data_itemnumoflist"
                 else:
                     opcode = "motion_movesteps"
                 
@@ -249,9 +255,15 @@ def createExpressionBlocks(expression, blockName, inputName):
                             blockInputs = [blockInputs[0]]
                     elif item == "len":
                         if stack[-1] in spriteLists:
-                            sprite["blocks"][blockName]["fields"][blockInputs[0]] = [stack[-1], spriteLists[stack[-1]][0]]
+                            sprite["blocks"][blockName]["fields"]["LIST"] = [stack[-1], spriteLists[stack[-1]][0]]
                         else:
-                            sprite["blocks"][blockName]["fields"][blockInputs[0]] = [stack[-1], globalLists[stack[-1]][0]]
+                            sprite["blocks"][blockName]["fields"]["LIST"] = [stack[-1], globalLists[stack[-1]][0]]
+                    elif item == "indexOf":
+                        if stack[-2] in spriteLists:
+                            sprite["blocks"][blockName]["fields"]["LIST"] = [stack[-2], spriteLists[stack[-2]][0]]
+                        else:
+                            sprite["blocks"][blockName]["fields"]["LIST"] = [stack[-2], globalLists[stack[-2]][0]]
+                        blockInputs = [blockInputs[0]]
 
                     for index in range(-1, (len(blockInputs) + 1) * -1, -1):
                         if isinstance(stack[index], list):
@@ -369,7 +381,8 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
                             else:
                                 varTypeTree(item[inputIndex+1][0], blockName, blockInputs[inputIndex])
                         case "boolean":
-                            if not isinstance(flatten_single_lists(item[inputIndex+1])[0], list) and flatten_single_lists(item[inputIndex+1])[0] in opcodeMap:
+                            if not isinstance(flatten_single_lists(item[inputIndex+1])[0], list
+                                              ) and flatten_single_lists(item[inputIndex+1])[0] in opcodeMap or flatten_single_lists(item[inputIndex+1])[0] in aliases:
                                 createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
                             else:
                                 createBoolean(flatten_single_lists(item[inputIndex+1]), blockName, blockInputs[inputIndex])

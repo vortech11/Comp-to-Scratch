@@ -758,7 +758,7 @@
         "description": "Move x steps"
     },
     "data_itemnumoflist":{
-        "inputs": ["INDEX", "LIST"],
+        "inputs": ["ITEM", "LIST"],
         "inputtype": ["text", "dropdown"],
         "blocktype" : "reporter",
         "description": "Move x steps"

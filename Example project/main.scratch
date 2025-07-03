@@ -1,24 +1,12 @@
-sprite Stage{}
+sprite Stage{};
 
 sprite cat{
     script[
-        func moveUnits(input1: text, input2: bool){
-            move(input1);
-            if(input2){
-                move("-100");
-            };
-        };
-
-        func moveUnits2(){
-            move(10);
-        };
-
         start();
-        moveUnits(10 + 3, 6 == 7);
-        sleep("1");
-        moveUnits(10 + 3, 6 == 6);
+        list thing = [10];
+        move(indexOf(thing, "what!"));
     ];
     costumes[
         "pics/cat.svg"
-    ]
-}
+    ];
+};

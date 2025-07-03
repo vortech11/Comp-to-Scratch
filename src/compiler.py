@@ -9,97 +9,28 @@ import sys
 import warnings
 
 from scriptHandler import createBlocks
+from fileHandler import genTokens
 
-scratchCompVersion = "0.2"
+scratchCompVersion = "0.3"
 
 opcodeMap = json.load(open("src/OpcodeMap.json"))
 
 print("starting...")
 
-extension = ".scratch"
 outputFolderName = "build"
 
-delimiters = [" ", ":"]
-
-specialChar = [";", "."]
-
-inputDoubleDelimiter = [">", "<", "==", ">=", "<=", "!="]
-
-doubleChar = ["=", "+", "-", "*", "/", ">", "<", "!"]
-
-openbrackets = ["(", "{", "["]
-closebrackets = [")", "}", "]"]
 
 spriteVars = {} # { varname: [ varcode, initial value ] }
 spriteLists = {}
 globalVars = {}
 globalLists = {}
 
-def character_is_delimiter(line, index):
-    global delimiters
-    if line[index] in delimiters:
-        if line[-1] != "": return True
-    else:
-        return False
-    
-def character_is_bracket(character):
-    global openbrackets
-    global closebrackets
-    if character in closebrackets:
-        return -1
-    elif character in openbrackets:
-        return 1
-    else:
-        return 0
 
 def gen_hash(string):
     if type(string) != str:
         string = str(string)
     return hashlib.md5(string.encode()).hexdigest()
 
-        
-def createBranches():
-    global index
-    global lineTokens
-
-    commands = []
-
-    while index < len(lineTokens):
-        token = lineTokens[index]
-        if token in openbrackets:
-            index += 1
-            commands.append(createBranches())
-        elif token in closebrackets:
-            index += 1
-            return commands
-        else:
-            commands.append(token)
-            index += 1
-    
-    return commands
-
-def parse_commands(command_list):
-    def parse_block(lst):
-        result : list = []
-        current : list = []
-        if len(lst) > 1:
-            for item in lst:
-                if item == ";":
-                    if current:
-                        result.append(current)
-                    current = []
-                elif isinstance(item, list):
-                    parsed = parse_block(item)
-                    current.append(parsed)
-                else:
-                    current.append(item)
-            if current:
-                result.append(current)
-            return result
-        else:
-            return lst
-
-    return parse_block(command_list)
 
 def encodeAsset(assetType, assetPath, isDefault):
     assetName = Path(assetPath).stem
@@ -146,72 +77,7 @@ assert Path(sys.argv[1]).exists(), f"File '{sys.argv[1]}' does not exist."
 
 (Path(sys.argv[1]).parent / outputFolderName).mkdir(exist_ok=True)
 
-with open(sys.argv[1], "r") as file:
-    lineTokens = [""]
-    isString = False
-    for line in file.readlines():
-        isComment = False
-        isDouble = False
-        for index, character in enumerate(line):
-            if character == "\"": isString = not isString
-            elif character == "#": isComment = True
-            elif character == "\n": isComment = False
-            elif isComment: continue
-            elif isString: lineTokens[-1] += character
-            elif character_is_delimiter(line, index): lineTokens.append("")
-            elif character in (specialChar + openbrackets + closebrackets): 
-                lineTokens.append(character)
-                lineTokens.append("")
-            elif isDouble == True:
-                if character in doubleChar:
-                    lineTokens[-1] += character
-                    lineTokens.append("")
-                    isDouble = False
-                else:
-                    lineTokens.append(character)
-                    isDouble = False
-            elif character in doubleChar: 
-                lineTokens.append(character)
-                isDouble = True
-            elif character == ",":
-                lineTokens.append("]")
-                lineTokens.append("[")
-                lineTokens.append("")
-            else: lineTokens[-1] += character
-
-#print(lineTokens)
-
-lineTokens = [token for token in lineTokens if token != ""]
-
-outTokens = []
-lastOpenBracket = None
-for tokenIndex, item in enumerate(lineTokens):
-    if item in openbrackets and lastOpenBracket != "Close":
-        outTokens.append("[")
-        lastOpenBracket = len(outTokens)
-    elif item in closebrackets and lastOpenBracket == "Close":
-        outTokens.append("]")
-        outTokens.append("]")
-        lastOpenBracket = None
-    elif item in inputDoubleDelimiter:
-        if isinstance(lastOpenBracket, int):
-            outTokens.insert(lastOpenBracket, "[")
-            lastOpenBracket = "Close"
-        outTokens.append("]")
-        outTokens.append(item)
-        outTokens.append("[")
-    else:
-        outTokens.append(item)
-lineTokens = outTokens
-
-tokenList = []
-index = 0
-
-#print(lineTokens)
-
-lineTokens = createBranches()
-
-#print(lineTokens)
+tokens = genTokens(sys.argv[1])
 
 output = {"targets":[], "monitors":[], "extensions":[], "meta":{
                 "semver": "3.0.0",
@@ -222,18 +88,15 @@ output = {"targets":[], "monitors":[], "extensions":[], "meta":{
 
 filesToBeCompressed = [outputFolderName + "/project.json"]
 
-index = 0
-indent = 0
 blockIndex = 1
 
-while index < len(lineTokens):
-    if lineTokens[index] == "sprite":
+for command in tokens:
+    if command[0] == "sprite":
         sprite = {"isStage":True, "name":"Stage", "variables":{}, "lists":{}, 
                   "broadcasts":{}, "blocks":{}, "comments":{}, "currentCostume":0, 
                   "costumes":[], "sounds":[], "volume":100, "layerOrder":0}
-        index += 1
 
-        if lineTokens[index] == "Stage":
+        if command[1] == "Stage":
             sprite["tempo"] = 60
             sprite["videoTransparency"] = 50
             sprite["videoState"] = "on"
@@ -248,15 +111,14 @@ while index < len(lineTokens):
             sprite["draggable"] = False
             sprite["rotationStyle"] = "all around"
             sprite["layerOrder"] = 1
-        sprite["name"] = lineTokens[index]
-        index += 1
+        sprite["name"] = command[1]
 
         spriteVars = {}
         spriteLists = {}
         
         costumesInit = False
 
-        spriteData = parse_commands(lineTokens[index])
+        spriteData = command[2]
         print(spriteData)
 
         for attribute in spriteData:
@@ -288,10 +150,6 @@ while index < len(lineTokens):
             encodeAsset("costume", "blank.svg", True)
         
         output["targets"].append(sprite)
-    elif character_is_bracket(lineTokens[index]) == -1:
-        pass
-
-    index += 1
 
 output = json.dumps(output)
 with open(Path(sys.argv[1]).parent / outputFolderName / "project.json", "w") as file:
