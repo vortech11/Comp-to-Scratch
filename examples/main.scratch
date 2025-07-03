@@ -1,4 +1,4 @@
-sprite Stage{}
+sprite Stage{};
 
 sprite cat{
     script[
@@ -18,4 +18,4 @@ sprite cat{
     costumes[
         "pics/cat.svg"
     ];
-}
+};

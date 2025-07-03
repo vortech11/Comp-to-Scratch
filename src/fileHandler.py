@@ -135,18 +135,40 @@ def parse_commands(command_list):
 
     return parse_block(command_list)
 
+def split_commands(tokenList):
+    outList: list = []
+    startStack: list = [[0]]
+    for token in tokenList:
+        if token in openbrackets:
+            startStack.append(len(outList))
+            outList.append(token)
+        elif token in closebrackets:
+            startStack.pop()
+            outList.append(token)
+        elif token == ";":
+            if isinstance(startStack[-1], list):
+                index = startStack.pop()[0]
+            else:
+                index = startStack.pop()
+            outList.insert(index, "[")
+            outList.append("]")
+            startStack.append([len(outList)])
+        else:
+            outList.append(token)
+    return outList
+            
+
 def genTokens(filePath):
     lineTokens = parseFile(filePath)
 
     lineTokens = [token for token in lineTokens if token != ""]
-    print(lineTokens)
-
+    
+    lineTokens = split_commands(lineTokens)
+    
     lineTokens = createBoolBrackets(lineTokens)
-    print(lineTokens)
-
     brancher = branchHandler()
     lineTokens = brancher.createBranches(lineTokens)
-
-    lineTokens = parse_commands(lineTokens)
+    
+    
     
     return lineTokens

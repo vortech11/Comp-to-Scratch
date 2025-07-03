@@ -204,8 +204,6 @@ def createExpressionBlocks(expression, blockName, inputName):
     parent = blockName
 
     expression = convertRPN(expression)
-    
-    print(expression)
 
     stack = []
     if len(expression) == 1:
@@ -382,7 +380,7 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
                                 varTypeTree(item[inputIndex+1][0], blockName, blockInputs[inputIndex])
                         case "boolean":
                             if not isinstance(flatten_single_lists(item[inputIndex+1])[0], list
-                                              ) and flatten_single_lists(item[inputIndex+1])[0] in opcodeMap or flatten_single_lists(item[inputIndex+1])[0] in aliases:
+                                              ) and (flatten_single_lists(item[inputIndex+1])[0] in opcodeMap or flatten_single_lists(item[inputIndex+1])[0] in aliases):
                                 createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
                             else:
                                 createBoolean(flatten_single_lists(item[inputIndex+1]), blockName, blockInputs[inputIndex])
