@@ -532,6 +532,26 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
             
             previous = blockName
             
+        elif item[0] == "for":
+            blockName = initAtrobutes("data_setvariableto", previous, index, inputName)
+            spriteVars[item[1][0][1]] = [item[1][0][1] + str(blockIndex), 0]
+            if len(item[1][0]) > 3:
+                createExpressionBlocks(item[1][0][3::], blockName, "VALUE")
+            else:
+                createExpressionBlocks([0], blockName, "VALUE")
+            sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[1][0][1], spriteVars[item[1][0][1]][0]]
+            previous = blockName
+            
+            blockName = initAtrobutes("control_repeat_until", previous, index, inputName)
+            topBlock = blockName
+            blockName = initAtrobutes("operator_not", blockName, 0, "CONDITION")
+            createBoolean(flatten_single_lists(item[1][1]), blockName, "OPERAND")
+            newSubstack = item[2]
+            newSubstack.append(item[1][2])
+            createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, newSubstack, topBlock, "SUBSTACK")
+            
+            previous = topBlock
+            
         else:
             warnings.warn(f"Comand {item} not recognized")
             

@@ -112,29 +112,6 @@ class branchHandler():
 
         return commands
 
-def parse_commands(command_list):
-    def parse_block(lst):
-        result : list = []
-        current : list = []
-        if len(lst) > 1:
-            for item in lst:
-                if item == ";":
-                    if current:
-                        result.append(current)
-                    current = []
-                elif isinstance(item, list):
-                    parsed = parse_block(item)
-                    current.append(parsed)
-                else:
-                    current.append(item)
-            if current:
-                result.append(current)
-            return result
-        else:
-            return lst
-
-    return parse_block(command_list)
-
 def split_commands(tokenList):
     outList: list = []
     startStack: list = [[0]]
