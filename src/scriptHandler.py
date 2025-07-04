@@ -1,5 +1,7 @@
 import json
-from opcodeAlias import aliases
+from src.opcodeAlias import aliases
+from pathlib import Path
+from src.fileHandler import genTokens
 import warnings
 
 opcodeMap = json.load(open("src/OpcodeMap.json"))
@@ -313,7 +315,7 @@ def createBoolean(expression, blockName, inputName):
                 blockName = initAtrobutes("operator_not", blockName, 0, inputName)
                 createLogicOperator("operator_equals", expression, ["OPERAND", "OPERAND1", "OPERAND2"], blockName)
 
-def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput, spriteListsInput, globalListsInput, blocks, parent, inputName=None):
+def createBlocks(filePath, spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput, spriteListsInput, globalListsInput, blocks, parent, inputName=None):
     
     global sprite
     
@@ -367,7 +369,7 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
                             else:
                                 sprite["blocks"][blockName]["fields"][blockInputs[inputIndex]] = [item[inputIndex+1][0], None]
                         case "menu":
-                            createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, [[blockInfo["dropdownID"], [item[inputIndex+1][0]]]], blockName, blockInputs[inputIndex])
+                            createBlocks(filePath, sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, [[blockInfo["dropdownID"], [item[inputIndex+1][0]]]], blockName, blockInputs[inputIndex])
                         case "broadcast":
                             sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [11, item[inputIndex+1][0]]]
                         case "color":
@@ -381,11 +383,11 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
                         case "boolean":
                             if not isinstance(flatten_single_lists(item[inputIndex+1])[0], list
                                               ) and (flatten_single_lists(item[inputIndex+1])[0] in opcodeMap or flatten_single_lists(item[inputIndex+1])[0] in aliases):
-                                createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
+                                createBlocks(filePath, sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
                             else:
                                 createBoolean(flatten_single_lists(item[inputIndex+1]), blockName, blockInputs[inputIndex])
                         case "substack":
-                            createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
+                            createBlocks(filePath, sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[inputIndex+1], blockName, blockInputs[inputIndex])
             
             if blockType in ["cap", "c-block cap"]:
                 previous = None
@@ -464,7 +466,7 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
             topBlock = blockName
             blockName = initAtrobutes("operator_not", blockName, 0, "CONDITION")
             createBoolean(flatten_single_lists(item[1]), blockName, "OPERAND")
-            createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[2], topBlock, "SUBSTACK")
+            createBlocks(filePath, sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[2], topBlock, "SUBSTACK")
             
             previous = topBlock
         
@@ -509,7 +511,7 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
 
             currentFunc = item[1]
             
-            createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[-1], topBlock)
+            createBlocks(filePath, sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, item[-1], topBlock)
             
             previous = None
             
@@ -548,9 +550,16 @@ def createBlocks(spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput,
             createBoolean(flatten_single_lists(item[1][1]), blockName, "OPERAND")
             newSubstack = item[2]
             newSubstack.append(item[1][2])
-            createBlocks(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, newSubstack, topBlock, "SUBSTACK")
+            createBlocks(filePath, sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, newSubstack, topBlock, "SUBSTACK")
             
             previous = topBlock
+        
+        elif item[0] == "import":
+            parentDirectory = Path(filePath).parent
+            fileCommands = genTokens(parentDirectory / item[1])
+            for command in fileCommands:
+                if command[0] == "export":
+                    createBlocks(filePath, sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists, command[1], previous)
             
         else:
             warnings.warn(f"Comand {item} not recognized")

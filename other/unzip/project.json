@@ -14,8 +14,8 @@
                     "name": "blank",
                     "bitmapResolution": 1,
                     "dataFormat": "svg",
-                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
-                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "assetId": "87ec29ad216c0074c731d581c7f40c39",
+                    "md5ext": "87ec29ad216c0074c731d581c7f40c39.svg",
                     "rotationCenterX": 0,
                     "rotationCenterY": 0
                 }
@@ -32,12 +32,12 @@
             "isStage": false,
             "name": "cat",
             "variables": {},
-            "lists": { "thing2": ["thing", []] },
+            "lists": {},
             "broadcasts": {},
             "blocks": {
                 "block2": {
                     "opcode": "event_whenflagclicked",
-                    "next": "block3",
+                    "next": null,
                     "parent": null,
                     "inputs": {},
                     "fields": {},
@@ -45,42 +45,6 @@
                     "topLevel": true,
                     "x": 0,
                     "y": 0
-                },
-                "block3": {
-                    "opcode": "data_deletealloflist",
-                    "next": "block4",
-                    "parent": "block2",
-                    "inputs": {},
-                    "fields": { "LIST": ["thing", "thing2"] },
-                    "shadow": false,
-                    "topLevel": false
-                },
-                "block4": {
-                    "opcode": "data_addtolist",
-                    "next": "block5",
-                    "parent": "block3",
-                    "inputs": { "ITEM": [1, [10, "10"]] },
-                    "fields": { "LIST": ["thing", "thing2"] },
-                    "shadow": false,
-                    "topLevel": false
-                },
-                "block5": {
-                    "opcode": "motion_movesteps",
-                    "next": null,
-                    "parent": "block4",
-                    "inputs": { "STEPS": [2, "kKk)##MX/#G4IDksrN=`"] },
-                    "fields": {},
-                    "shadow": false,
-                    "topLevel": false
-                },
-                "kKk)##MX/#G4IDksrN=`": {
-                    "opcode": "data_itemnumoflist",
-                    "next": null,
-                    "parent": "block5",
-                    "inputs": { "ITEM": [1, [10, "thing"]] },
-                    "fields": { "LIST": ["thing", "thing2"] },
-                    "shadow": false,
-                    "topLevel": false
                 }
             },
             "comments": {},
@@ -90,8 +54,8 @@
                     "name": "cat",
                     "bitmapResolution": 1,
                     "dataFormat": "svg",
-                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
-                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "assetId": "702d6b19295a4135a0cd6c49606e2a44",
+                    "md5ext": "702d6b19295a4135a0cd6c49606e2a44.svg",
                     "rotationCenterX": 0,
                     "rotationCenterY": 0
                 }
@@ -112,7 +76,7 @@
     "extensions": [],
     "meta": {
         "semver": "3.0.0",
-        "vm": "11.1.0",
+        "vm": "11.3.0",
         "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0"
     }
 }

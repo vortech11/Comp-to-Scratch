@@ -1,11 +1,10 @@
 sprite Stage{};
 
+import "thing.scratch";
+
 sprite cat{
     script[
         start();
-        for(var i = 0; i < 3; i++;){
-            move(3);
-        };
     ];
     costumes[
         "pics/cat.svg"
