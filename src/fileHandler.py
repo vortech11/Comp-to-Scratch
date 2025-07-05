@@ -120,7 +120,10 @@ def split_commands(tokenList):
             startStack.append(len(outList))
             outList.append(token)
         elif token in closebrackets:
-            startStack.pop()
+            index = startStack.pop()
+            if isinstance(index, list) and index[0] != len(outList):
+                outList.insert(index[0], "[")
+                outList.append("]")
             outList.append(token)
         elif token == ";":
             if isinstance(startStack[-1], list):

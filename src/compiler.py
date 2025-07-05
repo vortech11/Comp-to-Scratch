@@ -54,7 +54,7 @@ def encodeAsset(sprite, assetType, assetPath, isDefault):
             else:
                 shutil.copyfile(Path(filePath).parent / assetPath, 
                                 Path(filePath).parent / outputFolderName / (encodedName + ".svg"))
-        return sprite, filesToBeCompressed
+    return sprite
 
 def createSprite(spriteName, spriteData):
     global blockIndex
@@ -87,7 +87,7 @@ def createSprite(spriteName, spriteData):
     
     costumesInit = False
 
-    print(spriteData)
+    #print(spriteData)
 
     for attribute in spriteData:
         if attribute[0] == "script":
@@ -136,8 +136,9 @@ def fillCommands(parentDirectory, tokens, filesToBeCompressedInput, outputFolder
     sprites = []
     for command in tokens:
         if command[0] == "sprite":
-            sprites.append(createSprite(command[1], command[2],))
+            sprites.append(createSprite(command[1], command[2]))
         elif command[0] == "import":
             fileTokens = genTokens(Path(parentDirectory) / command[1])
-            sprites.extend(fillCommands(Path(Path(parentDirectory) / command[1]).parent, fileTokens, filesToBeCompressed, outputFolderName, filePath, blockIndex, [globalVars, globalLists]))
-    return sprites, filesToBeCompressed
+            importData = fillCommands(Path(Path(parentDirectory) / command[1]).parent, fileTokens, filesToBeCompressed, outputFolderName, filePath, blockIndex, [globalVars, globalLists])
+            sprites.extend(importData[0])
+    return (sprites, filesToBeCompressed)
