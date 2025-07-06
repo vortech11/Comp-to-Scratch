@@ -1,18 +1,27 @@
 site_name: Scratch Script Docs
+repo_url: https://github.com/vortech11/Comp-to-Scratch/tree/main
+repo_name: vortech11/Comp-to-Scratch
+
 nav:
   - Getting started: index.md
   - Installation: install.md
+  - Structure of files: body.md
+  - Quirks of syntax: quirks.md
+  - Scripts: scripts.md
 theme:
   name: material
   logo: assets/cat.png
-  favicon: assets/cat.ico
+  favicon: assets/cat(1).ico
+  font:
+    text: Merriweather Sans
+    code: Red Hat Mono
   palette:
     # Dark Mode
     - scheme: slate
       toggle:
         icon: material/weather-sunny
         name: Dark mode
-      primary: green
+      primary: black
       accent: deep purple
 
     # Light Mode
@@ -22,8 +31,15 @@ theme:
         name: Light mode
       primary: blue
       accent: deep orange
+  features:
+    - navigation.footer
+
 
 markdown_extensions:
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span

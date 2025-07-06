@@ -5,4 +5,5 @@ aliases = {
     "forever": "control_forever",
     "setxy": "motion_gotoxy",
     "sleep": "control_wait",
+    "say": "looks_say",
 }

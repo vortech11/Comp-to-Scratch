@@ -13,17 +13,11 @@ sprite cat{
     script[
         start();
         setxy(0, 0);
-        list distances = [10, 23, 56, 11];
-
-        for(var i = 0; i < len(distances); i++){
-            if(i != 1){
-                move(distances[i]);
-            };
-            sleep(".5");
+        move(3);
         };
     ];
     costumes[
-        "pics/cat.svg"
+        "cat.svg"
     ];
 };
 ```
