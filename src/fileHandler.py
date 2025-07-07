@@ -46,6 +46,9 @@ def parseFile(filePath):
                 elif character in (specialChar + openbrackets + closebrackets): 
                     lineTokens.append(character)
                     lineTokens.append("")
+                    if character == "}":
+                        lineTokens.append(";")
+                        lineTokens.append("")
                 elif isDouble == True:
                     if character in doubleChar:
                         lineTokens[-1] += character
