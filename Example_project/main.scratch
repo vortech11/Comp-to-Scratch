@@ -3,8 +3,16 @@ sprite Stage{}
 sprite cat{
     script[
         start();
-        list wat = [10, 3];
-        wat[3 + 3] = ((5 + (4 / 3)) / 2)
+        if(){
+
+        }
+        elif(){
+
+        }
+        elif(){
+
+        }
+        move(10);
     ];
     costumes[
         "pics/cat.svg"

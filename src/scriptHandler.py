@@ -25,6 +25,9 @@ class scriptHandler:
         self.globalVars = globalVarsInput
         self.spriteLists = spriteListsInput
         self.globalLists = globalListsInput
+        
+        self.isStaticVars = False
+        self.staticVars = []
 
     def initAtrobutes(self, opcode, previous, index, inputName=None):
         global opcodeMap
@@ -107,7 +110,7 @@ class scriptHandler:
             self.operatorMap,
             self.spriteLists,
             self.globalLists,
-            ["len", "indexOf"]
+            ["len", "indexOf", "contains"]
         ]
 
         for func in funcs:
@@ -141,6 +144,8 @@ class scriptHandler:
     def convertRPN(self, expression):
         expression = self.convertParenths(expression)
         expression = self.solveFullList(expression)
+        
+        print(expression)
 
         output = []
         stack = []
@@ -247,7 +252,6 @@ class scriptHandler:
                             else:
                                 self.sprite["blocks"][blockName]["fields"]["LIST"] = [stack[-2], self.globalLists[stack[-2]][0]]
                             blockInputs = [blockInputs[0]]
-
                         for index in range(-1, (len(blockInputs) + 1) * -1, -1):
                             if isinstance(stack[index], list):
                                 self.sprite["blocks"][blockName]["inputs"][blockInputs[len(blockInputs) - abs(index)]] = [1, stack[index][0]]
@@ -267,13 +271,20 @@ class scriptHandler:
         self.createExpressionBlocks(expression[2], blockName, inputs[2])
 
     def createBoolean(self, expression, blockName, inputName):
-
+        print(expression[1])
 
         if self.currentFunc != None and expression[0] in self.funcSignatures[self.currentFunc]["inputNames"]:
             tempBlock = self.initAtrobutes("argument_reporter_boolean", blockName, 0, inputName)
             self.sprite["blocks"][tempBlock]["inputs"] = {}
             self.sprite["blocks"][tempBlock]["fields"]["VALUE"] = [expression, None]
             self.sprite["blocks"][blockName]["inputs"][inputName] = [1, tempBlock]
+        elif expression[0] == "contains":
+            midblock = self.initAtrobutes("data_listcontainsitem", blockName, 0, inputName)
+            if expression[1][0] in self.spriteLists:
+                self.sprite["blocks"][midblock]["fields"]["LIST"] = [expression[1][0], self.spriteLists[expression[1][0]][0]]
+            else:
+                self.sprite["blocks"][midblock]["fields"]["LIST"] = [expression[1][0], self.globalLists[expression[1][0]][0]]
+            self.createExpressionBlocks(expression[2], midblock, "ITEM")
         else:
             match expression[1]:
                 case ">":
@@ -342,6 +353,7 @@ class scriptHandler:
                             case "color":
                                 self.sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [9, item[inputIndex+1][0]]]
                             case "text":
+                                print(item)
                                 if isinstance(item[inputIndex+1][0], list):
                                     #self.createBlocks(filePath, item[inputIndex+1], blockName, blockInputs[inputIndex])
                                     self.createExpressionBlocks(item[inputIndex+1][0], blockName, blockInputs[inputIndex])
@@ -444,6 +456,17 @@ class scriptHandler:
                         self.sprite["blocks"][blockName]["fields"]["LIST"] = [item[0], self.spriteLists[item[0]][0]]
                         previous = blockName
 
+            elif item[0] == "static":
+                if not self.isStaticVars:
+                    blockName = previous
+                    self.createBlocks(Path.cwd() / "src/placeholder.txt", [["import", "packages/static.scratch"]], None)
+                    previous = blockName
+                    self.isStaticVars = True
+                
+                
+                    
+            
+            
             elif item[0] == "while":
                 blockName = self.initAtrobutes("control_repeat_until", previous, index, inputName)
                 topBlock = blockName
@@ -538,12 +561,11 @@ class scriptHandler:
                 previous = topBlock
 
             elif item[0] == "import":
-                print(item)
                 parentDirectory = Path(filePath).parent
                 fileCommands = genTokens(parentDirectory / item[1])
                 for command in fileCommands:
                     if command[0] == "export":
-                        self.createBlocks(filePath, command[1], previous)
+                        self.createBlocks(parentDirectory / item[1], command[1], previous)
                         previous = "block" + str(self.blockIndex)
                         
             elif item[0] == "else":
