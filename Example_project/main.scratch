@@ -3,8 +3,11 @@ sprite Stage{}
 sprite cat{
     script[
         start();
-        static what = 10;
-        changeVar(what, 7);
+        list distances = [10, 7, 4, 6];
+
+        for(static i = 0; i < 3; i++){
+            move(distances[i]);
+        }
     ];
     costumes[
         "pics/cat.svg"

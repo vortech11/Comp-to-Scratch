@@ -61,6 +61,9 @@ class scriptHandler:
                 self.sprite["blocks"][previous]["next"] = blockName
 
         return blockName
+    
+    def mendParent(self):
+        return "block" + str(self.blockIndex)
 
     def varTypeTree(self, value, blockName, inputName):
         global opcodeMap
@@ -81,6 +84,19 @@ class scriptHandler:
             self.sprite["blocks"][tempBlock]["inputs"] = {}
             self.sprite["blocks"][tempBlock]["fields"]["VALUE"] = [value, None]
             outputValue = [1, tempBlock]
+        elif value in self.staticVars:
+            tempblock = self.initAtrobutes("data_itemoflist", blockName, 0, inputName)
+            if "value" in self.spriteLists:
+                self.sprite["blocks"][tempblock]["fields"]["LIST"] = ["value", self.spriteLists["value"][0]]
+            else:
+                self.sprite["blocks"][tempblock]["fields"]["LIST"] = ["value", self.globalLists["value"][0]]
+            secondBlock = self.initAtrobutes("data_itemnumoflist", tempblock, 0, "INDEX")
+            if "key" in self.spriteLists:
+                self.sprite["blocks"][secondBlock]["fields"]["LIST"] = ["key", self.spriteLists["key"][0]]
+            else:
+                self.sprite["blocks"][secondBlock]["fields"]["LIST"] = ["key", self.globalLists["key"][0]]
+            self.sprite["blocks"][secondBlock]["inputs"]["ITEM"] = [1, [10, value]]
+            outputValue = [1, tempblock]
         else:
             outputValue = [1, [10, value]]
 
@@ -216,7 +232,7 @@ class scriptHandler:
                         opcode = operators[item]
                     elif item in opcodeMap:
                         opcode = item
-                    elif item in self.spriteLists or item in self.globalLists:
+                    elif item in self.spriteLists:
                         if stack[-1] == "Whole":
                             if len(expression) > 2:
                                 if expression[itemIndex+1] == "len":
@@ -319,6 +335,32 @@ class scriptHandler:
                 case "!=":
                     blockName = self.initAtrobutes("operator_not", blockName, 0, inputName)
                     self.createLogicOperator("operator_equals", expression, ["OPERAND", "OPERAND1", "OPERAND2"], blockName)
+                    
+    def executeScript(self, blocks, parent):
+        self.createBlocks(None, blocks, parent)
+        return self.mendParent()
+    
+    def callFunc(self, funcName, inputs, parent, index=0, inputName=None):
+        blockName = self.initAtrobutes("procedures_call", parent, index, inputName)
+        self.sprite["blocks"][blockName]["mutation"] = {
+            "tagName": "mutation", 
+            "children": [], 
+            "proccode": funcName + " " + " ".join([element for element in self.funcSignatures[funcName]["inputDataTypes"]]), 
+            "argumentids": "[" + ",".join(["\"" + str(element) + "\"" for element in self.funcSignatures[funcName]["inputIds"]]) + "]", 
+            "warp": "true"
+        }
+
+        if len(inputs[0]) != 0:
+            for i in range(len(inputs)):        
+                if self.funcSignatures[funcName]["inputDataTypes"][i] == "%s":
+                    if self.funcSignatures[funcName]["inputNames"][i] == "varName" and not inputs[i][0] == "varName":
+                        self.sprite["blocks"][blockName]["inputs"][self.funcSignatures[funcName]["inputIds"][i]] = [1, [10, inputs[i][0]]]
+                    else:
+                        self.createExpressionBlocks(inputs[i], blockName, self.funcSignatures[funcName]["inputIds"][i])
+                else:
+                    self.createBoolean(self.flatten_single_lists(inputs[i]), blockName, self.funcSignatures[funcName]["inputIds"][i])
+
+        return blockName
 
     def createBlocks(self, filePath, blocks, parent, inputName=None):
         global opcodeMap
@@ -366,7 +408,7 @@ class scriptHandler:
                             case "color":
                                 self.sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [9, item[inputIndex+1][0]]]
                             case "text":
-                                self.createExpressionBlocks(item[inputIndex+1][0], blockName, blockInputs[inputIndex])
+                                self.createExpressionBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
                             case "boolean":
                                 if not isinstance(self.flatten_single_lists(item[inputIndex+1])[0], list
                                                   ) and (self.flatten_single_lists(item[inputIndex+1])[0] in opcodeMap or self.flatten_single_lists(item[inputIndex+1])[0] in aliases):
@@ -477,11 +519,25 @@ class scriptHandler:
                 
                 self.staticVars.append(item[1])
                 if len(item) > 2:
-                    self.createBlocks(filePath, [["createVar", [item[1]], [item[3::]]]], previous)
+                    self.executeScript([["createVar", [item[1]], [item[3::]]]], previous)
                 else:
-                    self.createBlocks(filePath, [["createVar", [item[1]], [0]]], previous)
-                previous = "block" + str(self.blockIndex)
-            
+                    self.executeScript([["createVar", [item[1]], [0]]], previous)
+                    
+            elif item[0] in self.staticVars:
+                if item[1] == "=":
+                    self.executeScript([["setVar", [item[0]], [item[2::]]]], previous)
+                    
+                elif item[1] == "+=":
+                    self.executeScript([["changeVar", [item[0]], [item[2::]]]], previous)
+                    
+                elif item[1] == "++":
+                    self.executeScript([["changeVar", [item[0]], [1]]], previous)
+                
+            elif item[0] == "del":
+                if item[1] in self.staticVars:
+                    self.executeScript([["deleteVar", [item[1]]]], previous)
+                    self.staticVars.remove(item[1])
+                
             elif item[0] == "while":
                 blockName = self.initAtrobutes("control_repeat_until", previous, index, inputName)
                 topBlock = blockName
@@ -537,33 +593,10 @@ class scriptHandler:
                 previous = None
 
             elif item[0] in self.funcSignatures:
-                blockName = self.initAtrobutes("procedures_call", previous, index, inputName)
-                self.sprite["blocks"][blockName]["mutation"] = {
-                    "tagName": "mutation", 
-                    "children": [], 
-                    "proccode": item[0] + " " + " ".join([element for element in self.funcSignatures[item[0]]["inputDataTypes"]]), 
-                    "argumentids": "[" + ",".join(["\"" + str(element) + "\"" for element in self.funcSignatures[item[0]]["inputIds"]]) + "]", 
-                    "warp": "true"
-                }
-
-                if len(item[1]) != 0:
-                    for i in range(len(item)-1):        
-                        if self.funcSignatures[item[0]]["inputDataTypes"][i] == "%s":
-                            self.createExpressionBlocks(item[i+1], blockName, self.funcSignatures[item[0]]["inputIds"][i])
-                        else:
-                            self.createBoolean(self.flatten_single_lists(item[i+1]), blockName, self.funcSignatures[item[0]]["inputIds"][i])
-
-                previous = blockName
+                previous = self.callFunc(item[0], item[1::], previous, index, inputName)
 
             elif item[0] == "for":
-                blockName = self.initAtrobutes("data_setvariableto", previous, index, inputName)
-                self.spriteVars[item[1][0][1]] = [item[1][0][1] + str(self.blockIndex), 0]
-                if len(item[1][0]) > 3:
-                    self.createExpressionBlocks(item[1][0][3::], blockName, "VALUE")
-                else:
-                    self.createExpressionBlocks([0], blockName, "VALUE")
-                self.sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[1][0][1], self.spriteVars[item[1][0][1]][0]]
-                previous = blockName
+                previous = self.executeScript([item[1][0]], previous)
 
                 blockName = self.initAtrobutes("control_repeat_until", previous, index, inputName)
                 topBlock = blockName
@@ -572,8 +605,8 @@ class scriptHandler:
                 newSubstack = item[2]
                 newSubstack.append(item[1][2])
                 self.createBlocks(filePath, newSubstack, topBlock, "SUBSTACK")
-
                 previous = topBlock
+                previous = self.executeScript([["del", item[1][0][1]]], previous)
 
             elif item[0] == "import":
                 parentDirectory = Path(filePath).parent
@@ -581,7 +614,7 @@ class scriptHandler:
                 for command in fileCommands:
                     if command[0] == "export":
                         self.createBlocks(parentDirectory / item[1], command[1], previous)
-                        previous = "block" + str(self.blockIndex)
+                        previous = self.mendParent()
                         
             elif item[0] == "else":
                 self.sprite["blocks"][previous]["opcode"] = "control_if_else"
