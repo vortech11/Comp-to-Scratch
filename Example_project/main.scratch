@@ -3,16 +3,8 @@ sprite Stage{}
 sprite cat{
     script[
         start();
-        if(){
-
-        }
-        elif(){
-
-        }
-        elif(){
-
-        }
-        move(10);
+        static what = 10;
+        changeVar(what, 7);
     ];
     costumes[
         "pics/cat.svg"

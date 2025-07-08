@@ -102,19 +102,30 @@ class scriptHandler:
 
         return expression
 
-    def itemIsFunc(self, item):
+    def itemIsSpecialFunc(self, item):
         global opcodeMap
-
         funcs = [
             opcodeMap,
-            self.operatorMap,
             self.spriteLists,
             self.globalLists,
             ["len", "indexOf", "contains"]
         ]
-
+        
         for func in funcs:
             if item in func:
+                return True
+            
+        return False
+
+    def itemIsFunc(self, item):
+        global opcodeMap
+        
+        funcs = [
+            self.operatorMap,
+        ]
+
+        for func in funcs:
+            if self.itemIsSpecialFunc(item) or item in func:
                 return True
 
         return False
@@ -144,8 +155,6 @@ class scriptHandler:
     def convertRPN(self, expression):
         expression = self.convertParenths(expression)
         expression = self.solveFullList(expression)
-        
-        print(expression)
 
         output = []
         stack = []
@@ -164,7 +173,7 @@ class scriptHandler:
 
                         if len(stack) > 0:
                             if index + 1 < len(expression):
-                                if stack[-1] in opcodeMap and not expression[index + 1] == "[":
+                                if self.itemIsSpecialFunc(stack[-1]) and not expression[index + 1] == "[":
                                     output.append(stack.pop())
                 else:
                     output.append(item)
@@ -192,9 +201,11 @@ class scriptHandler:
         global opcodeMap
 
         parent = blockName
+        
+        expression = self.flatten_single_lists(expression)
 
-        expression = self.convertRPN(expression)
-
+        expression = self.convertRPN([expression])
+        
         stack = []
         if len(expression) == 1:
             self.varTypeTree(expression[0], blockName, inputName)
@@ -207,13 +218,16 @@ class scriptHandler:
                         opcode = item
                     elif item in self.spriteLists or item in self.globalLists:
                         if stack[-1] == "Whole":
-                            if expression[itemIndex+1] == "len":
-                                opcode = None
-                                stack.pop()
-                                stack.append(item)
-                            elif expression[itemIndex+2] == "indexOf":
-                                opcode = None
-                                stack.append(item)
+                            if len(expression) > 2:
+                                if expression[itemIndex+1] == "len":
+                                    opcode = None
+                                    stack.pop()
+                                    stack.append(item)
+                                elif expression[itemIndex+2] == "indexOf":
+                                    opcode = None
+                                    stack.append(item)
+                                else:
+                                    opcode = "data_listcontents"
                             else:
                                 opcode = "data_listcontents"
                         else:
@@ -271,7 +285,6 @@ class scriptHandler:
         self.createExpressionBlocks(expression[2], blockName, inputs[2])
 
     def createBoolean(self, expression, blockName, inputName):
-        print(expression[1])
 
         if self.currentFunc != None and expression[0] in self.funcSignatures[self.currentFunc]["inputNames"]:
             tempBlock = self.initAtrobutes("argument_reporter_boolean", blockName, 0, inputName)
@@ -353,12 +366,7 @@ class scriptHandler:
                             case "color":
                                 self.sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [9, item[inputIndex+1][0]]]
                             case "text":
-                                print(item)
-                                if isinstance(item[inputIndex+1][0], list):
-                                    #self.createBlocks(filePath, item[inputIndex+1], blockName, blockInputs[inputIndex])
-                                    self.createExpressionBlocks(item[inputIndex+1][0], blockName, blockInputs[inputIndex])
-                                else:
-                                    self.varTypeTree(item[inputIndex+1][0], blockName, blockInputs[inputIndex])
+                                self.createExpressionBlocks(item[inputIndex+1][0], blockName, blockInputs[inputIndex])
                             case "boolean":
                                 if not isinstance(self.flatten_single_lists(item[inputIndex+1])[0], list
                                                   ) and (self.flatten_single_lists(item[inputIndex+1])[0] in opcodeMap or self.flatten_single_lists(item[inputIndex+1])[0] in aliases):
@@ -413,11 +421,12 @@ class scriptHandler:
                 blockName = self.initAtrobutes("data_deletealloflist", previous, index, inputName)
                 self.sprite["blocks"][blockName]["fields"]["LIST"] = [item[1], self.spriteLists[item[1]][0]]
                 previous = blockName
-                for expression in item[3::]:
-                    blockName = self.initAtrobutes("data_addtolist", previous, index)
-                    self.createExpressionBlocks(expression, blockName, "ITEM")
-                    self.sprite["blocks"][blockName]["fields"]["LIST"] = [item[1], self.spriteLists[item[1]][0]]
-                    previous = blockName
+                if len(item[3]) != 0:
+                    for expression in item[3::]:
+                        blockName = self.initAtrobutes("data_addtolist", previous, index)
+                        self.createExpressionBlocks(expression, blockName, "ITEM")
+                        self.sprite["blocks"][blockName]["fields"]["LIST"] = [item[1], self.spriteLists[item[1]][0]]
+                        previous = blockName
 
             elif (item[0] in self.spriteLists) or (item[0] in self.globalLists):
 
@@ -441,6 +450,9 @@ class scriptHandler:
                         blockName = self.initAtrobutes("data_insertatlist", previous, index, inputName)
                         self.createExpressionBlocks(item[3], blockName, "INDEX")
                         self.createExpressionBlocks(item[4], blockName, "ITEM")
+                    elif item[2] == "remove":
+                        blockName = self.initAtrobutes("data_deleteoflist", previous, index, inputName)
+                        self.createExpressionBlocks(item[3], blockName, "INDEX")
                     else:
                         assert False, "Accessing method of list that does not exist"
                     
@@ -451,7 +463,7 @@ class scriptHandler:
                     if len(item) > 2 and item[2] == "=":
                         blockName = self.initAtrobutes("data_replaceitemoflist", previous, index, inputName)
                         self.createExpressionBlocks(item[1], blockName, "INDEX")
-                        self.createExpressionBlocks(item[3], blockName, "ITEM")
+                        self.createExpressionBlocks(item[3::], blockName, "ITEM")
                         
                         self.sprite["blocks"][blockName]["fields"]["LIST"] = [item[0], self.spriteLists[item[0]][0]]
                         previous = blockName
@@ -463,9 +475,12 @@ class scriptHandler:
                     previous = blockName
                     self.isStaticVars = True
                 
-                
-                    
-            
+                self.staticVars.append(item[1])
+                if len(item) > 2:
+                    self.createBlocks(filePath, [["createVar", [item[1]], [item[3::]]]], previous)
+                else:
+                    self.createBlocks(filePath, [["createVar", [item[1]], [0]]], previous)
+                previous = "block" + str(self.blockIndex)
             
             elif item[0] == "while":
                 blockName = self.initAtrobutes("control_repeat_until", previous, index, inputName)
@@ -582,7 +597,7 @@ class scriptHandler:
             else:
                 warnings.warn(f"Comand {item} not recognized")
                 
-            if not self.sprite["blocks"][previous]["opcode"] in ["control_if", "control_if_else"] and previousIf != None:
+            if previous != None and not self.sprite["blocks"][previous]["opcode"] in ["control_if", "control_if_else"] and previousIf != None:
                 previousIf = None
 
         return self.sprite, self.blockIndex, self.spriteVars, self.spriteLists

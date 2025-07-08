@@ -32,19 +32,22 @@
             "isStage": false,
             "name": "cat",
             "variables": {},
-            "lists": {},
+            "lists": { "key1": ["key", []], "value2": ["value", []] },
             "broadcasts": {},
             "blocks": {
-                "block2": {
-                    "opcode": "event_whenflagclicked",
+                "@YWORTE;;:[N1681ghhR": {
+                    "opcode": "data_replaceitemoflist",
                     "next": null,
                     "parent": null,
-                    "inputs": {},
-                    "fields": {},
+                    "inputs": {
+                        "INDEX": [1, [7, "1"]],
+                        "ITEM": [1, [10, "thing"]]
+                    },
+                    "fields": { "LIST": ["key", "key1"] },
                     "shadow": false,
                     "topLevel": true,
-                    "x": 0,
-                    "y": 0
+                    "x": 46,
+                    "y": 60
                 }
             },
             "comments": {},

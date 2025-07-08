@@ -1,3 +1,51 @@
 export{
+    func RESET(){
+        list key = [];
+        list value = [];
+        var ERRORTYPE = 0;
+    }
     start();
+    RESET();
+
+    func ERROR(errortype: text){
+        ERRORTYPE = errortype;
+    }
+
+    func createVar(varName: text, varValue: text){
+        if (contains(key, varName)){
+            ERROR("Var already exists");
+        }
+        else{
+            key.push(varName);
+            value.push(varValue);
+        }
+    }
+
+    func deleteVar(varName: text){
+        if (contains(key, varName)){
+            value.remove(indexOf(key, varName));
+            key.remove(indexOf(key, varName));
+        }
+        else{
+            ERROR("Var does not exist");
+        }
+    }
+
+    func setVar(varName: text, varValue: text){
+        if (contains(key, varName)){
+            if (contains(key, varValue)){
+                value[indexOf(key, varName)] = value[indexOf(key, varValue)];
+            }
+            else{
+                value[indexOf(key, varName)] = varValue;
+            }
+        }
+        else{
+            ERROR("Var does not exist");
+        }
+    }
+
+    func changeVar(varName: text, varValue: text){
+        setVar(varName, value[indexOf(key, varName)] + varValue);
+    }
 }
