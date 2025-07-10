@@ -2,12 +2,12 @@ sprite Stage{}
 
 sprite cat{
     script[
-        start();
-        list distances = [10, 7, 4, 6];
-
-        for(static i = 0; i < 3; i++){
-            move(distances[i]);
+        func testfunc(input1: text){
+            move(input1);
+            return 10;
         }
+        
+        start();
     ];
     costumes[
         "pics/cat.svg"

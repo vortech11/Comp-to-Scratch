@@ -21,12 +21,13 @@ class scriptHandler:
 
         self.sprite = spriteInput
         self.blockIndex = blockIndexInput
+        
         self.spriteVars = spriteVarsInput
         self.globalVars = globalVarsInput
         self.spriteLists = spriteListsInput
         self.globalLists = globalListsInput
         
-        self.isStaticVars = False
+        self.dependencies = {"staticVars": False}
         self.staticVars = []
 
     def initAtrobutes(self, opcode, previous, index, inputName=None):
@@ -67,7 +68,7 @@ class scriptHandler:
 
     def varTypeTree(self, value, blockName, inputName):
         global opcodeMap
-
+        
         if value in self.spriteVars:
             outputValue = [1, [12, value, self.spriteVars[value][0]]]
         elif value in self.globalVars:
@@ -76,11 +77,17 @@ class scriptHandler:
             outputValue = [1, [13, value, self.spriteLists[value][0]]]
         elif value in self.globalLists:
             outputValue = [1, [13, value, self.globalLists[value][0]]]
-        elif self.currentFunc != None and value in self.funcSignatures[self.currentFunc]["inputNames"]:
-            if self.funcSignatures[self.currentFunc]["inputDataTypes"][self.funcSignatures[self.currentFunc]["inputNames"].index(value)] == "%s":
-                tempBlock = self.initAtrobutes("argument_reporter_string_number", blockName, 0, inputName)
+        elif self.currentFunc != None and (value in self.funcSignatures[self.currentFunc]["inputNames"] or value in self.funcSignatures[self.currentFunc]["returns"]):
+            if value in self.funcSignatures[self.currentFunc]["inputNames"]:
+                if self.funcSignatures[self.currentFunc]["inputDataTypes"][self.funcSignatures[self.currentFunc]["inputNames"].index(value)] == "%s":
+                    tempBlock = self.initAtrobutes("argument_reporter_string_number", blockName, 0, inputName)
+                else:
+                    tempBlock = self.initAtrobutes("argument_reporter_boolean", blockName, 0, inputName)
             else:
-                tempBlock = self.initAtrobutes("argument_reporter_boolean", blockName, 0, inputName)
+                if self.funcSignatures[self.currentFunc]["returnDataTypes"][self.funcSignatures[self.currentFunc]["returns"].index(value)] == "%s":
+                    tempBlock = self.initAtrobutes("argument_reporter_string_number", blockName, 0, inputName)
+                else:
+                    tempBlock = self.initAtrobutes("argument_reporter_boolean", blockName, 0, inputName)
             self.sprite["blocks"][tempBlock]["inputs"] = {}
             self.sprite["blocks"][tempBlock]["fields"]["VALUE"] = [value, None]
             outputValue = [1, tempBlock]
@@ -336,6 +343,26 @@ class scriptHandler:
                     blockName = self.initAtrobutes("operator_not", blockName, 0, inputName)
                     self.createLogicOperator("operator_equals", expression, ["OPERAND", "OPERAND1", "OPERAND2"], blockName)
                     
+    def applyFuncSig(self, blockName, funcName):
+        self.sprite["blocks"][blockName]["mutation"]["argumentnames"] = "[" + ",".join(["\"" + str(element) + "\"" for element in self.funcSignatures[funcName]["inputNames"] + self.funcSignatures[funcName]["returns"]]) + "]"
+        self.sprite["blocks"][blockName]["mutation"]["argumentids"] = "[" + ",".join(["\"" + str(element) + "\"" for element in self.funcSignatures[funcName]["inputIds"] + self.funcSignatures[funcName]["returns"]]) + "]"
+        self.sprite["blocks"][blockName]["mutation"]["argumentdefaults"] = "[" + ",".join(["\"" + "false" + "\"" if element == "%b" else "\"\"" for element in self.funcSignatures[funcName]["inputDataTypes"] + self.funcSignatures[funcName]["returnDataTypes"]]) + "]"
+        self.sprite["blocks"][blockName]["mutation"]["proccode"] = funcName + " " + " ".join(self.funcSignatures[funcName]["inputDataTypes"] + self.funcSignatures[funcName]["returnDataTypes"])
+        
+    def requireDep(self, dep, previous):
+        if not self.dependencies[dep]:
+            func = self.currentFunc
+            blockName = previous
+            self.createBlocks(Path.cwd() / "src/placeholder.txt", [["import", "packages/static.scratch"]], None)
+            previous = blockName
+            self.currentFunc = func
+            self.dependencies[dep] = True
+
+        
+                    
+        return previous
+        
+        
     def executeScript(self, blocks, parent):
         self.createBlocks(None, blocks, parent)
         return self.mendParent()
@@ -351,15 +378,15 @@ class scriptHandler:
         }
 
         if len(inputs[0]) != 0:
-            for i in range(len(inputs)):        
+            for i in range(len(inputs)):
                 if self.funcSignatures[funcName]["inputDataTypes"][i] == "%s":
-                    if self.funcSignatures[funcName]["inputNames"][i] == "varName" and not inputs[i][0] == "varName":
+                    if self.funcSignatures[funcName]["inputNames"][i] == "varName" and (not inputs[i][0] in self.funcSignatures[self.currentFunc]["inputNames"] and not inputs[i][0] in self.funcSignatures[self.currentFunc]["returns"]) and not inputs[i][0] == "varName":
+                        print("HIHJ")
                         self.sprite["blocks"][blockName]["inputs"][self.funcSignatures[funcName]["inputIds"][i]] = [1, [10, inputs[i][0]]]
                     else:
                         self.createExpressionBlocks(inputs[i], blockName, self.funcSignatures[funcName]["inputIds"][i])
                 else:
                     self.createBoolean(self.flatten_single_lists(inputs[i]), blockName, self.funcSignatures[funcName]["inputIds"][i])
-
         return blockName
 
     def createBlocks(self, filePath, blocks, parent, inputName=None):
@@ -511,11 +538,7 @@ class scriptHandler:
                         previous = blockName
 
             elif item[0] == "static":
-                if not self.isStaticVars:
-                    blockName = previous
-                    self.createBlocks(Path.cwd() / "src/placeholder.txt", [["import", "packages/static.scratch"]], None)
-                    previous = blockName
-                    self.isStaticVars = True
+                self.requireDep("staticVars", previous)
                 
                 self.staticVars.append(item[1])
                 if len(item) > 2:
@@ -565,26 +588,28 @@ class scriptHandler:
                 self.funcSignatures[item[1]] = { 
                     "inputNames": [], 
                     "inputDataTypes": [], 
-                    "inputIds": [] 
+                    "inputIds": [],
+                    "returns": [],
+                    "returnDataTypes": [],
+                    "funcProtoName": None
                 }
+                self.funcSignatures[item[1]]["funcProtoName"] = blockName
                 if len(item[2]) != 0:
                     for i in range(len(item)-3):
                         self.funcSignatures[item[1]]["inputNames"].append(self.flatten_single_lists(item[i+2])[0])
                         self.funcSignatures[item[1]]["inputIds"].append(str(self.flatten_single_lists(item[i+2])[0]) + str(self.blockIndex))
+                        # New Tech Discovered!
+                        # The stuff commented out is automatically generated by scratch!
                         if self.flatten_single_lists(item[i+2])[1] == "text":
-                            self.sprite["blocks"][blockName]["mutation"]["proccode"] += " %s"
-                            self.sprite["blocks"][self.initAtrobutes("argument_reporter_string_number", blockName, 0, self.flatten_single_lists(item[i+2])[0])]["fields"]["VALUE"] = [self.flatten_single_lists(item[i+2])[0], None]
+                            #self.sprite["blocks"][self.initAtrobutes("argument_reporter_string_number", blockName, 0, self.flatten_single_lists(item[i+2])[0])]["fields"]["VALUE"] = [self.flatten_single_lists(item[i+2])[0], None]
                             self.funcSignatures[item[1]]["inputDataTypes"].append("%s")
 
 
                         elif self.flatten_single_lists(item[i+2])[1] == "bool":
-                            self.sprite["blocks"][blockName]["mutation"]["proccode"] += " %b"
-                            self.sprite["blocks"][self.initAtrobutes("argument_reporter_boolean", blockName, 0, self.flatten_single_lists(item[i+2])[0])]["fields"]["VALUE"] = [self.flatten_single_lists(item[i+2])[0], None]
+                            #self.sprite["blocks"][self.initAtrobutes("argument_reporter_boolean", blockName, 0, self.flatten_single_lists(item[i+2])[0])]["fields"]["VALUE"] = [self.flatten_single_lists(item[i+2])[0], None]
                             self.funcSignatures[item[1]]["inputDataTypes"].append("%b")
 
-                self.sprite["blocks"][blockName]["mutation"]["argumentnames"] = "[" + ",".join(["\"" + str(element) + "\"" for element in self.funcSignatures[item[1]]["inputNames"]]) + "]"
-                self.sprite["blocks"][blockName]["mutation"]["argumentids"] = "[" + ",".join(["\"" + str(element) + "\"" for element in self.funcSignatures[item[1]]["inputIds"]]) + "]"
-                self.sprite["blocks"][blockName]["mutation"]["argumentdefaults"] = "[" + ",".join(["\"" + "false" + "\"" if element == "%b" else "\"\"" for element in self.funcSignatures[item[1]]["inputDataTypes"]]) + "]"
+                self.applyFuncSig(blockName, item[1])
 
                 self.currentFunc = item[1]
 
@@ -594,6 +619,15 @@ class scriptHandler:
 
             elif item[0] in self.funcSignatures:
                 previous = self.callFunc(item[0], item[1::], previous, index, inputName)
+            
+            elif self.currentFunc != None and item[0] == "return":
+                self.funcSignatures[self.currentFunc]["returns"].append("input")
+                self.funcSignatures[self.currentFunc]["returnDataTypes"].append("%s")
+                self.applyFuncSig(self.funcSignatures[self.currentFunc]["funcProtoName"], self.currentFunc)
+                
+                self.requireDep("staticVars", previous)
+                
+                previous = self.callFunc("setVar", [["input"], [item[1]]], previous, index, inputName)
 
             elif item[0] == "for":
                 previous = self.executeScript([item[1][0]], previous)
@@ -606,7 +640,8 @@ class scriptHandler:
                 newSubstack.append(item[1][2])
                 self.createBlocks(filePath, newSubstack, topBlock, "SUBSTACK")
                 previous = topBlock
-                previous = self.executeScript([["del", item[1][0][1]]], previous)
+                if item[1][0][0] == "static":
+                    previous = self.executeScript([["del", item[1][0][1]]], previous)
 
             elif item[0] == "import":
                 parentDirectory = Path(filePath).parent

@@ -32,22 +32,108 @@
             "isStage": false,
             "name": "cat",
             "variables": {},
-            "lists": { "key1": ["key", []], "value2": ["value", []] },
+            "lists": {},
             "broadcasts": {},
             "blocks": {
-                "@YWORTE;;:[N1681ghhR": {
-                    "opcode": "data_replaceitemoflist",
-                    "next": null,
+                "block2": {
+                    "opcode": "procedures_definition",
+                    "next": "Z9Ry*iNnv!J1VA976RO@",
                     "parent": null,
-                    "inputs": {
-                        "INDEX": [1, [7, "1"]],
-                        "ITEM": [1, [10, "thing"]]
-                    },
-                    "fields": { "LIST": ["key", "key1"] },
+                    "inputs": { "custom_block": [1, "block3"] },
+                    "fields": {},
                     "shadow": false,
                     "topLevel": true,
-                    "x": 46,
-                    "y": 60
+                    "x": 48,
+                    "y": 64
+                },
+                "block3": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "block2",
+                    "inputs": {
+                        "input13": [1, "Nj85tmaTO7k#^rgRwhWB"],
+                        "input": [1, "=g(^nP7!hwi8g25VN;ny"]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "testfunc %s %s",
+                        "argumentids": "[\"input13\",\"input\"]",
+                        "argumentnames": "[\"input1\",\"input\"]",
+                        "argumentdefaults": "[\"\",\"\"]",
+                        "warp": "true"
+                    }
+                },
+                "Nj85tmaTO7k#^rgRwhWB": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "block3",
+                    "inputs": {},
+                    "fields": { "VALUE": ["input1", null] },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "=g(^nP7!hwi8g25VN;ny": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "block3",
+                    "inputs": {},
+                    "fields": { "VALUE": ["input", null] },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "block5": {
+                    "opcode": "event_whenflagclicked",
+                    "next": ")mUT%;#sCBg8Hz#)8^LK",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 53,
+                    "y": 235
+                },
+                "Z9Ry*iNnv!J1VA976RO@": {
+                    "opcode": "motion_movesteps",
+                    "next": null,
+                    "parent": "block2",
+                    "inputs": {
+                        "STEPS": [3, "#^RAyfip_EPnMn3@!`Fc", [4, "10"]]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "#^RAyfip_EPnMn3@!`Fc": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Z9Ry*iNnv!J1VA976RO@",
+                    "inputs": {},
+                    "fields": { "VALUE": ["input", null] },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ")mUT%;#sCBg8Hz#)8^LK": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "block5",
+                    "inputs": {
+                        "input13": [1, [10, ""]],
+                        "input": [1, [10, "10"]]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "testfunc %s %s",
+                        "argumentids": "[\"input13\",\"input\"]",
+                        "warp": "true"
+                    }
                 }
             },
             "comments": {},
@@ -67,7 +153,7 @@
             "volume": 100,
             "layerOrder": 1,
             "visible": true,
-            "x": 0,
+            "x": 40,
             "y": 0,
             "size": 100,
             "direction": 90,
