@@ -93,7 +93,7 @@ def createSprite(spriteName, spriteData):
 
     for attribute in spriteData:
         if attribute[0] == "script":
-            sprite, blockIndex, spriteVars, spriteLists = scriptHandler(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists
+            sprite, blockIndex, spriteVars, spriteLists, x = scriptHandler(sprite, blockIndex, spriteVars, globalVars, spriteLists, globalLists
                                                                         ).createBlocks(filePath, attribute[1], None)
             for item, value in spriteVars.items():
                 sprite["variables"][value[0]] = [item, value[1]]

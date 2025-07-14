@@ -3,6 +3,7 @@ sprite Stage{}
 sprite cat{
     script[
         func testfunc(input1: text){
+            static thing;
             move(input1);
             return 10;
         }

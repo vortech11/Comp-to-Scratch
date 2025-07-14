@@ -31,6 +31,7 @@ class scriptHandler:
         
         self.dependencies = {"staticVars": False}
         self.staticVars = []
+        self.varsToBeDeleted = []
 
     def initAtrobutes(self, opcode, previous, index, inputName=None):
         global opcodeMap
@@ -580,24 +581,26 @@ class scriptHandler:
                 self.requireDep("staticVars", previous)
                 
                 self.staticVars.append(item[1])
+                if self.currentFunc != None:
+                    self.varsToBeDeleted.append(item[1])
                 if len(item) > 2:
-                    self.executeScript([["createVar", [item[1]], [item[3::]]]], previous)
+                    previous = self.executeScript([["createVar", [item[1]], [item[3::]]]], previous)
                 else:
-                    self.executeScript([["createVar", [item[1]], [0]]], previous)
+                    previous = self.executeScript([["createVar", [item[1]], [0]]], previous)
                     
             elif item[0] in self.staticVars:
                 if item[1] == "=":
-                    self.executeScript([["setVar", [item[0]], [item[2::]]]], previous)
+                    previous = self.executeScript([["setVar", [item[0]], [item[2::]]]], previous)
                     
                 elif item[1] == "+=":
-                    self.executeScript([["changeVar", [item[0]], [item[2::]]]], previous)
+                    previous = self.executeScript([["changeVar", [item[0]], [item[2::]]]], previous)
                     
                 elif item[1] == "++":
-                    self.executeScript([["changeVar", [item[0]], [1]]], previous)
+                    previous = self.executeScript([["changeVar", [item[0]], [1]]], previous)
                 
             elif item[0] == "del":
                 if item[1] in self.staticVars:
-                    self.executeScript([["deleteVar", [item[1]]]], previous)
+                    previous = self.executeScript([["deleteVar", [item[1]]]], previous)
                     self.staticVars.remove(item[1])
                 
             elif item[0] == "while":
@@ -652,7 +655,9 @@ class scriptHandler:
 
                 self.currentFunc = item[1]
 
-                self.createBlocks(filePath, item[-1], topBlock)
+                previous = self.createBlocks(filePath, item[-1], topBlock)[4]
+                for var in self.varsToBeDeleted:
+                    previous = self.callFunc("deleteVar", [[var]], previous)
 
                 previous = None
 
@@ -707,4 +712,4 @@ class scriptHandler:
             if previous != None and not self.sprite["blocks"][previous]["opcode"] in ["control_if", "control_if_else"] and previousIf != None:
                 previousIf = None
 
-        return self.sprite, self.blockIndex, self.spriteVars, self.spriteLists
+        return self.sprite, self.blockIndex, self.spriteVars, self.spriteLists, previous
