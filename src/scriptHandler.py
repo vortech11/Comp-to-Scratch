@@ -230,6 +230,8 @@ class scriptHandler:
 
         parent = blockName
         
+        returnBlock = blockName
+        
         expression = self.flatten_single_lists(expression)
 
         expression = self.convertRPN([expression])
@@ -250,12 +252,17 @@ class scriptHandler:
                         for _ in self.funcSignatures[item]["inputNames"]:
                             funcInputs.append([stack.pop()])
                         topperBlock = self.sprite["blocks"][topBlock]["parent"]
-                        tempBlockName = self.callFunc("createVar", [["temp"], [0]], topperBlock)
-                        funcInputs.append(["temp"])
-                        print(funcInputs)
+                        tempVarName = f"temp{self.blockIndex}"
+                        tempBlockName = self.callFunc("createVar", [[tempVarName], [0]], topperBlock)
+                        funcInputs.append([tempVarName])
                         tempBlockName = self.callFunc(item, funcInputs, tempBlockName)
                         self.sprite["blocks"][topBlock]["parent"] = tempBlockName
                         self.sprite["blocks"][tempBlockName]["next"] = topBlock
+                        stack.append(tempVarName)
+                        self.staticVars.append(tempVarName)
+                        if len(expression) == len(funcInputs):
+                            self.varTypeTree(stack[-1], blockName, inputName)
+                        returnBlock = self.callFunc("deleteVar", [[tempVarName]], returnBlock)
                         
                     elif item in self.spriteLists:
                         if stack[-1] == "Whole":
@@ -319,6 +326,8 @@ class scriptHandler:
                         stack.append([blockName])
                 else:
                     stack.append(item)
+        
+        return returnBlock
 
     def createLogicOperator(self, opcode, expression, inputs, blockName):
         blockName = self.initAtrobutes(opcode, blockName, 0, inputs[0])
@@ -394,6 +403,7 @@ class scriptHandler:
             "argumentids": "[" + ",".join(["\"" + str(element) + "\"" for element in self.funcSignatures[funcName]["inputIds"] + self.funcSignatures[funcName]["returns"]]) + "]", 
             "warp": "true"
         }
+        returnName = blockName
 
         if len(inputs[0]) != 0:
             for i in range(len(inputs)):
@@ -401,17 +411,19 @@ class scriptHandler:
                     if self.funcSignatures[funcName]["inputDataTypes"][i] == "%s":
                         if self.currentFunc != None and self.funcSignatures[funcName]["inputNames"][i] == "varName" and (not inputs[i][0] in self.funcSignatures[self.currentFunc]["inputNames"] and not inputs[i][0] in self.funcSignatures[self.currentFunc]["returns"]) and not inputs[i][0] == "varName":
                             self.sprite["blocks"][blockName]["inputs"][self.funcSignatures[funcName]["inputIds"][i]] = [1, [10, inputs[i][0]]]
+                        elif funcName == "deleteVar":
+                            self.sprite["blocks"][blockName]["inputs"][self.funcSignatures[funcName]["inputIds"][i]] = [1, [10, inputs[i][0]]]
                         else:
-                            self.createExpressionBlocks(inputs[i], blockName, self.funcSignatures[funcName]["inputIds"][i])
+                            returnName = self.createExpressionBlocks(inputs[i], blockName, self.funcSignatures[funcName]["inputIds"][i])
                     else:
                         self.createBoolean(self.flatten_single_lists(inputs[i]), blockName, self.funcSignatures[funcName]["inputIds"][i])
                 else:
                     returnIndex = i % len(self.funcSignatures[funcName]["inputNames"])
                     if self.funcSignatures[funcName]["returnDataTypes"][returnIndex] == "%s":
-                        self.createExpressionBlocks(inputs[i], blockName, self.funcSignatures[funcName]["returns"][returnIndex])
+                        returnName = self.createExpressionBlocks(inputs[i], blockName, self.funcSignatures[funcName]["returns"][returnIndex])
                     else:
                         self.createBoolean(self.flatten_single_lists(inputs[i]), blockName, self.funcSignatures[funcName]["returns"][returnIndex])
-        return blockName
+        return returnName
 
     def createBlocks(self, filePath, blocks, parent, inputName=None):
         global opcodeMap
@@ -441,11 +453,12 @@ class scriptHandler:
                 
                 if opcode == "control_if":
                     previousIf = blockName
+                
+                returnName = blockName
 
                 if len(blockInfo["inputs"]) > 0:
                     blockInputType = blockInfo["inputtype"]
                     blockInputs = blockInfo["inputs"]
-
                     for inputIndex in range(0, len(item)-1):
                         match blockInputType[inputIndex]:
                             case "dropdown":
@@ -460,7 +473,7 @@ class scriptHandler:
                             case "color":
                                 self.sprite["blocks"][blockName]["inputs"][blockInputs[inputIndex]] = [1, [9, item[inputIndex+1][0]]]
                             case "text":
-                                self.createExpressionBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
+                                returnName = self.createExpressionBlocks(item[inputIndex+1], blockName, blockInputs[inputIndex])
                             case "boolean":
                                 if not isinstance(self.flatten_single_lists(item[inputIndex+1])[0], list
                                                   ) and (self.flatten_single_lists(item[inputIndex+1])[0] in opcodeMap or self.flatten_single_lists(item[inputIndex+1])[0] in aliases):
@@ -474,41 +487,46 @@ class scriptHandler:
                     previous = None
                     self.currentFunc = None
                 else:
-                    previous = blockName
+                    previous = returnName
 
             elif item[0] == "var":
                 blockName = self.initAtrobutes("data_setvariableto", previous, index, inputName)
                 self.spriteVars[item[1]] = [item[1] + str(self.blockIndex), 0]
+                returnName = blockName
                 if len(item) > 3:
-                    self.createExpressionBlocks(item[3::], blockName, "VALUE")
+                    returnName = self.createExpressionBlocks(item[3::], blockName, "VALUE")
                 else:
-                    self.createExpressionBlocks([0], blockName, "VALUE")
+                    returnName = self.createExpressionBlocks([0], blockName, "VALUE")
                 self.sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[1], self.spriteVars[item[1]][0]]
-                previous = blockName
+                previous = returnName
 
             elif (item[0] in self.spriteVars) or (item[0] in self.globalVars):
 
                 if item[1] == "=":
                     blockName = self.initAtrobutes("data_setvariableto", previous, index, inputName)
-                    self.createExpressionBlocks(item[2::], blockName, "VALUE")
+                    returnName = blockName
+                    returnName = self.createExpressionBlocks(item[2::], blockName, "VALUE")
 
                 elif item[1] == "+=":
                     blockName = self.initAtrobutes("data_changevariableby", previous, index, inputName)
-                    self.createExpressionBlocks(item[2::], blockName, "VALUE")
+                    returnName = blockName
+                    returnName = self.createExpressionBlocks(item[2::], blockName, "VALUE")
 
                 elif item[1] == "++":
                     blockName = self.initAtrobutes("data_changevariableby", previous, index, inputName)
-                    self.createExpressionBlocks(["1"], blockName, "VALUE")
+                    returnName = blockName
+                    returnName = self.createExpressionBlocks(["1"], blockName, "VALUE")
 
                 else:
                     blockName = self.initAtrobutes("data_setvariableto", previous, index, inputName)
-                    self.createExpressionBlocks([item[0]], blockName, "VALUE")
+                    returnName = blockName
+                    returnName = self.createExpressionBlocks([item[0]], blockName, "VALUE")
 
                 if item[0] in self.spriteVars:
                     self.sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], self.spriteVars[item[0]][0]]
                 else:
                     self.sprite["blocks"][blockName]["fields"]["VARIABLE"] = [item[0], self.globalVars[item[0]][0]]
-                previous = blockName
+                previous = returnName
 
             elif item[0] == "list":
                 self.spriteLists[item[1]] = [item[1] + str(self.blockIndex), []]
@@ -518,9 +536,8 @@ class scriptHandler:
                 if len(item[3]) != 0:
                     for expression in item[3::]:
                         blockName = self.initAtrobutes("data_addtolist", previous, index)
-                        self.createExpressionBlocks(expression, blockName, "ITEM")
                         self.sprite["blocks"][blockName]["fields"]["LIST"] = [item[1], self.spriteLists[item[1]][0]]
-                        previous = blockName
+                        previous = self.createExpressionBlocks(expression, blockName, "ITEM")
 
             elif (item[0] in self.spriteLists) or (item[0] in self.globalLists):
 
@@ -531,22 +548,21 @@ class scriptHandler:
                     if not (len(item[2::]) == 1 and len(item[2::][0]) == 0):
                         for expression in item[2::]:
                             blockName = self.initAtrobutes("data_addtolist", previous, index)
-                            self.createExpressionBlocks(expression, blockName, "ITEM")
                             self.sprite["blocks"][blockName]["fields"]["LIST"] = [item[0], self.spriteLists[item[0]][0]]
-                            previous = blockName
+                            previous = self.createExpressionBlocks(expression, blockName, "ITEM")
 
                 elif item[1] == ".":
 
                     if item[2] == "push":
                         blockName = self.initAtrobutes("data_addtolist", previous, index, inputName)
-                        self.createExpressionBlocks(item[3], blockName, "ITEM")
+                        previous = self.createExpressionBlocks(item[3], blockName, "ITEM")
                     elif item[2] == "insert":
                         blockName = self.initAtrobutes("data_insertatlist", previous, index, inputName)
-                        self.createExpressionBlocks(item[3], blockName, "INDEX")
+                        previous = self.createExpressionBlocks(item[3], blockName, "INDEX")
                         self.createExpressionBlocks(item[4], blockName, "ITEM")
                     elif item[2] == "remove":
                         blockName = self.initAtrobutes("data_deleteoflist", previous, index, inputName)
-                        self.createExpressionBlocks(item[3], blockName, "INDEX")
+                        previous = self.createExpressionBlocks(item[3], blockName, "INDEX")
                     else:
                         assert False, "Accessing method of list that does not exist"
                     
@@ -556,11 +572,9 @@ class scriptHandler:
                 elif isinstance(item[1], list):
                     if len(item) > 2 and item[2] == "=":
                         blockName = self.initAtrobutes("data_replaceitemoflist", previous, index, inputName)
-                        self.createExpressionBlocks(item[1], blockName, "INDEX")
-                        self.createExpressionBlocks(item[3::], blockName, "ITEM")
-                        
                         self.sprite["blocks"][blockName]["fields"]["LIST"] = [item[0], self.spriteLists[item[0]][0]]
-                        previous = blockName
+                        previous = self.createExpressionBlocks(item[1], blockName, "INDEX")
+                        self.createExpressionBlocks(item[3::], blockName, "ITEM")
 
             elif item[0] == "static":
                 self.requireDep("staticVars", previous)

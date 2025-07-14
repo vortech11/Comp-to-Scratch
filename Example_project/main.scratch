@@ -8,7 +8,8 @@ sprite cat{
         }
         
         start();
-        move(testfunc(10));
+        move(testfunc(10) + testfunc(4));
+        move(3);
     ];
     costumes[
         "pics/cat.svg"
