@@ -3,11 +3,13 @@ import hashlib
 import shutil
 from pathlib import Path
 import warnings
+import logging
+logger = logging.getLogger(__name__)
 
 from src.scriptHandler import scriptHandler
-from src.fileHandler import genTokens
+from src.parser import genTokens
 
-opcodeMap = json.load(open("src/OpcodeMap.json"))
+opcodeMap = json.load(open(Path(__file__).resolve().parent / "OpcodeMap.json"))
 
 def gen_hash(string):
     if type(string) != str:
@@ -49,7 +51,7 @@ def encodeAsset(sprite, assetType, assetPath, isDefault):
             filesToBeCompressed.append(outputFolderName + "/" + encodedName + ".svg")
 
             if isDefault:
-                shutil.copyfile(Path.cwd() / "src/Default Assets" / assetPath, 
+                shutil.copyfile(Path(__file__).resolve().parent / "Default Assets" / assetPath, 
                                 Path(filePath).parent / outputFolderName / (encodedName + ".svg"))
             else:
                 shutil.copyfile(Path(filePath).parent / assetPath, 

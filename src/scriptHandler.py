@@ -1,10 +1,12 @@
 import json
 from src.opcodeAlias import aliases
 from pathlib import Path
-from src.fileHandler import genTokens
+from src.parser import genTokens
 import warnings
+import logging
+logger = logging.getLogger(__name__)
 
-opcodeMap = json.load(open("src/OpcodeMap.json"))
+opcodeMap = json.load(open(Path(__file__).resolve().parent / "OpcodeMap.json"))
 
 class scriptHandler:
     def __init__(self, spriteInput, blockIndexInput, spriteVarsInput, globalVarsInput, spriteListsInput, globalListsInput):
@@ -131,7 +133,8 @@ class scriptHandler:
             opcodeMap,
             self.spriteLists,
             self.globalLists,
-            ["len", "indexOf", "contains"]
+            ["len", "indexOf", "contains"],
+            self.funcSignatures
         ]
         
         for func in funcs:
@@ -222,6 +225,8 @@ class scriptHandler:
         }
 
         global opcodeMap
+        
+        topBlock = blockName
 
         parent = blockName
         
@@ -239,6 +244,19 @@ class scriptHandler:
                         opcode = operators[item]
                     elif item in opcodeMap:
                         opcode = item
+                    elif item in self.funcSignatures:
+                        opcode = None
+                        funcInputs = []
+                        for _ in self.funcSignatures[item]["inputNames"]:
+                            funcInputs.append([stack.pop()])
+                        topperBlock = self.sprite["blocks"][topBlock]["parent"]
+                        tempBlockName = self.callFunc("createVar", [["temp"], [0]], topperBlock)
+                        funcInputs.append(["temp"])
+                        print(funcInputs)
+                        tempBlockName = self.callFunc(item, funcInputs, tempBlockName)
+                        self.sprite["blocks"][topBlock]["parent"] = tempBlockName
+                        self.sprite["blocks"][tempBlockName]["next"] = topBlock
+                        
                     elif item in self.spriteLists:
                         if stack[-1] == "Whole":
                             if len(expression) > 2:
@@ -353,7 +371,7 @@ class scriptHandler:
         if not self.dependencies[dep]:
             func = self.currentFunc
             blockName = previous
-            self.createBlocks(Path.cwd() / "src/placeholder.txt", [["import", "packages/static.scratch"]], None)
+            self.createBlocks(Path(__file__).resolve().parent / "placeholder.txt", [["import", "packages/static.scratch"]], None)
             previous = blockName
             self.currentFunc = func
             self.dependencies[dep] = True
@@ -372,21 +390,27 @@ class scriptHandler:
         self.sprite["blocks"][blockName]["mutation"] = {
             "tagName": "mutation", 
             "children": [], 
-            "proccode": funcName + " " + " ".join([element for element in self.funcSignatures[funcName]["inputDataTypes"]]), 
-            "argumentids": "[" + ",".join(["\"" + str(element) + "\"" for element in self.funcSignatures[funcName]["inputIds"]]) + "]", 
+            "proccode": funcName + " " + " ".join([element for element in self.funcSignatures[funcName]["inputDataTypes"] + self.funcSignatures[funcName]["returnDataTypes"]]), 
+            "argumentids": "[" + ",".join(["\"" + str(element) + "\"" for element in self.funcSignatures[funcName]["inputIds"] + self.funcSignatures[funcName]["returns"]]) + "]", 
             "warp": "true"
         }
 
         if len(inputs[0]) != 0:
             for i in range(len(inputs)):
-                if self.funcSignatures[funcName]["inputDataTypes"][i] == "%s":
-                    if self.funcSignatures[funcName]["inputNames"][i] == "varName" and (not inputs[i][0] in self.funcSignatures[self.currentFunc]["inputNames"] and not inputs[i][0] in self.funcSignatures[self.currentFunc]["returns"]) and not inputs[i][0] == "varName":
-                        print("HIHJ")
-                        self.sprite["blocks"][blockName]["inputs"][self.funcSignatures[funcName]["inputIds"][i]] = [1, [10, inputs[i][0]]]
+                if i < len(self.funcSignatures[funcName]["inputNames"]):
+                    if self.funcSignatures[funcName]["inputDataTypes"][i] == "%s":
+                        if self.currentFunc != None and self.funcSignatures[funcName]["inputNames"][i] == "varName" and (not inputs[i][0] in self.funcSignatures[self.currentFunc]["inputNames"] and not inputs[i][0] in self.funcSignatures[self.currentFunc]["returns"]) and not inputs[i][0] == "varName":
+                            self.sprite["blocks"][blockName]["inputs"][self.funcSignatures[funcName]["inputIds"][i]] = [1, [10, inputs[i][0]]]
+                        else:
+                            self.createExpressionBlocks(inputs[i], blockName, self.funcSignatures[funcName]["inputIds"][i])
                     else:
-                        self.createExpressionBlocks(inputs[i], blockName, self.funcSignatures[funcName]["inputIds"][i])
+                        self.createBoolean(self.flatten_single_lists(inputs[i]), blockName, self.funcSignatures[funcName]["inputIds"][i])
                 else:
-                    self.createBoolean(self.flatten_single_lists(inputs[i]), blockName, self.funcSignatures[funcName]["inputIds"][i])
+                    returnIndex = i % len(self.funcSignatures[funcName]["inputNames"])
+                    if self.funcSignatures[funcName]["returnDataTypes"][returnIndex] == "%s":
+                        self.createExpressionBlocks(inputs[i], blockName, self.funcSignatures[funcName]["returns"][returnIndex])
+                    else:
+                        self.createBoolean(self.flatten_single_lists(inputs[i]), blockName, self.funcSignatures[funcName]["returns"][returnIndex])
         return blockName
 
     def createBlocks(self, filePath, blocks, parent, inputName=None):
@@ -397,6 +421,7 @@ class scriptHandler:
         previous = parent
 
         for index, item in enumerate(blocks):
+            #logger.debug(item)
             if item[0] in opcodeMap or item[0] in aliases:
 
                 if item[0] in aliases:

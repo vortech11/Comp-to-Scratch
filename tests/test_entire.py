@@ -1,6 +1,6 @@
 from pathlib import Path
-from src.compiler import fillCommands
-from src.fileHandler import genTokens
+from src.interpreter import fillCommands
+from src.parser import genTokens
 
 def test_sprites():
     fileName = Path().cwd() / "tests/testCode/entireTest.scratch"
