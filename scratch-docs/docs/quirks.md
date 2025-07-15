@@ -1,6 +1,6 @@
 # Quirks of the compiler
 
-Because this is my first language ever written, it weird and unintended functionality.
+Because this is my first language ever written, it contains weird and unintended functionality.
 
 ## Whitespace
 
@@ -13,7 +13,6 @@ start    (  )     ;
       move () ;
   if   (1  == 1 )  { move
   (3)}
-    ;
 ]
     }
 ```
@@ -22,7 +21,7 @@ It looks horrible, but it works
 
 ## Brackets
 
-All types of brackets are interchangeable
+All types of brackets are interchangeable*
 
 Brackets include:
 
@@ -63,19 +62,9 @@ move("10.3");
 
 ## Semicolons
 
-Semicolons are relatively normal except for the fact that they must come after every function and command, including if statements and while loops
+Semicolons are relatively normal except for the fact that they must come after every function and command, excluding curly brackets.
 
 !!! failure "This does not work"
-    ```ts
-    if (5 == 3){
-        move(10);
-    }
-    move(3);
-    ```
-
-Instead it should look something like this:
-
-!!! success ""
     ```ts
     if (5 == 3){
         move(10);
@@ -83,14 +72,31 @@ Instead it should look something like this:
     move(3);
     ```
 
-The exception to this rule is if the command is the last in a stack or substack in which it is not needed
+!!! failure "This does not work"
+    ```ts
+    if (5 == 3)(
+        move(10);
+    )
+    move(3);
+    ```
+
+
+Instead it should look something like this:
 
 !!! success ""
     ```ts
-    script[
-        if (5 == 3){
-            move(10)
-        };
-        move(3)
-    ];
+    if (5 == 3){
+        move(10);
+    }
+    move(3);
+    ```
+
+...or this
+
+!!! success ""
+    ```ts
+    if (5 == 3)(
+        move(10);
+    );
+    move(3);
     ```

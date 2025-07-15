@@ -10,14 +10,14 @@ The following is an example .scratch file that makes the cat step through the it
 sprite Stage{};
 
 sprite cat{
-    script[
+    script{
         start();
         setxy(0, 0);
         move(3);
-        };
-    ];
-    costumes[
+        }
+    }
+    costumes{
         "cat.svg"
-    ];
-};
+    }
+}
 ```

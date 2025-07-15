@@ -1,0 +1,7 @@
+export {
+    require "console.scratch";
+    func RESET(){
+        var what = 0;
+    }
+    what += 3;
+}

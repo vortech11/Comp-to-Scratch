@@ -7,11 +7,11 @@ Scratch Script is created to embody the functionality of base Scratch, so there 
 This functionality is accomplished in Scratch Script by the use of the sprite keyword.
 
 ```ts linenums="1"
-sprite Stage{};
+sprite Stage{}
 
-sprite cat{};
+sprite cat{}
 
-sprite thing{};
+sprite thing{}
 ```
 
 The text that comes after `sprite` will be the name of the sprite.
@@ -26,9 +26,9 @@ Sprites have attributes such as their costumes or scripts.
 
 ```ts
 sprite cat{
-    script[];
-    costumes[];
-};
+    script{}
+    costumes{}
+}
 ```
 
 ## Scripts
@@ -37,10 +37,10 @@ Inside of scripts, there are functions and commands that are created from top to
 
 ```ts
 sprite cat{
-    script[
+    script{
         start();
         move(10);
-    ];
+    }
 }
 ```
 
@@ -52,11 +52,11 @@ Inside of the costumes attribute there is a list of file paths to images. The re
 
 ```ts
 sprite cat{
-    costumes[
+    costumes{
         "cat1.svg",
         "foldername/filename.svg"
-    ];
-};
+    }
+}
 ```
 
 For example, the path "folder1/bestImage.svg" would result in a costume named "bestImage".

@@ -2,15 +2,13 @@ sprite Stage{}
 
 sprite cat{
     script[
-        func testfunc(input1: text){
-            static thing;
-            move(input1);
-            return 10;
-        }
+        func moveDistance(distanceInput: text){
+            static tempDistance = 10;
+            move(tempDistance);
         
         start();
-        move(testfunc(10) + testfunc(4));
-        move(3);
+        moveDistance(10);
+}
     ];
     costumes[
         "pics/cat.svg"

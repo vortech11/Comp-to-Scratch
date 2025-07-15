@@ -1,5 +1,5 @@
 export {
     move(3);
-};
+}
 
-sprite cat2 {};
+sprite cat2 {}

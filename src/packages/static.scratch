@@ -1,14 +1,15 @@
 export{
+    require "console.scratch";
+
     func RESET(){
         list key = [];
         list value = [];
         var ERRORTYPE = 0;
     }
-    start();
-    RESET();
 
     func ERROR(errortype: text){
         ERRORTYPE = errortype;
+        print(ERRORTYPE);
     }
 
     func createVar(varName: text, varValue: text){

@@ -8,6 +8,7 @@ nav:
   - Structure of files: body.md
   - Quirks of syntax: quirks.md
   - Scripts: scripts.md
+  - Importing: importing.md
 theme:
   name: material
   logo: assets/cat.png

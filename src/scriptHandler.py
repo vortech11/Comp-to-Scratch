@@ -29,7 +29,8 @@ class scriptHandler:
         self.spriteLists = spriteListsInput
         self.globalLists = globalListsInput
         
-        self.dependencies = {"staticVars": False}
+        self.dependencies = []
+        
         self.staticVars = []
         self.varsToBeDeleted = []
 
@@ -377,17 +378,23 @@ class scriptHandler:
         self.sprite["blocks"][blockName]["mutation"]["argumentdefaults"] = "[" + ",".join(["\"" + "false" + "\"" if element == "%b" else "\"\"" for element in self.funcSignatures[funcName]["inputDataTypes"] + self.funcSignatures[funcName]["returnDataTypes"]]) + "]"
         self.sprite["blocks"][blockName]["mutation"]["proccode"] = funcName + " " + " ".join(self.funcSignatures[funcName]["inputDataTypes"] + self.funcSignatures[funcName]["returnDataTypes"])
         
-    def requireDep(self, dep, previous):
-        if not self.dependencies[dep]:
+    def requireDep(self, dep, filePath, previous):
+        if not dep in self.dependencies:
             func = self.currentFunc
             blockName = previous
-            self.createBlocks(Path(__file__).resolve().parent / "placeholder.txt", [["import", "packages/static.scratch"]], None)
+            file = Path(__file__).resolve().parent / "packages" / dep
+            if file.exists():
+                self.createBlocks(Path(__file__).resolve().parent / "placeholder.txt", [["import", f"packages/{dep}"]], None)
+            else:
+                file = Path(filePath).resolve().parent / dep
+                if file.exists():
+                    self.createBlocks(Path(filePath).resolve().parent / "placeholder.txt", [["import", dep]], None)
+                else:
+                    assert False, f"Dependency {dep} does not exist"
             previous = blockName
             self.currentFunc = func
-            self.dependencies[dep] = True
-
-        
-                    
+            self.dependencies.append(dep)
+            
         return previous
         
         
@@ -412,7 +419,7 @@ class scriptHandler:
                     if self.funcSignatures[funcName]["inputDataTypes"][i] == "%s":
                         if self.currentFunc != None and self.funcSignatures[funcName]["inputNames"][i] == "varName" and (not inputs[i][0] in self.funcSignatures[self.currentFunc]["inputNames"] and not inputs[i][0] in self.funcSignatures[self.currentFunc]["returns"]) and not inputs[i][0] == "varName":
                             self.sprite["blocks"][blockName]["inputs"][self.funcSignatures[funcName]["inputIds"][i]] = [1, [10, inputs[i][0]]]
-                        elif funcName == "deleteVar":
+                        elif self.funcSignatures[funcName]["inputNames"][i] == 'varName' and inputs[i][0] != "varName":
                             self.sprite["blocks"][blockName]["inputs"][self.funcSignatures[funcName]["inputIds"][i]] = [1, [10, inputs[i][0]]]
                         else:
                             returnName = self.createExpressionBlocks(inputs[i], blockName, self.funcSignatures[funcName]["inputIds"][i])
@@ -434,7 +441,7 @@ class scriptHandler:
         previous = parent
 
         for index, item in enumerate(blocks):
-            #logger.debug(item)
+            logger.debug(item)
             if item[0] in opcodeMap or item[0] in aliases:
 
                 if item[0] in aliases:
@@ -534,11 +541,12 @@ class scriptHandler:
                 blockName = self.initAtrobutes("data_deletealloflist", previous, index, inputName)
                 self.sprite["blocks"][blockName]["fields"]["LIST"] = [item[1], self.spriteLists[item[1]][0]]
                 previous = blockName
-                if len(item[3]) != 0:
-                    for expression in item[3::]:
-                        blockName = self.initAtrobutes("data_addtolist", previous, index)
-                        self.sprite["blocks"][blockName]["fields"]["LIST"] = [item[1], self.spriteLists[item[1]][0]]
-                        previous = self.createExpressionBlocks(expression, blockName, "ITEM")
+                if len(item) > 2:
+                    if len(item[3]) != 0:
+                        for expression in item[3::]:
+                            blockName = self.initAtrobutes("data_addtolist", previous, index)
+                            self.sprite["blocks"][blockName]["fields"]["LIST"] = [item[1], self.spriteLists[item[1]][0]]
+                            previous = self.createExpressionBlocks(expression, blockName, "ITEM")
 
             elif (item[0] in self.spriteLists) or (item[0] in self.globalLists):
 
@@ -578,7 +586,7 @@ class scriptHandler:
                         self.createExpressionBlocks(item[3::], blockName, "ITEM")
 
             elif item[0] == "static":
-                self.requireDep("staticVars", previous)
+                self.requireDep("static.scratch", filePath, previous)
                 
                 self.staticVars.append(item[1])
                 if self.currentFunc != None:
@@ -669,7 +677,7 @@ class scriptHandler:
                 self.funcSignatures[self.currentFunc]["returnDataTypes"].append("%s")
                 self.applyFuncSig(self.funcSignatures[self.currentFunc]["funcProtoName"], self.currentFunc)
                 
-                self.requireDep("staticVars", previous)
+                self.requireDep("static.scratch", filePath, previous)
                 
                 previous = self.callFunc("setVar", [["input"], [item[1]]], previous, index, inputName)
 
@@ -705,6 +713,9 @@ class scriptHandler:
                 self.createBoolean(item[1], blockName, "CONDITION")
                 self.createBlocks(filePath, item[2], blockName, "SUBSTACK")
                 previousIf = blockName
+                
+            elif item[0] == "require":
+                previous = self.requireDep(item[1], filePath, previous)
 
             else:
                 warnings.warn(f"Comand {item} not recognized")

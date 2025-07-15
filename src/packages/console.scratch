@@ -1,0 +1,9 @@
+export {
+    func consoleClear(){
+        list console = [];
+    }
+
+    func print(input: text){
+        console.push(input);
+    }
+}
