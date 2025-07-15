@@ -2,4 +2,14 @@ export {
     move(3);
 }
 
-sprite cat2 {}
+sprite Stage(){}
+
+sprite cat2 {
+    script{
+        static h;
+        loop(){
+            h=1;
+        }
+        move(3);
+    }
+}

@@ -6,4 +6,5 @@ aliases = {
     "setxy": "motion_gotoxy",
     "sleep": "control_wait",
     "say": "looks_say",
+    "loop": "control_repeat",
 }

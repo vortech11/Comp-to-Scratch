@@ -30,99 +30,22 @@
         },
         {
             "isStage": false,
-            "name": "cat",
-            "variables": {},
-            "lists": {},
+            "name": "cat2",
+            "variables": { "ERRORTYPE13": ["ERRORTYPE", 0] },
+            "lists": {
+                "console3": ["console", []],
+                "key10": ["key", []],
+                "value11": ["value", []]
+            },
             "broadcasts": {},
             "blocks": {
-                "block2": {
-                    "opcode": "procedures_definition",
-                    "next": "Z9Ry*iNnv!J1VA976RO@",
-                    "parent": null,
-                    "inputs": { "custom_block": [1, "block3"] },
-                    "fields": {},
-                    "shadow": false,
-                    "topLevel": true,
-                    "x": 48,
-                    "y": 64
-                },
-                "block3": {
-                    "opcode": "procedures_prototype",
-                    "next": null,
-                    "parent": "block2",
-                    "inputs": {
-                        "input13": [1, "Nj85tmaTO7k#^rgRwhWB"],
-                        "input": [1, "=g(^nP7!hwi8g25VN;ny"]
-                    },
-                    "fields": {},
-                    "shadow": true,
-                    "topLevel": false,
-                    "mutation": {
-                        "tagName": "mutation",
-                        "children": [],
-                        "proccode": "testfunc %s %s",
-                        "argumentids": "[\"input13\",\"input\"]",
-                        "argumentnames": "[\"input1\",\"input\"]",
-                        "argumentdefaults": "[\"\",\"\"]",
-                        "warp": "true"
-                    }
-                },
-                "Nj85tmaTO7k#^rgRwhWB": {
-                    "opcode": "argument_reporter_string_number",
-                    "next": null,
-                    "parent": "block3",
-                    "inputs": {},
-                    "fields": { "VALUE": ["input1", null] },
-                    "shadow": true,
-                    "topLevel": false
-                },
-                "=g(^nP7!hwi8g25VN;ny": {
-                    "opcode": "argument_reporter_string_number",
-                    "next": null,
-                    "parent": "block3",
-                    "inputs": {},
-                    "fields": { "VALUE": ["input", null] },
-                    "shadow": true,
-                    "topLevel": false
-                },
-                "block5": {
-                    "opcode": "event_whenflagclicked",
-                    "next": ")mUT%;#sCBg8Hz#)8^LK",
-                    "parent": null,
-                    "inputs": {},
-                    "fields": {},
-                    "shadow": false,
-                    "topLevel": true,
-                    "x": 53,
-                    "y": 235
-                },
-                "Z9Ry*iNnv!J1VA976RO@": {
-                    "opcode": "motion_movesteps",
-                    "next": null,
-                    "parent": "block2",
-                    "inputs": {
-                        "STEPS": [3, "#^RAyfip_EPnMn3@!`Fc", [4, "10"]]
-                    },
-                    "fields": {},
-                    "shadow": false,
-                    "topLevel": false
-                },
-                "#^RAyfip_EPnMn3@!`Fc": {
-                    "opcode": "argument_reporter_string_number",
-                    "next": null,
-                    "parent": "Z9Ry*iNnv!J1VA976RO@",
-                    "inputs": {},
-                    "fields": { "VALUE": ["input", null] },
-                    "shadow": false,
-                    "topLevel": false
-                },
-                ")mUT%;#sCBg8Hz#)8^LK": {
+                "block73": {
                     "opcode": "procedures_call",
                     "next": null,
-                    "parent": "block5",
+                    "parent": "block72",
                     "inputs": {
-                        "input13": [1, [10, ""]],
-                        "input": [1, [10, "10"]]
+                        "varName42": [1, "block74"],
+                        "varValue42": [1, [10, "1"]]
                     },
                     "fields": {},
                     "shadow": false,
@@ -130,21 +53,62 @@
                     "mutation": {
                         "tagName": "mutation",
                         "children": [],
-                        "proccode": "testfunc %s %s",
-                        "argumentids": "[\"input13\",\"input\"]",
+                        "proccode": "setVar %s %s",
+                        "argumentids": "[\"varName42\",\"varValue42\"]",
                         "warp": "true"
                     }
+                },
+                "block74": {
+                    "opcode": "data_itemoflist",
+                    "next": null,
+                    "parent": "block73",
+                    "inputs": { "INDEX": [1, "block75"] },
+                    "fields": { "LIST": ["value", "value11"] },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "block75": {
+                    "opcode": "data_itemnumoflist",
+                    "next": null,
+                    "parent": "block74",
+                    "inputs": { "ITEM": [1, [10, "h"]] },
+                    "fields": { "LIST": ["key", "key10"] },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "]r;i.`q~9D`7.2Z98??C": {
+                    "opcode": "control_repeat",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "TIMES": [1, [6, "10"]],
+                        "SUBSTACK": [2, "BPNN5/a/HVBo}#%^Us?J"]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 190,
+                    "y": 52
+                },
+                "BPNN5/a/HVBo}#%^Us?J": {
+                    "opcode": "motion_movesteps",
+                    "next": null,
+                    "parent": "]r;i.`q~9D`7.2Z98??C",
+                    "inputs": { "STEPS": [1, [4, "10"]] },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
                 }
             },
             "comments": {},
             "currentCostume": 0,
             "costumes": [
                 {
-                    "name": "cat",
+                    "name": "blank",
                     "bitmapResolution": 1,
                     "dataFormat": "svg",
-                    "assetId": "702d6b19295a4135a0cd6c49606e2a44",
-                    "md5ext": "702d6b19295a4135a0cd6c49606e2a44.svg",
+                    "assetId": "87ec29ad216c0074c731d581c7f40c39",
+                    "md5ext": "87ec29ad216c0074c731d581c7f40c39.svg",
                     "rotationCenterX": 0,
                     "rotationCenterY": 0
                 }
@@ -153,7 +117,7 @@
             "volume": 100,
             "layerOrder": 1,
             "visible": true,
-            "x": 40,
+            "x": 0,
             "y": 0,
             "size": 100,
             "direction": 90,

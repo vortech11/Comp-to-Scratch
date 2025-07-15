@@ -253,6 +253,7 @@ class scriptHandler:
                         funcInputs = []
                         for _ in self.funcSignatures[item]["inputNames"]:
                             funcInputs.append([stack.pop()])
+                        funcInputs.reverse()
                         topperBlock = self.sprite["blocks"][topBlock]["parent"]
                         tempVarName = f"temp{self.blockIndex}"
                         tempBlockName = self.callFunc("createVar", [[tempVarName], [0]], topperBlock)
@@ -398,9 +399,8 @@ class scriptHandler:
         return previous
         
         
-    def executeScript(self, blocks, parent):
-        self.createBlocks(None, blocks, parent)
-        return self.mendParent()
+    def executeScript(self, blocks, parent, inputName):
+        return self.createBlocks(None, blocks, parent, inputName)[4]
     
     def callFunc(self, funcName, inputs, parent, index=0, inputName=None):
         blockName = self.initAtrobutes("procedures_call", parent, index, inputName)
@@ -417,9 +417,9 @@ class scriptHandler:
             for i in range(len(inputs)):
                 if i < len(self.funcSignatures[funcName]["inputNames"]):
                     if self.funcSignatures[funcName]["inputDataTypes"][i] == "%s":
-                        if self.currentFunc != None and self.funcSignatures[funcName]["inputNames"][i] == "varName" and (not inputs[i][0] in self.funcSignatures[self.currentFunc]["inputNames"] and not inputs[i][0] in self.funcSignatures[self.currentFunc]["returns"]) and not inputs[i][0] == "varName":
+                        if self.currentFunc != None and self.funcSignatures[funcName]["inputNames"][i] == "varName" and ((not inputs[i][0] in self.funcSignatures[self.currentFunc]["inputNames"]) and (not inputs[i][0] in self.funcSignatures[self.currentFunc]["returns"])) and (not inputs[i][0] == "varName"):
                             self.sprite["blocks"][blockName]["inputs"][self.funcSignatures[funcName]["inputIds"][i]] = [1, [10, inputs[i][0]]]
-                        elif self.funcSignatures[funcName]["inputNames"][i] == 'varName' and inputs[i][0] != "varName":
+                        elif self.currentFunc == None and self.funcSignatures[funcName]["inputNames"][i] == 'varName' and inputs[i][0] != "varName":
                             self.sprite["blocks"][blockName]["inputs"][self.funcSignatures[funcName]["inputIds"][i]] = [1, [10, inputs[i][0]]]
                         else:
                             returnName = self.createExpressionBlocks(inputs[i], blockName, self.funcSignatures[funcName]["inputIds"][i])
@@ -592,23 +592,23 @@ class scriptHandler:
                 if self.currentFunc != None:
                     self.varsToBeDeleted.append(item[1])
                 if len(item) > 2:
-                    previous = self.executeScript([["createVar", [item[1]], [item[3::]]]], previous)
+                    previous = self.executeScript([["createVar", [item[1]], [item[3::]]]], previous, inputName)
                 else:
-                    previous = self.executeScript([["createVar", [item[1]], [0]]], previous)
+                    previous = self.executeScript([["createVar", [item[1]], [0]]], previous, inputName)
                     
             elif item[0] in self.staticVars:
                 if item[1] == "=":
-                    previous = self.executeScript([["setVar", [item[0]], [item[2::]]]], previous)
+                    previous = self.executeScript([["setVar", [item[0]], [item[2::]]]], previous, inputName)
                     
                 elif item[1] == "+=":
-                    previous = self.executeScript([["changeVar", [item[0]], [item[2::]]]], previous)
+                    previous = self.executeScript([["changeVar", [item[0]], [item[2::]]]], previous, inputName)
                     
                 elif item[1] == "++":
-                    previous = self.executeScript([["changeVar", [item[0]], [1]]], previous)
+                    previous = self.executeScript([["changeVar", [item[0]], [1]]], previous, inputName)
                 
             elif item[0] == "del":
                 if item[1] in self.staticVars:
-                    previous = self.executeScript([["deleteVar", [item[1]]]], previous)
+                    previous = self.executeScript([["deleteVar", [item[1]]]], previous, inputName)
                     self.staticVars.remove(item[1])
                 
             elif item[0] == "while":
@@ -664,6 +664,7 @@ class scriptHandler:
                 self.currentFunc = item[1]
 
                 previous = self.createBlocks(filePath, item[-1], topBlock)[4]
+                
                 for var in self.varsToBeDeleted:
                     previous = self.callFunc("deleteVar", [[var]], previous)
 
@@ -679,10 +680,10 @@ class scriptHandler:
                 
                 self.requireDep("static.scratch", filePath, previous)
                 
-                previous = self.callFunc("setVar", [["input"], [item[1]]], previous, index, inputName)
+                previous = self.callFunc("setVar", [["input"], [item[1::]]], previous, index, inputName)
 
             elif item[0] == "for":
-                previous = self.executeScript([item[1][0]], previous)
+                previous = self.executeScript([item[1][0]], previous, inputName)
 
                 blockName = self.initAtrobutes("control_repeat_until", previous, index, inputName)
                 topBlock = blockName
@@ -693,7 +694,7 @@ class scriptHandler:
                 self.createBlocks(filePath, newSubstack, topBlock, "SUBSTACK")
                 previous = topBlock
                 if item[1][0][0] == "static":
-                    previous = self.executeScript([["del", item[1][0][1]]], previous)
+                    previous = self.executeScript([["del", item[1][0][1]]], previous, inputName)
 
             elif item[0] == "import":
                 parentDirectory = Path(filePath).parent

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 from src.parser import genTokens
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     logger.info("Started")
     scratchCompVersion = "0.3"
 
