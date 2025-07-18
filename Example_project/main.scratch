@@ -2,18 +2,12 @@ sprite Stage{}
 
 sprite cat{
     script{
-        func pow(base: text, power: text){
-            static output = base;
-            loop(power - 1){
-                output = output * base;
-            }
-            return output;
-        }
-
-        start();
-        print(pow(2, 10));
+        
     }
     costumes{
-        "pics/cat.svg"
+        "pics/cat.svg": {}
     }
+    sounds[
+        "ahh.mp3"
+    ];
 }

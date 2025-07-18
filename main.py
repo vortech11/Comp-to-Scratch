@@ -11,7 +11,7 @@ from src.parser import genTokens
 def main():
     logging.basicConfig(level=logging.INFO)
     logger.info("Started")
-    scratchCompVersion = "0.3"
+    scratchCompVersion = "0.3.0"
 
     outputFolderName = "build"
 
@@ -35,7 +35,7 @@ def main():
     blockIndex = 1
 
     tokens = genTokens(sys.argv[1])
-    output["targets"], filesToBeCompressed = fillCommands(Path(sys.argv[1]).parent, tokens, filesToBeCompressed, outputFolderName, sys.argv[1], blockIndex, [{}, {}])
+    output["targets"], filesToBeCompressed = fillCommands(Path(sys.argv[1]).resolve(), tokens, filesToBeCompressed, outputFolderName, blockIndex, [{}, {}])
 
     output = json.dumps(output)
     with open(Path(sys.argv[1]).parent / outputFolderName / "project.json", "w") as file:
