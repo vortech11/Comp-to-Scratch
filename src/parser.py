@@ -12,6 +12,7 @@ doubleChar = ["=", "+", "-", "*", "/", ">", "<", "!"]
 openbrackets = ["(", "{", "["]
 closebrackets = [")", "}", "]"]
 
+booldelimeters = ["and", "or"]
 
 def character_is_delimiter(line, index):
     global delimiters
@@ -69,27 +70,73 @@ def parseFile(filePath):
     
     return lineTokens
 
-def createBoolBrackets(lineTokens):
+def createBoolBrackets(lineTokens, delimiter, disallow, splitBrackets):
     outTokens = []
-    lastOpenBracket = None
-    for item in lineTokens:
-        if item in openbrackets and lastOpenBracket != "Close":
-            outTokens.append("[")
-            lastOpenBracket = len(outTokens)
-        elif item in closebrackets and lastOpenBracket == "Close":
-            outTokens.append("]")
-            outTokens.append("]")
-            lastOpenBracket = None
-        elif item in inputDoubleDelimiter:
-            if isinstance(lastOpenBracket, int):
-                outTokens.insert(lastOpenBracket, "[")
-                lastOpenBracket = "Close"
-            outTokens.append("]")
+    lastOpenBracket: list = []
+    levelOfSplit = 0
+    mode = None
+    for index, item in enumerate(lineTokens):
+        if item in openbrackets:
+            if not (len(outTokens) > 2 and outTokens[-2] in disallow):
+                outTokens.append("[")
+                lastOpenBracket.append(len(outTokens))
+        elif item in closebrackets:
+            if len(lineTokens) > index + 2:
+                print(lineTokens[index+2], outTokens)
+            
+            if not (len(lineTokens) > index + 2 and lineTokens[index+2] in disallow):
+                outTokens.append("]")
+                if lastOpenBracket:
+                    lastOpenBracket.pop()
+                #print(len(lastOpenBracket), levelOfSplit, outTokens)
+                if mode == "Close" and len(lastOpenBracket) == levelOfSplit:
+                    outTokens.append("]")
+        elif item in delimiter:
+            print(lastOpenBracket[-1])
+            outTokens.insert(lastOpenBracket[-1], "[")
+            mode = "Close"
+            if splitBrackets:
+                levelOfSplit = len(lastOpenBracket) - 1
+            else:
+                levelOfSplit = len(lastOpenBracket)
+            
+            if splitBrackets:
+                outTokens.append("]")
+                
             outTokens.append(item)
-            outTokens.append("[")
+            
+            if splitBrackets:
+                outTokens.append("[")
         else:
             outTokens.append(item)
     
+    return outTokens
+
+def addBracketsForKeyword(tokens):
+    outTokens = []
+    for token in tokens:
+        if token in booldelimeters:
+            outTokens.append("]")
+            outTokens.append("]")
+            outTokens.append(token)
+            outTokens.append("[")
+            outTokens.append("[")
+        else:
+            outTokens.append(token)
+    return outTokens
+
+def removeBracketsForKeyword(tokens, delimeter):
+    outTokens = []
+    toSkipOver = False
+    for token in tokens:
+        if token in delimeter:
+            outTokens.pop()
+            outTokens.append(token)
+            toSkipOver = True
+        elif toSkipOver:
+            toSkipOver = False
+        else:
+            outTokens.append(token)
     return outTokens
 
 class branchHandler():
@@ -149,10 +196,21 @@ def genTokens(filePath):
     
     lineTokens = split_commands(lineTokens)
     
-    lineTokens = createBoolBrackets(lineTokens)
+    lineTokens = addBracketsForKeyword(lineTokens)
+    
+    lineTokens = createBoolBrackets(lineTokens, inputDoubleDelimiter, booldelimeters, True)
+    
+    print(lineTokens)
+    
+    lineTokens = removeBracketsForKeyword(lineTokens, booldelimeters)
+    
+    lineTokens = createBoolBrackets(lineTokens, booldelimeters, [], True)
+    
+    print(lineTokens)
+    
     brancher = branchHandler()
     lineTokens = brancher.createBranches(lineTokens)
     
-    
+    print(lineTokens)
     
     return lineTokens

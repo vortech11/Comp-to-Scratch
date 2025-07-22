@@ -21,8 +21,6 @@ def main():
 
     (Path(sys.argv[1]).parent / outputFolderName).mkdir(exist_ok=True)
 
-    tokens = genTokens(sys.argv[1])
-
     output = {"targets":[], "monitors":[], "extensions":[], "meta":{
                     "semver": "3.0.0",
                     "vm": "11.0.0-beta.2",

@@ -145,15 +145,12 @@ def createSprite(spriteName, spriteData):
                 center = None
                 if len(costumePath[0][1::]) > 0:
                     for attribute2 in costumePath[0][1::]:
-                        print(costumePath[0])
                         if not (isinstance(attribute2, list) and len(attribute2) == 0):
                             if attribute2[0] == "center":
                                 if attribute2[1] == "center":
-                                    print("center")
                                     center = None
                                 else:
                                     center = [attribute2[1][0], attribute2[2][0]]
-                                    print(center)
                 
                 costumesInit = True
                 sprite = encodeAsset(sprite, "costume", costumePath[0][0], False, center)

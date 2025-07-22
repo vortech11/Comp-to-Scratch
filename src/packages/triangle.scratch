@@ -1,0 +1,19 @@
+export {
+    func TRIANGLE_CalcDistances(x1, y1, x2, y2, x3, y3, xa, ya, xb, yb, xc, yc){
+        var TRIANGLE_a = sqrt((xa * xa) + (ya * ya));
+        var TRIANGLE_b = sqrt((xb * xb) + (yb * yb));
+        var TRIANGLE_c = sqrt((xc * xc) + (yc * yc));
+        var TRIANGLE_per = TRIANGLE_a + TRIANGLE_b + TRIANGLE_c;
+        setxy((TRIANGLE_a * x1 + TRIANGLE_b * x2 + TRIANGLE_c * x3) / TRIANGLE_per, (TRIANGLE_a * y1 + TRIANGLE_b * y2 + TRIANGLE_c * y3) / TRIANGLE_per)
+    }
+
+    func TRIANGLE_DrawInner(p1x, p1y, p2x, p2y, p3x, p3y, res, x1, y1, x2, y2, x3, y3, real_res, shading){
+        setPenSize(res);
+        penDown();
+    }
+
+    func drawTri(x1, y1, x2, y2, x3, y3, shading, res){
+        penDown();
+        TRIANGLE_CalcDistances(x1, y1, x2, y2, x3, y3, x2 - x3, y2 - y3, x3 - x1, y3 - y1, x2 - x1, y2 - y1);
+    }
+}

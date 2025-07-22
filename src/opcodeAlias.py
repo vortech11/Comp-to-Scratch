@@ -7,4 +7,7 @@ aliases = {
     "sleep": "control_wait",
     "say": "looks_say",
     "loop": "control_repeat",
+    "penDown": "pen_penDown",
+    "penUp": "pen_penUp",
+    "setPenSize": "pen_setPenSizeTo",
 }
