@@ -1,7 +1,6 @@
-from parser.scanner import Token, TokenType
-from interpreter.environment import Environment, CallableFactory
+from src.parser.scanner import Token, TokenType
 
-from interpreter.envData import *
+from src.fileGen import ProjectFile
 
 class Grammar:
     def getPrint(self) -> str:
@@ -26,6 +25,30 @@ class Binary(Expr):
         
     def getPrint(self) -> str:
         return f"{self.operator} ({self.left.getPrint()}) ({self.right.getPrint()})"
+    
+    def convert(self, projectFile: ProjectFile, sprite, previous=None):
+        if previous is None:
+            topLevel = True
+        else:
+            topLevel = False
+        
+        left = self.left.convert(projectFile, sprite)
+        right = self.right.convert(projectFile, sprite)
+
+        opcode = ""
+
+        match self.operator.type:
+            case TokenType.PLUS: opcode = "operator_add"
+                
+        projectFile.addBlock(
+            opcode, 
+            {"NUM1": left, "NUM2": right}, 
+            {}, 
+            False, 
+            topLevel, 
+            sprite, 
+            previous
+        )
         
 class Grouping(Expr):
     def __init__(self, expression: Expr):
