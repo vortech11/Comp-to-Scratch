@@ -87,6 +87,9 @@ class Call(Expr):
         listPrintArgs = [arg.getPrint() for arg in self.arguments]
         printArgs = ", ".join(listPrintArgs)
         return f"{self.callee.getPrint()} {self.paren} ({printArgs})"
+    
+    def convert(self, projectFile: ProjectFile, sprite: str):
+        ...
 
 class Variable(Expr):
     def __init__(self, name: Token) -> None:
@@ -182,7 +185,7 @@ class CostumeStmt(Stmt):
         self.path: Token = path
     
     def convert(self, projectFile: ProjectFile, sprite):
-        projectFile.addCostume(sprite, self.name.lexeme, self.path.lexeme, (0, 0))
+        projectFile.addCostume(sprite, self.name.lexeme, self.path.lexeme, (1, 1))
 
 class FileStmt(Grammar):
     def convert(self, projectFile: ProjectFile):

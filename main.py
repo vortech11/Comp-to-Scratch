@@ -31,10 +31,9 @@ def saveFile(filePath: Path, fileContents: dict, filesToCoppy: list[list[Path]])
 
     filesToBeCompressed.append(Path(outputFolderName) / "project.json")
 
-    print(filesToCoppy)
     for file in filesToCoppy:
         path = filePath.parent / outputFolderName / file[1]
-        copyfile(file[0], path)
+        copyfile(filePath.parent / file[0], path)
         filesToBeCompressed.append(path)
 
 
@@ -49,7 +48,7 @@ def main():
     assert len(sys.argv) > 1, "No file Selected!"
 
     assert Path(sys.argv[1]).exists(), f"File '{sys.argv[1]}' does not exist."
-    filePath: Path = Path(sys.argv[1])
+    filePath: Path = Path(sys.argv[1]).resolve()
 
     (filePath.parent / outputFolderName).mkdir(exist_ok=True)
 
