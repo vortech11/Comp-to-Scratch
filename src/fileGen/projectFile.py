@@ -1,22 +1,31 @@
+from hashlib import md5
+from pathlib import Path
 
 class ProjectFile:
     def __init__(self) -> None:
         self.fileDict = {
-            "targets": [],
+            "targets": {},
             "monitors": [],
             "extensions": [],
             "meta": {
                 "server": "3.0.0",
                 "vm": "11.0.0-beta.2",
-                "agent": "Scratch Compiler v1.0.0"
+                "agent": "Scratch Compiler v0.3.0b"
             }
         }
+
+        self.files: list[list[Path]] = []
+
         self.currentBlock = 0
     
     def getBlockName(self, blockNum=None) -> str:
         if blockNum is None:
             return f"Block{self.currentBlock}"
         return f"Block{blockNum}"
+    
+    def genHash(self, path: str):
+        #assert Path(path).exists(), f"File '{path}' does not exist."
+        return md5(Path(path).name.encode()).hexdigest()
     
     def addSprite(self, name="Stage", isStage=True):
         self.fileDict["targets"][name] = {
@@ -55,17 +64,23 @@ class ProjectFile:
         }
         return self.currentBlock
     
-    def addCostume(self, sprite, name, dataFormat, rotationCenter:tuple):
+    def addCostume(self, sprite: str, name: str, path: str, rotationCenter:tuple):
+        assetId = self.genHash(path)
+        suffix = Path(path).suffix
+        dataFormat = suffix.removeprefix(".")
+
         self.fileDict["targets"][sprite]["costumes"].append(
             {
                 "name": name,
                 "dataFormat": dataFormat,
-                "assetId": "",
-                "md5ext": "",
+                "assetId": assetId,
+                "md5ext": assetId + dataFormat,
                 "rotationCenterX": rotationCenter[0],
                 "rotationCenterY": rotationCenter[1]
             }
         )
+
+        self.files.append([Path(path), Path(assetId + suffix)])
     
     def addSound(self, sprite, name, dataFormat, rate, sampleCount):
         self.fileDict["targets"][sprite]["sounds"].append(

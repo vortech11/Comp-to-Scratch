@@ -1,13 +1,14 @@
 from src.parser.scanner import Token, TokenType
 
-from src.fileGen import ProjectFile
+from src.fileGen.projectFile import ProjectFile
 
 class Grammar:
     def getPrint(self) -> str:
         return f"()"
 
 class Expr(Grammar):
-    ...
+    def convert(self, projectFile: ProjectFile, sprite, previous):
+        ...
 
 class Assign(Expr):
     def __init__(self, name: Token, value: Expr) -> None:
@@ -32,23 +33,23 @@ class Binary(Expr):
         else:
             topLevel = False
         
-        left = self.left.convert(projectFile, sprite)
-        right = self.right.convert(projectFile, sprite)
-
-        opcode = ""
-
-        match self.operator.type:
-            case TokenType.PLUS: opcode = "operator_add"
-                
-        projectFile.addBlock(
-            opcode, 
-            {"NUM1": left, "NUM2": right}, 
-            {}, 
-            False, 
-            topLevel, 
-            sprite, 
-            previous
-        )
+        #left = self.left.convert(projectFile, sprite)
+        #right = self.right.convert(projectFile, sprite)
+        #
+        #opcode = ""
+        #
+        #match self.operator.type:
+        #    case TokenType.PLUS: opcode = "operator_add"
+        #        
+        #projectFile.addBlock(
+        #    opcode, 
+        #    {"NUM1": left, "NUM2": right}, 
+        #    {}, 
+        #    False, 
+        #    topLevel, 
+        #    sprite, 
+        #    previous
+        #)
         
 class Grouping(Expr):
     def __init__(self, expression: Expr):
@@ -106,6 +107,10 @@ class Block(Stmt):
         for statement in self.statements:
             output.append(statement.getPrint())
         return f"{'\n'.join(output)}"
+    
+    def convert(self, projectFile: ProjectFile, sprite: str):
+        for statement in self.statements:
+            statement.convert(projectFile, sprite) # type: ignore
     
 class Expression(Stmt):
     def __init__(self, expression: Expr):
@@ -170,6 +175,31 @@ class WhileStmt(Stmt):
 
     def getPrint(self) -> str:
         return f"while ({self.expression.getPrint()}) {{{self.statement.getPrint()}}}"
-        
+    
+class CostumeStmt(Stmt):
+    def __init__(self, name: Token, path: Token) -> None:
+        self.name: Token = name
+        self.path: Token = path
+    
+    def convert(self, projectFile: ProjectFile, sprite):
+        projectFile.addCostume(sprite, self.name.lexeme, self.path.lexeme, (0, 0))
+
+class FileStmt(Grammar):
+    def convert(self, projectFile: ProjectFile):
+        ...
+
+class Sprite(FileStmt):
+    def __init__(self, name: Token, body: Stmt) -> None:
+        self.name: Token = name
+        self.body: Stmt = body
+    
+    def getPrint(self) -> str:
+        return f"sprite {self.name.lexeme} {{{self.body.getPrint()}}}"
+    
+    def convert(self, projectFile: ProjectFile):
+        isStage = self.name.lexeme == "Stage"
+        projectFile.addSprite(self.name.lexeme, isStage)
+        self.body.convert(projectFile, self.name.lexeme) # type: ignore
+
 def printAST(grammar: Grammar):
     print(f"{grammar.getPrint()}")

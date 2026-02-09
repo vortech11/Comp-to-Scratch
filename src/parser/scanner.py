@@ -47,6 +47,10 @@ class TokenType(Enum):
 
     EOF = auto()
 
+    SPRITE = auto()
+    COSTUME = auto()
+    SOUND = auto()
+
 keywords = {
     "and": TokenType.AND,
     "class": TokenType.CLASS,
@@ -63,7 +67,10 @@ keywords = {
     "this": TokenType.THIS,
     "true": TokenType.TRUE,
     "var": TokenType.VAR,
-    "while": TokenType.WHILE
+    "while": TokenType.WHILE,
+    "sprite": TokenType.SPRITE,
+    "costume": TokenType.COSTUME,
+    "sound": TokenType.SOUND,
 }
 
 class Token:

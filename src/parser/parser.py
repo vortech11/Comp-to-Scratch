@@ -1,4 +1,4 @@
-from langGrammar import *
+from src.parser.langGrammar import *
 import logging
 logger = logging.getLogger(__name__)
 
@@ -329,19 +329,41 @@ class Parser:
         body: Stmt = self.block()
         return Function(name, parameters, body)
     
+    def costumeDeclaration(self):
+        name: Token = self.consume(TokenType.IDENTIFIER, "Expect name of costume.")
+        path: Token = self.consume(TokenType.STRING, "Expect costume path after costume name.")
+        self.consume(TokenType.SEMICOLON, "Expect semicolon after costume path.")
+
+        return CostumeStmt(name, path)
+    
     def declaration(self):
         match self.getToken().type:
             case TokenType.FUNC:
                 return self.funcDeclaration("function")
             case TokenType.VAR:
                 return self.varDeclaration()
+            case TokenType.COSTUME:
+                return self.costumeDeclaration()
             case _:
                 return self.statement()
+            
+    def sprite(self):
+        name = self.consume(TokenType.IDENTIFIER, "Expect name of sprite after sprite keyword.")
+        self.consume(TokenType.LEFT_BRACE, "Expect '{' after sprite name.")
+        self.advance()
+        body = self.block()
+
+        return Sprite(name, body)
+            
+    def fileStatement(self):
+        match self.getToken().type:
+            case TokenType.SPRITE:
+                return self.sprite()
     
     def parse(self):
         tokenList = []
         while not self.isAtEnd():
-            tokenList.append(self.declaration())
+            tokenList.append(self.fileStatement())
             self.advance()
         return tokenList
 
