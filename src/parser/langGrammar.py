@@ -130,6 +130,9 @@ class Variable(Expr):
     def convert(self, projectFile: ProjectFile, sprite: str, previous):
         if self.name.lexeme in opcodeMap:
             return self.name
+        
+        if projectFile.isVar(sprite, self.name.lexeme):
+            return [2, [12, self.name.lexeme, self.name.lexeme]]
 
 class Stmt(Grammar):
     def convert(self, projectFile: ProjectFile, sprite: str, previous: str | None) -> Any:

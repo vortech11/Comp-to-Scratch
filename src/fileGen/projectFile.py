@@ -135,3 +135,9 @@ class ProjectFile:
     
     def define(self, sprite, name, value):
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"][name] = [name, value]
+
+    def getVarId(self, sprite, name):
+        ...
+
+    def isVar(self, sprite, name):
+        return name in self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"]
