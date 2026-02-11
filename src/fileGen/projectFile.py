@@ -67,13 +67,17 @@ class ProjectFile:
         self.fileDict["targets"].append(sprite)
         self.spriteList.append(name)
 
-    def addBlock(self, opcode, inputs, fields, shadow, sprite, previous=None, topLevel=None):
+    def addBlock(self, opcode: str, inputs: dict, fields: dict, shadow: bool, sprite: str, previous=None, topLevel=None, mendPrevious=True):
         self.currentBlock += 1
         blockName = self.getBlockName()
         if previous is None and topLevel is None:
             topLevel = True
         else:
             topLevel = False
+
+        if (not previous is None) and (mendPrevious is True):
+            self.setBlockAttribute(sprite, previous, "next", blockName)
+
         block = {
             "opcode": opcode,
             "next": None,
@@ -89,7 +93,11 @@ class ProjectFile:
             block["y"] = 0
 
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["blocks"][blockName] = block
-        return self.currentBlock
+        return blockName
+    
+    def setBlockAttribute(self, sprite: str, blockName: str, attribute: str, value):
+        spriteIndex = self.getSpriteIndex(sprite)
+        self.fileDict["targets"][spriteIndex]["blocks"][blockName][attribute] = value
     
     def addCostume(self, sprite: str, name: str, path: str, rotationCenter:tuple):
         assetId = self.genHash(path)

@@ -4,6 +4,7 @@ from src.parser.scanner import Token, TokenType
 
 from src.fileGen.projectFile import ProjectFile
 
+from typing import Any
 
 with open("src/OpcodeMap.json") as map:
     opcodeMap = load(map)
@@ -13,7 +14,7 @@ class Grammar:
         return f"()"
 
 class Expr(Grammar):
-    def convert(self, projectFile: ProjectFile, sprite, previous):
+    def convert(self, projectFile: ProjectFile, sprite: str, previous: str | None) -> Any:
         ...
 
 class Assign(Expr):
@@ -23,6 +24,12 @@ class Assign(Expr):
     
     def getPrint(self) -> str:
         return f"{self.name.lexeme} = {self.value.getPrint()}"
+    
+    def convert(self, projectFile: ProjectFile, sprite, previous):
+        block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, self.name.lexeme]}, False, sprite, previous)
+        value = self.value.convert(projectFile, sprite, block)
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
+        return block
 
 class Binary(Expr):
     def __init__(self, left: Expr, operator: Token, right: Expr):
@@ -34,28 +41,36 @@ class Binary(Expr):
         return f"{self.operator} ({self.left.getPrint()}) ({self.right.getPrint()})"
     
     def convert(self, projectFile: ProjectFile, sprite, previous=None):
-        if previous is None:
-            topLevel = True
-        else:
-            topLevel = False
+        match self.operator.type:
+            case TokenType.EQUAL_EQUAL: opcode = "operator_equals"
+            case TokenType.BANG_EQUAL: opcode = ""
+            case TokenType.GREATER: opcode = "operator_gt"
+            case TokenType.GREATER_EQUAL: opcode = ""
+            case TokenType.LESS: opcode = ""
+            case TokenType.LESS_EQUAL: opcode = "operator_lt"
+            
+            case TokenType.PLUS: opcode = "operator_add"
+            case TokenType.MINUS: opcode = "operator_subtract"
+            case TokenType.STAR: opcode = "operator_multiply"
+            case TokenType.SLASH: opcode = "operator_divide"
+            
+            case TokenType.AND: opcode = "operator_and"
+            case TokenType.OR: opcode = "operator_or"
+
+            case _ : opcode = ""
         
-        #left = self.left.convert(projectFile, sprite)
-        #right = self.right.convert(projectFile, sprite)
-        #
-        #opcode = ""
-        #
-        #match self.operator.type:
-        #    case TokenType.PLUS: opcode = "operator_add"
-        #        
-        #projectFile.addBlock(
-        #    opcode, 
-        #    {"NUM1": left, "NUM2": right}, 
-        #    {}, 
-        #    False, 
-        #    topLevel, 
-        #    sprite, 
-        #    previous
-        #)
+        block = projectFile.addBlock(opcode, {}, {}, False, sprite, previous, mendPrevious=False)
+
+
+        left = self.left.convert(projectFile, sprite, block)
+        right = self.right.convert(projectFile, sprite, block)
+
+        leftName = opcodeMap[opcode]["inputs"][0]
+        rightName = opcodeMap[opcode]["inputs"][1]
+
+        projectFile.setBlockAttribute(sprite, block, "inputs", {leftName: left, rightName: right})
+
+        return [3, block, [10, "10"]]
         
 class Grouping(Expr):
     def __init__(self, expression: Expr):
@@ -63,6 +78,9 @@ class Grouping(Expr):
     
     def getPrint(self) -> str:
         return f"group {self.expression.getPrint()}"
+    
+    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+        return self.expression.convert(projectFile, sprite, previous)
         
 class Literal(Expr):
     def __init__(self, value):
@@ -75,7 +93,7 @@ class Literal(Expr):
             case _:
                 return f"{self.value}"
             
-    def convert(self, projectFIle: ProjectFile, sprite):
+    def convert(self, projectFile: ProjectFile, sprite: str, previous):
         return [1, [10, self.value]]
         
 class Unary(Expr):
@@ -97,8 +115,8 @@ class Call(Expr):
         printArgs = ", ".join(listPrintArgs)
         return f"{self.callee.getPrint()} {self.paren} ({printArgs})"
     
-    def convert(self, projectFile: ProjectFile, sprite: str):
-        callee = self.callee.convert(projectFile, sprite)
+    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+        callee = self.callee.convert(projectFile, sprite, previous)
         assert isinstance(callee, Token), "Function call must have callee as callable object"
         
 
@@ -109,12 +127,13 @@ class Variable(Expr):
     def getPrint(self):
         return f"{self.name}"
     
-    def convert(self, projectFile: ProjectFile, sprite: str):
+    def convert(self, projectFile: ProjectFile, sprite: str, previous):
         if self.name.lexeme in opcodeMap:
             return self.name
 
 class Stmt(Grammar):
-    ...
+    def convert(self, projectFile: ProjectFile, sprite: str, previous: str | None) -> Any:
+        ...
 
 class Block(Stmt):
     def __init__(self, statements: list[Stmt]) -> None:
@@ -126,9 +145,12 @@ class Block(Stmt):
             output.append(statement.getPrint())
         return f"{'\n'.join(output)}"
     
-    def convert(self, projectFile: ProjectFile, sprite: str):
+    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+        prev = previous
         for statement in self.statements:
-            statement.convert(projectFile, sprite) # type: ignore
+            print(statement.getPrint())
+            prev = statement.convert(projectFile, sprite, prev)
+            print(prev)
     
 class Expression(Stmt):
     def __init__(self, expression: Expr):
@@ -136,6 +158,9 @@ class Expression(Stmt):
         
     def getPrint(self) -> str:
         return f"{self.expression.getPrint()}"
+    
+    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+        return self.expression.convert(projectFile, sprite, previous)
         
 class Print(Stmt):
     def __init__(self, expression: Expr):
@@ -167,10 +192,12 @@ class Var(Stmt):
             value = self.initializer.getPrint()
         return f"var {self.name} {value}"
     
-    def convert(self, projectFile: ProjectFile, sprite: str, previous=None):
+    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+        block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, self.name.lexeme]}, False, sprite, previous)
+
         value = [1, [10, None]]
         if not self.initializer is None:
-            value = self.initializer.convert(projectFile, sprite)
+            value = self.initializer.convert(projectFile, sprite, block)
 
         if value[1][1] is None:
             value[1][1] = ""
@@ -178,7 +205,8 @@ class Var(Stmt):
         value[1][1] = str(value[1][1])
         
         projectFile.define(sprite, self.name.lexeme, value[1][1])
-        projectFile.addBlock("data_setvariableto", {"VALUE": value}, {"VARIABLE": [self.name.lexeme, self.name.lexeme]}, False, sprite)
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
+        return block
 
 class Function(Stmt):
     def __init__(self, name: Token, params: list[Token], body: Stmt) -> None:
@@ -212,8 +240,9 @@ class CostumeStmt(Stmt):
         self.name: Token = name
         self.path: Token = path
     
-    def convert(self, projectFile: ProjectFile, sprite):
+    def convert(self, projectFile: ProjectFile, sprite, previous):
         projectFile.addCostume(sprite, self.name.lexeme, self.path.lexeme, (1, 1))
+        return previous
 
 class FileStmt(Grammar):
     def convert(self, projectFile: ProjectFile):
@@ -230,7 +259,7 @@ class Sprite(FileStmt):
     def convert(self, projectFile: ProjectFile):
         isStage = self.name.lexeme == "Stage"
         projectFile.addSprite(self.name.lexeme, isStage)
-        self.body.convert(projectFile, self.name.lexeme) # type: ignore
+        self.body.convert(projectFile, self.name.lexeme, None)
 
 def printAST(grammar: Grammar):
     print(f"{grammar.getPrint()}")
