@@ -5,9 +5,10 @@ sprite Stage {
     
     if (10 == 3){
         var thing = 4;
-    }
-    else {
-        thing = 5;
+    } else if (3 == 4) {
+        thing = 5 * 2 + 3;
+    } else {
+        thing = 0;
     }
     thing = 2;
 }

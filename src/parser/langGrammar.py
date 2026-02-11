@@ -70,7 +70,7 @@ class Binary(Expr):
 
         projectFile.setBlockAttribute(sprite, block, "inputs", {leftName: left, rightName: right})
 
-        return [3, block, [10, "10"]]
+        return [2, block]
         
 class Grouping(Expr):
     def __init__(self, expression: Expr):
@@ -240,11 +240,15 @@ class IfStmt(Stmt):
         condition = self.condition.convert(projectFile, sprite, block)
         
         thenBranch = self.thenBranch.convert(projectFile, sprite, block)
+        if not isinstance(thenBranch, list):
+            thenBranch = [2, thenBranch]
         
         inputs = {"CONDITION" : condition, "SUBSTACK": thenBranch}        
 
         if not self.elseBranch is None:
             elseBranch = self.elseBranch.convert(projectFile, sprite, block)
+            if not isinstance(elseBranch, list):
+                elseBranch = [2, elseBranch]
             inputs["SUBSTACK2"] = elseBranch
 
         projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
