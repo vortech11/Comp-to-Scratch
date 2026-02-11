@@ -46,8 +46,8 @@ class Binary(Expr):
             case TokenType.BANG_EQUAL: opcode = ""
             case TokenType.GREATER: opcode = "operator_gt"
             case TokenType.GREATER_EQUAL: opcode = ""
-            case TokenType.LESS: opcode = ""
-            case TokenType.LESS_EQUAL: opcode = "operator_lt"
+            case TokenType.LESS: opcode = "operator_lt"
+            case TokenType.LESS_EQUAL: opcode = ""
             
             case TokenType.PLUS: opcode = "operator_add"
             case TokenType.MINUS: opcode = "operator_subtract"
