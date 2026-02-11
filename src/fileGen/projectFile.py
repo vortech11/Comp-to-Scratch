@@ -88,7 +88,7 @@ class ProjectFile:
             block["x"] = 0
             block["y"] = 0
 
-        self.fileDict["targets"][self.getSpriteIndex(sprite)][blockName] = block
+        self.fileDict["targets"][self.getSpriteIndex(sprite)]["blocks"][blockName] = block
         return self.currentBlock
     
     def addCostume(self, sprite: str, name: str, path: str, rotationCenter:tuple):
