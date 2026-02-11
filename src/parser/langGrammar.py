@@ -94,7 +94,7 @@ class Literal(Expr):
                 return f"{self.value}"
             
     def convert(self, projectFile: ProjectFile, sprite: str, previous):
-        return [1, [10, self.value]]
+        return [1, [10, str(self.value)]]
         
 class Unary(Expr):
     def __init__(self, operator: Token, right: Expr):
@@ -147,10 +147,12 @@ class Block(Stmt):
     
     def convert(self, projectFile: ProjectFile, sprite: str, previous):
         prev = previous
+        references = []
         for statement in self.statements:
-            print(statement.getPrint())
-            prev = statement.convert(projectFile, sprite, prev)
-            print(prev)
+            references.append(statement.convert(projectFile, sprite, prev))
+            prev = references[-1]
+
+        return [2, references[-1]]
     
 class Expression(Stmt):
     def __init__(self, expression: Expr):
@@ -226,6 +228,29 @@ class IfStmt(Stmt):
 
     def getPrint(self) -> str:
         return f"if ({self.condition.getPrint()}) {{{self.thenBranch.getPrint()}}}"
+    
+    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+        if self.elseBranch is None:
+            opcode = "control_if"
+        else:
+            opcode = "control_if_else"
+        
+        block = projectFile.addBlock(opcode, {}, {}, False, sprite, previous)
+
+        condition = self.condition.convert(projectFile, sprite, block)
+        
+        thenBranch = self.thenBranch.convert(projectFile, sprite, block)
+        
+        inputs = {"CONDITION" : condition, "SUBSTACK": thenBranch}        
+
+        if not self.elseBranch is None:
+            elseBranch = self.elseBranch.convert(projectFile, sprite, block)
+            inputs["SUBSTACK2"] = elseBranch
+
+        projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
+        projectFile.setBlockAttribute(sprite, block, "next", None)
+
+        return block
 
 class WhileStmt(Stmt):
     def __init__(self, expression: Expr, statement: Stmt) -> None:

@@ -197,7 +197,8 @@ class Parser:
         
         thenBranch: Stmt = self.statement()
         elseBranch: Stmt | None = None
-        if self.match([TokenType.ELSE], offset=-1):
+        if self.match([TokenType.ELSE]):
+            self.advance()
             elseBranch = self.statement()
         
         return IfStmt(condition, thenBranch, elseBranch)

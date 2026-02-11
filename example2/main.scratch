@@ -1,6 +1,13 @@
 sprite Stage {
     costume cat "cat.svg";
+
+    thing = 100;
     
-    var thing = 10;
-    thing = (3 / 4) * 2 / (4 + 3);
+    if (10 == 3){
+        var thing = 4;
+    }
+    else {
+        thing = 5;
+    }
+    thing = 2;
 }
