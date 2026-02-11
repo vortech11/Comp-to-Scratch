@@ -1,6 +1,12 @@
+from json import load
+
 from src.parser.scanner import Token, TokenType
 
 from src.fileGen.projectFile import ProjectFile
+
+
+with open("src/OpcodeMap.json") as map:
+    opcodeMap = load(map)
 
 class Grammar:
     def getPrint(self) -> str:
@@ -68,6 +74,9 @@ class Literal(Expr):
                 return f'"{self.value}"'
             case _:
                 return f"{self.value}"
+            
+    def convert(self, projectFIle: ProjectFile, sprite):
+        return [1, [10, self.value]]
         
 class Unary(Expr):
     def __init__(self, operator: Token, right: Expr):
@@ -89,7 +98,9 @@ class Call(Expr):
         return f"{self.callee.getPrint()} {self.paren} ({printArgs})"
     
     def convert(self, projectFile: ProjectFile, sprite: str):
-        ...
+        callee = self.callee.convert(projectFile, sprite)
+        assert isinstance(callee, Token), "Function call must have callee as callable object"
+        
 
 class Variable(Expr):
     def __init__(self, name: Token) -> None:
@@ -97,6 +108,10 @@ class Variable(Expr):
         
     def getPrint(self):
         return f"{self.name}"
+    
+    def convert(self, projectFile: ProjectFile, sprite: str):
+        if self.name.lexeme in opcodeMap:
+            return self.name
 
 class Stmt(Grammar):
     ...
@@ -151,6 +166,19 @@ class Var(Stmt):
         else:
             value = self.initializer.getPrint()
         return f"var {self.name} {value}"
+    
+    def convert(self, projectFile: ProjectFile, sprite: str, previous=None):
+        value = [1, [10, None]]
+        if not self.initializer is None:
+            value = self.initializer.convert(projectFile, sprite)
+
+        if value[1][1] is None:
+            value[1][1] = ""
+        
+        value[1][1] = str(value[1][1])
+        
+        projectFile.define(sprite, self.name.lexeme, value[1][1])
+        projectFile.addBlock("data_setvariableto", {"VALUE": value}, {"VARIABLE": [self.name.lexeme, self.name.lexeme]}, False, sprite)
 
 class Function(Stmt):
     def __init__(self, name: Token, params: list[Token], body: Stmt) -> None:

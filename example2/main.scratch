@@ -1,3 +1,5 @@
 sprite Stage {
     costume cat "cat.svg";
+    
+    var thing = 10;
 }

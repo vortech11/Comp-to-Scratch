@@ -1,1 +1,61 @@
-{"targets": [{"isStage": true, "name": "Stage", "variables": {}, "lists": {}, "broadcasts": {}, "blocks": {}, "comments": {}, "currentCostume": 0, "costumes": [{"name": "cat", "dataFormat": "svg", "assetId": "ecb86074b52beb4ddabc9d5963d03d03", "md5ext": "ecb86074b52beb4ddabc9d5963d03d03.svg", "rotationCenterX": 1, "rotationCenterY": 1}, {"name": "thing1", "dataFormat": "svg", "assetId": "ecb86074b52beb4ddabc9d5963d03d03", "md5ext": "ecb86074b52beb4ddabc9d5963d03d03.svg", "rotationCenterX": 1, "rotationCenterY": 1}, {"name": "thing2", "dataFormat": "svg", "assetId": "ecb86074b52beb4ddabc9d5963d03d03", "md5ext": "ecb86074b52beb4ddabc9d5963d03d03.svg", "rotationCenterX": 1, "rotationCenterY": 1}, {"name": "thing3", "dataFormat": "svg", "assetId": "ecb86074b52beb4ddabc9d5963d03d03", "md5ext": "ecb86074b52beb4ddabc9d5963d03d03.svg", "rotationCenterX": 1, "rotationCenterY": 1}, {"name": "thing4", "dataFormat": "svg", "assetId": "ecb86074b52beb4ddabc9d5963d03d03", "md5ext": "ecb86074b52beb4ddabc9d5963d03d03.svg", "rotationCenterX": 1, "rotationCenterY": 1}, {"name": "thing5", "dataFormat": "svg", "assetId": "ecb86074b52beb4ddabc9d5963d03d03", "md5ext": "ecb86074b52beb4ddabc9d5963d03d03.svg", "rotationCenterX": 1, "rotationCenterY": 1}], "sounds": [], "volume": 100, "layerOrder": 0, "tempo": 60, "videoTransparency": 50, "videoState": "on", "textToSpeechLanguage": null}], "monitors": [], "extensions": [], "meta": {"semver": "3.0.0", "vm": "11.0.0-beta.2", "agent": "Scratch Compiler v0.3.0b"}}
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "thing": [
+                    "thing",
+                    "10.0"
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "cat",
+                    "dataFormat": "svg",
+                    "assetId": "ecb86074b52beb4ddabc9d5963d03d03",
+                    "md5ext": "ecb86074b52beb4ddabc9d5963d03d03.svg",
+                    "rotationCenterX": 1,
+                    "rotationCenterY": 1
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null,
+            "Block1": {
+                "opcode": "data_setvariableto",
+                "next": null,
+                "parent": null,
+                "inputs": { 
+                    "VALUE": [1, [10, "10.0"]]
+                },
+                "fields": {
+                    "VARIABLE": [
+                        "thing",
+                        "thing"
+                    ]
+                },
+                "shadow": false,
+                "topLevel": true,
+                "x": 0,
+                "y": 0
+            }
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "11.0.0-beta.2",
+        "agent": "Scratch Compiler v0.3.0b"
+    }
+}
