@@ -1,6 +1,10 @@
 sprite Stage {
     costume cat "cat.svg";
 
-    var thing = 100;
-    thing = thing + 1;
+    {
+        var i = 0;
+        while(i < 10){
+            i = i + 1;
+        }
+    }
 }

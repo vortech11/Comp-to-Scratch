@@ -104,6 +104,26 @@ class Unary(Expr):
     def getPrint(self) -> str:
         return f"{self.operator} ({self.right.getPrint()})"
     
+    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+        match self.operator.type:
+            case TokenType.BANG:
+                opcode = "operator_not"
+            case TokenType.MINUS:
+                opcode = "operator_subtract"
+            case _:
+                opcode = ""
+        
+        block = projectFile.addBlock(opcode, {}, {}, False, sprite, previous, mendPrevious=False)
+
+        right = self.right.convert(projectFile, sprite, block)
+
+        if opcode == "operator_not":
+            projectFile.setBlockAttribute(sprite, block, "inputs", {"OPERAND": right})
+        elif opcode == "operator_subtract":
+            projectFile.setBlockAttribute(sprite, block, "inputs", {"NUM1": [1, [10, "0"]], "NUM2": right})
+
+        return [2, block]
+    
 class Call(Expr):
     def __init__(self, callee: Expr, paren: Token, arguments: list[Expr]) -> None:
         self.callee: Expr = callee
@@ -261,11 +281,21 @@ class IfStmt(Stmt):
 
 class WhileStmt(Stmt):
     def __init__(self, expression: Expr, statement: Stmt) -> None:
-        self.expression = expression
-        self.statement = statement
+        self.expression: Expr = expression
+        self.statement: Stmt = statement
 
     def getPrint(self) -> str:
         return f"while ({self.expression.getPrint()}) {{{self.statement.getPrint()}}}"
+    
+    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+        block = projectFile.addBlock("control_repeat_until", {}, {}, False, sprite, previous)
+        expression = Unary(Token(TokenType.BANG, "!", "!", 0), self.expression)
+        expression = expression.convert(projectFile, sprite, block)
+        statement = self.statement.convert(projectFile, sprite, block)
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"CONDITION": expression, "SUBSTACK": statement})
+        projectFile.setBlockAttribute(sprite, block, "next", None)
+        return block
+        
     
 class CostumeStmt(Stmt):
     def __init__(self, name: Token, path: Token) -> None:
