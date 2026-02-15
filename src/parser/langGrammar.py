@@ -175,7 +175,9 @@ class Block(Stmt):
             references.append(statement.convert(projectFile, sprite, prev))
             prev = references[-1]
 
-        return [2, references[-1]]
+        if len(references) > 0:
+            return references[-1]
+        return None
     
 class Expression(Stmt):
     def __init__(self, expression: Expr):
@@ -263,15 +265,13 @@ class IfStmt(Stmt):
         condition = self.condition.convert(projectFile, sprite, block)
         
         thenBranch = self.thenBranch.convert(projectFile, sprite, block)
-        if not isinstance(thenBranch, list):
-            thenBranch = [2, thenBranch]
+        thenBranch = [2, thenBranch]
         
         inputs = {"CONDITION" : condition, "SUBSTACK": thenBranch}        
 
         if not self.elseBranch is None:
             elseBranch = self.elseBranch.convert(projectFile, sprite, block)
-            if not isinstance(elseBranch, list):
-                elseBranch = [2, elseBranch]
+            elseBranch = [2, elseBranch]
             inputs["SUBSTACK2"] = elseBranch
 
         projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
@@ -292,6 +292,7 @@ class WhileStmt(Stmt):
         expression = Unary(Token(TokenType.BANG, "!", "!", 0), self.expression)
         expression = expression.convert(projectFile, sprite, block)
         statement = self.statement.convert(projectFile, sprite, block)
+        statement = [2, statement]
         projectFile.setBlockAttribute(sprite, block, "inputs", {"CONDITION": expression, "SUBSTACK": statement})
         projectFile.setBlockAttribute(sprite, block, "next", None)
         return block
