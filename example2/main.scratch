@@ -1,11 +1,11 @@
 sprite Stage {
     costume cat "cat.svg";
 
-    motion_movesteps(10);
-}
+    func main(){
+        motion_movesteps(10);
+    }
 
-sprite cat {
-    costume cat "cat.svg";
-
-
+    func main(){
+        var erm = "what the sigma";
+    }
 }

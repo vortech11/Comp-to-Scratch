@@ -183,8 +183,6 @@ class Call(Expr):
             projectFile.setBlockAttribute(sprite, block, "next", None)
             return block
 
-        
-
 class Variable(Expr):
     def __init__(self, name: Token) -> None:
         self.name = name
@@ -296,6 +294,18 @@ class Function(Stmt):
     def getPrint(self) -> str:
         params = ", ".join([str(param) for param in self.params])
         return f"func {self.name} ({params}) {{{self.body}}}"
+    
+    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+        match self.name.lexeme:
+            case "main": opcode = "event_whenflagclicked"
+            case "keyPressed": opcode = "event_whenkeypressed"
+            case _: opcode = None
+
+        if not opcode is None:
+            params: list[Expr] = [Literal(value) for value in self.params]
+            block = Call(Variable(Token(TokenType.IDENTIFIER, opcode, None, 0)), Token(TokenType.LEFT_PAREN, "(", None, 0), params).convert(projectFile, sprite, None)
+            endBlock = self.body.convert(projectFile, sprite, block)
+            return
 
 class IfStmt(Stmt):
     def __init__(self, condition: Expr, thenBranch: Stmt, elseBranch: Stmt | None) -> None:
