@@ -29,7 +29,7 @@ class Assign(Expr):
         return f"{self.name.lexeme} = {self.value.getPrint()}"
     
     def convert(self, projectFile: ProjectFile, sprite, previous):
-        block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, self.name.lexeme]}, False, sprite, previous)
+        block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]}, False, sprite, previous)
         value = self.value.convert(projectFile, sprite, block)
         projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
         return block
@@ -177,7 +177,7 @@ class Variable(Expr):
             return self.name
         
         if projectFile.isVar(sprite, self.name.lexeme):
-            return [2, [12, self.name.lexeme, self.name.lexeme]]
+            return [2, [12, self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]]
 
 class Stmt(Grammar):
     def convert(self, projectFile: ProjectFile, sprite: str, previous: str | None) -> Any:
@@ -194,15 +194,17 @@ class Block(Stmt):
         return f"{'\n'.join(output)}"
     
     def convert(self, projectFile: ProjectFile, sprite: str, previous):
-        prev = previous
-        references = []
+        topBlock = None
+        bottomBlock = previous
         for statement in self.statements:
-            references.append(statement.convert(projectFile, sprite, prev))
-            prev = unpack(references[-1], 1)
+            block = statement.convert(projectFile, sprite, bottomBlock)
+            if (not unpack(block, 1) == previous) and topBlock is None:
+                topBlock = unpack(block, 0)
+            bottomBlock = unpack(block, 1)
 
-        if len(references) > 0:
-            return unpack(references[0]), unpack(references[-1], 1)
-        return None
+        if topBlock is None:
+            return bottomBlock
+        return topBlock, bottomBlock
     
 class Expression(Stmt):
     def __init__(self, expression: Expr):
@@ -245,7 +247,8 @@ class Var(Stmt):
         return f"var {self.name} {value}"
     
     def convert(self, projectFile: ProjectFile, sprite: str, previous):
-        block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, self.name.lexeme]}, False, sprite, previous)
+        projectFile.define(sprite, self.name.lexeme, "")
+        block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]}, False, sprite, previous)
 
         value = [1, [10, None]]
         if not self.initializer is None:
@@ -260,7 +263,7 @@ class Var(Stmt):
             value[1][1] = str(value[1][1])
             literal = value[1][1]
         
-        projectFile.define(sprite, self.name.lexeme, literal)
+        projectFile.setVarDefault(sprite, self.name.lexeme, literal)
         projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
         return block
 

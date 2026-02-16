@@ -1,7 +1,9 @@
 sprite Stage {
     costume cat "cat.svg";
 
-    var num = 10.54 >= 3.0;
+    for(var i = 0; i < 10; i = i + 1){
+        
+    }
 }
 
 sprite cat {

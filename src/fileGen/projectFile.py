@@ -130,14 +130,23 @@ class ProjectFile:
             }
         )
 
-    def getBlock(self, sprite, name):
+    def getBlock(self, sprite, name) -> dict:
         return self.fileDict["targets"][self.getSpriteIndex(sprite)]["blocks"][name]
     
     def define(self, sprite, name, value):
-        self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"][name] = [name, value]
+        self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"][f"{name}{self.currentBlock}"] = [name, value]
 
-    def getVarId(self, sprite, name):
-        ...
+    def setVarDefault(self, sprite, name, value):
+        self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"][self.getVarId(sprite, name)] = [name, value]
 
-    def isVar(self, sprite, name):
-        return name in self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"]
+    def getVarId(self, sprite, name) -> str:
+        for key, value in self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"].items():
+            if value[0] == name:
+                return key
+        return ""
+
+    def isVar(self, sprite, name) -> bool:
+        for _, value in self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"].items():
+            if value[0] == name:
+                return True
+        return True
