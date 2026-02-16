@@ -3,6 +3,7 @@ from json import load
 from src.parser.scanner import Token, TokenType
 
 from src.fileGen.projectFile import ProjectFile
+from src.fileGen.environment import Environment
 
 from typing import Any
 
@@ -17,7 +18,7 @@ class Grammar:
         return f"()"
 
 class Expr(Grammar):
-    def convert(self, projectFile: ProjectFile, sprite: str, previous: str | None) -> Any:
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous: str | None) -> Any:
         ...
 
 class Assign(Expr):
@@ -28,9 +29,9 @@ class Assign(Expr):
     def getPrint(self) -> str:
         return f"{self.name.lexeme} = {self.value.getPrint()}"
     
-    def convert(self, projectFile: ProjectFile, sprite, previous):
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous):
         block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]}, False, sprite, previous)
-        value = self.value.convert(projectFile, sprite, block)
+        value = self.value.convert(projectFile, environment, sprite, block)
         projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
         return block
 
@@ -43,7 +44,7 @@ class Binary(Expr):
     def getPrint(self) -> str:
         return f"{self.operator} ({self.left.getPrint()}) ({self.right.getPrint()})"
     
-    def convert(self, projectFile: ProjectFile, sprite, previous=None):
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous=None):
         if self.operator.type in [TokenType.BANG_EQUAL, TokenType.GREATER_EQUAL, TokenType.LESS_EQUAL]:
             match self.operator.type:
                 case TokenType.BANG_EQUAL:
@@ -66,7 +67,7 @@ class Binary(Expr):
                 case _:
                     gram = Expr()
 
-            return gram.convert(projectFile, sprite, previous)
+            return gram.convert(projectFile, environment, sprite, previous)
 
 
         match self.operator.type:
@@ -87,8 +88,8 @@ class Binary(Expr):
         block = projectFile.addBlock(opcode, {}, {}, False, sprite, previous, mendPrevious=False)
 
 
-        left = self.left.convert(projectFile, sprite, block)
-        right = self.right.convert(projectFile, sprite, block)
+        left = self.left.convert(projectFile, environment, sprite, block)
+        right = self.right.convert(projectFile, environment, sprite, block)
 
         leftName = opcodeMap[opcode]["inputs"][0]
         rightName = opcodeMap[opcode]["inputs"][1]
@@ -104,8 +105,8 @@ class Grouping(Expr):
     def getPrint(self) -> str:
         return f"group {self.expression.getPrint()}"
     
-    def convert(self, projectFile: ProjectFile, sprite: str, previous):
-        return self.expression.convert(projectFile, sprite, previous)
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        return self.expression.convert(projectFile, environment, sprite, previous)
         
 class Literal(Expr):
     def __init__(self, value):
@@ -118,7 +119,7 @@ class Literal(Expr):
             case _:
                 return f"{self.value}"
             
-    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         return [1, [10, str(self.value)]]
         
 class Unary(Expr):
@@ -129,7 +130,7 @@ class Unary(Expr):
     def getPrint(self) -> str:
         return f"{self.operator} ({self.right.getPrint()})"
     
-    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         match self.operator.type:
             case TokenType.BANG:
                 opcode = "operator_not"
@@ -140,7 +141,7 @@ class Unary(Expr):
         
         block = projectFile.addBlock(opcode, {}, {}, False, sprite, previous, mendPrevious=False)
 
-        right = self.right.convert(projectFile, sprite, block)
+        right = self.right.convert(projectFile, environment, sprite, block)
 
         if opcode == "operator_not":
             projectFile.setBlockAttribute(sprite, block, "inputs", {"OPERAND": right})
@@ -160,8 +161,8 @@ class Call(Expr):
         printArgs = ", ".join(listPrintArgs)
         return f"{self.callee.getPrint()} {self.paren} ({printArgs})"
     
-    def convert(self, projectFile: ProjectFile, sprite: str, previous):
-        callee = self.callee.convert(projectFile, sprite, previous)
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        callee = self.callee.convert(projectFile, environment, sprite, previous)
         assert isinstance(callee, Token), "Function call must have callee as callable object"
         if callee.lexeme in opcodeMap:
             funcInfo = opcodeMap[callee.lexeme]
@@ -172,9 +173,9 @@ class Call(Expr):
             for index, input in enumerate(self.arguments):
                 match funcInfo["inputtype"][index]:
                     case "text":
-                        inputs[funcInfo["inputs"][index]] = input.convert(projectFile, sprite, block)
+                        inputs[funcInfo["inputs"][index]] = input.convert(projectFile, environment, sprite, block)
                     case "dropdown":
-                        arguments[funcInfo["inputs"][index]] = input.convert(projectFile, sprite, block)
+                        arguments[funcInfo["inputs"][index]] = input.convert(projectFile, environment, sprite, block)
                     case "menu":
                         ...
 
@@ -182,6 +183,27 @@ class Call(Expr):
             projectFile.setBlockAttribute(sprite, block, "arguments", arguments)
             projectFile.setBlockAttribute(sprite, block, "next", None)
             return block
+        
+        func = projectFile.getFunc(sprite, callee.lexeme)
+        block = projectFile.addBlock("procedures_call", {}, {}, False, sprite, previous)
+
+        mutation = {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": func["proccode"],
+            "argumentids": func["parameterIdText"],
+            "warp": func["warp"]
+        }
+
+        inputs = {}
+
+        for index, argument in enumerate(self.arguments):
+            input = argument.convert(projectFile, environment, sprite, block)
+            inputs[func["parameterIdList"][index]] = input
+
+        projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
+        projectFile.setBlockAttribute(sprite, block, "mutation", mutation)
+
 
 class Variable(Expr):
     def __init__(self, name: Token) -> None:
@@ -190,15 +212,23 @@ class Variable(Expr):
     def getPrint(self):
         return f"{self.name}"
     
-    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         if self.name.lexeme in opcodeMap:
             return self.name
+        
+        if projectFile.doesFuncExist(sprite, self.name.lexeme):
+            return self.name
+        
+        if environment.isFuncParam(self.name.lexeme):
+            inputName = self.name.lexeme
+            block = projectFile.addBlock("argument_reporter_boolean", {}, {"VALUE": [inputName]}, False, sprite, previous, mendPrevious=False)
+            return [2, block]
         
         if projectFile.isVar(sprite, self.name.lexeme):
             return [2, [12, self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]]
 
 class Stmt(Grammar):
-    def convert(self, projectFile: ProjectFile, sprite: str, previous: str | None) -> Any:
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous: str | None) -> Any:
         ...
 
 class Block(Stmt):
@@ -211,11 +241,11 @@ class Block(Stmt):
             output.append(statement.getPrint())
         return f"{'\n'.join(output)}"
     
-    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         topBlock = None
         bottomBlock = previous
         for statement in self.statements:
-            block = statement.convert(projectFile, sprite, bottomBlock)
+            block = statement.convert(projectFile, environment, sprite, bottomBlock)
             if (not unpack(block, 1) == previous) and topBlock is None:
                 topBlock = unpack(block, 0)
             bottomBlock = unpack(block, 1)
@@ -231,8 +261,8 @@ class Expression(Stmt):
     def getPrint(self) -> str:
         return f"{self.expression.getPrint()}"
     
-    def convert(self, projectFile: ProjectFile, sprite: str, previous):
-        return self.expression.convert(projectFile, sprite, previous)
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        return self.expression.convert(projectFile, environment, sprite, previous)
         
 class Print(Stmt):
     def __init__(self, expression: Expr):
@@ -264,13 +294,13 @@ class Var(Stmt):
             value = self.initializer.getPrint()
         return f"var {self.name} {value}"
     
-    def convert(self, projectFile: ProjectFile, sprite: str, previous):
-        projectFile.define(sprite, self.name.lexeme, "")
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        projectFile.createVar(sprite, self.name.lexeme, "")
         block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]}, False, sprite, previous)
 
         value = [1, [10, None]]
         if not self.initializer is None:
-            value = self.initializer.convert(projectFile, sprite, block)
+            value = self.initializer.convert(projectFile, environment, sprite, block)
 
         if value[0] == 2:
             literal = ""
@@ -295,7 +325,7 @@ class Function(Stmt):
         params = ", ".join([str(param) for param in self.params])
         return f"func {self.name} ({params}) {{{self.body}}}"
     
-    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         match self.name.lexeme:
             case "main": opcode = "event_whenflagclicked"
             case "keyPressed": opcode = "event_whenkeypressed"
@@ -303,9 +333,61 @@ class Function(Stmt):
 
         if not opcode is None:
             params: list[Expr] = [Literal(value) for value in self.params]
-            block = Call(Variable(Token(TokenType.IDENTIFIER, opcode, None, 0)), Token(TokenType.LEFT_PAREN, "(", None, 0), params).convert(projectFile, sprite, None)
-            endBlock = self.body.convert(projectFile, sprite, block)
-            return
+            block = Call(Variable(Token(TokenType.IDENTIFIER, opcode, None, 0)), Token(TokenType.LEFT_PAREN, "(", None, 0), params).convert(projectFile, environment, sprite, None)
+            endBlock = self.body.convert(projectFile, environment, sprite, block)
+            return previous
+        
+        block = projectFile.addBlock("procedures_definition", {}, {}, False, sprite)
+        prototype = projectFile.addBlock("procedures_prototype", {}, {}, True, sprite, block, mendPrevious=False)
+
+        prototypeInputs = {}
+
+        inputTypes = []
+        ids = []
+        names = []
+        defaults = []
+
+        for param in self.params:
+            name = param.lexeme
+            inputType = "%s"
+            inputId = f"{name}{len(names)}"
+
+            names.append(name)
+            inputTypes.append(inputType)
+            ids.append(inputId)
+            
+            defaults.append("")
+            
+            inputBlock = projectFile.addBlock("argument_reporter_string_number", {}, {"VALUE": [name, None]}, True, sprite, prototype, mendPrevious=False)
+            prototypeInputs[inputId] = [1, inputBlock]
+
+        textParamData = []
+        for paramlist in [ids, names, defaults]:
+            #paramlist = ["false" if item is False else "true" if item is True else item for item in paramlist]
+            textParamData.append(f"[{",".join([f"\"{item}\"" for item in paramlist])}]")
+
+        proccode = f"{self.name.lexeme} {" ".join(inputTypes)}"
+        warp = "true"
+
+        mutation = {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": proccode,
+            "argumentids": textParamData[0],
+            "argumentnames": textParamData[1],
+            "argumentdefaults": textParamData[2],
+            "warp": "true"
+        }
+
+        projectFile.setBlockAttribute(sprite, prototype, "mutation", mutation)
+        projectFile.setBlockAttribute(sprite, prototype, "inputs", prototypeInputs)
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"custom_block": [1, prototype]})
+
+        funcEnvironment = Environment(environment, {"name": self.name.lexeme, "argumentNames": names,})
+        projectFile.createFunc(sprite, self.name.lexeme, proccode, ids, textParamData[0], warp)
+
+        lastBlock = unpack(self.body.convert(projectFile, funcEnvironment, sprite, block), 1)
+        return previous
 
 class IfStmt(Stmt):
     def __init__(self, condition: Expr, thenBranch: Stmt, elseBranch: Stmt | None) -> None:
@@ -316,7 +398,7 @@ class IfStmt(Stmt):
     def getPrint(self) -> str:
         return f"if ({self.condition.getPrint()}) {{{self.thenBranch.getPrint()}}}"
     
-    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         if self.elseBranch is None:
             opcode = "control_if"
         else:
@@ -324,15 +406,15 @@ class IfStmt(Stmt):
         
         block = projectFile.addBlock(opcode, {}, {}, False, sprite, previous)
 
-        condition = self.condition.convert(projectFile, sprite, block)
+        condition = self.condition.convert(projectFile, environment, sprite, block)
         
-        thenBranch = unpack(self.thenBranch.convert(projectFile, sprite, block))
+        thenBranch = unpack(self.thenBranch.convert(projectFile, environment, sprite, block))
         thenBranch = [2, thenBranch]
         
         inputs = {"CONDITION" : condition, "SUBSTACK": thenBranch}        
 
         if not self.elseBranch is None:
-            elseBranch = unpack(self.elseBranch.convert(projectFile, sprite, block))
+            elseBranch = unpack(self.elseBranch.convert(projectFile, environment, sprite, block))
             elseBranch = [2, elseBranch]
             inputs["SUBSTACK2"] = elseBranch
 
@@ -349,11 +431,11 @@ class WhileStmt(Stmt):
     def getPrint(self) -> str:
         return f"while ({self.expression.getPrint()}) {{{self.statement.getPrint()}}}"
     
-    def convert(self, projectFile: ProjectFile, sprite: str, previous):
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         block = projectFile.addBlock("control_repeat_until", {}, {}, False, sprite, previous)
         expression = Unary(Token(TokenType.BANG, "!", "!", 0), self.expression)
-        expression = expression.convert(projectFile, sprite, block)
-        statement = unpack(self.statement.convert(projectFile, sprite, block))
+        expression = expression.convert(projectFile, environment, sprite, block)
+        statement = unpack(self.statement.convert(projectFile, environment, sprite, block))
         statement = [2, statement]
         projectFile.setBlockAttribute(sprite, block, "inputs", {"CONDITION": expression, "SUBSTACK": statement})
         projectFile.setBlockAttribute(sprite, block, "next", None)
@@ -365,7 +447,7 @@ class CostumeStmt(Stmt):
         self.name: Token = name
         self.path: Token = path
     
-    def convert(self, projectFile: ProjectFile, sprite, previous):
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous):
         projectFile.addCostume(sprite, self.name.lexeme, self.path.lexeme, (1, 1))
         return previous
 
@@ -384,7 +466,8 @@ class Sprite(FileStmt):
     def convert(self, projectFile: ProjectFile):
         isStage = self.name.lexeme == "Stage"
         projectFile.addSprite(self.name.lexeme, isStage)
-        self.body.convert(projectFile, self.name.lexeme, None)
+        spriteEnvironment = Environment(None, None)
+        self.body.convert(projectFile, spriteEnvironment, self.name.lexeme, None)
 
 def printAST(grammar: Grammar):
     print(f"{grammar.getPrint()}")

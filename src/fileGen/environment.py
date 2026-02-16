@@ -1,0 +1,34 @@
+
+
+
+
+class Environment:
+    def __init__(self, parent: Environment | None, funcSig: dict | None) -> None:
+        self.parent: Environment | None = parent
+
+        """
+            {
+            "name": [], 
+            "argumentNames": [],
+            }
+        """
+        self.func: None | dict = funcSig
+
+        self.tempVars = {}
+
+    def getFuncSig(self):
+        if not self.func is None:
+            return self.func
+
+        if not self.parent is None:
+            return self.parent.getFuncSig()
+        
+        return None
+
+    def isFuncParam(self, name: str) -> bool:
+        funcSig = self.getFuncSig()
+        if funcSig is None:
+            return False
+        if name in funcSig["argumentNames"]:
+            return True
+        return False

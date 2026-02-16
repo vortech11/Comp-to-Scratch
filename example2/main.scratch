@@ -1,11 +1,19 @@
 sprite Stage {
     costume cat "cat.svg";
 
-    func main(){
-        motion_movesteps(10);
+
+    func fibi(index){
+        var num1 = 0;
+        var num2 = 1;
+        var temp;
+        for (var i = 0; i < index; i = i + 1){
+            temp = num1 + num2;
+            num1 = num2;
+            num2 = temp;
+        }
     }
 
     func main(){
-        var erm = "what the sigma";
+        fibi(15);
     }
 }
