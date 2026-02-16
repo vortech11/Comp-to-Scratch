@@ -44,13 +44,35 @@ class Binary(Expr):
         return f"{self.operator} ({self.left.getPrint()}) ({self.right.getPrint()})"
     
     def convert(self, projectFile: ProjectFile, sprite, previous=None):
+        if self.operator.type in [TokenType.BANG_EQUAL, TokenType.GREATER_EQUAL, TokenType.LESS_EQUAL]:
+            match self.operator.type:
+                case TokenType.BANG_EQUAL:
+                    gram = Unary(
+                        Token(TokenType.BANG, "!", None, 0), 
+                        Binary(self.left, Token(TokenType.EQUAL_EQUAL, "==", None, 0), self.right)
+                    )
+                case TokenType.GREATER_EQUAL:
+                    gram = Binary(
+                        Binary(self.left, Token(TokenType.GREATER, ">", None, 0), self.right), 
+                        Token(TokenType.OR, "or", None, 0), 
+                        Binary(self.left, Token(TokenType.EQUAL_EQUAL, "==", None, 0), self.right)
+                    )
+                case TokenType.LESS_EQUAL:
+                    gram = Binary(
+                        Binary(self.left, Token(TokenType.GREATER, "<", None, 0), self.right), 
+                        Token(TokenType.OR, "or", None, 0), 
+                        Binary(self.left, Token(TokenType.EQUAL_EQUAL, "==", None, 0), self.right)
+                    )
+                case _:
+                    gram = Expr()
+
+            return gram.convert(projectFile, sprite, previous)
+
+
         match self.operator.type:
             case TokenType.EQUAL_EQUAL: opcode = "operator_equals"
-            case TokenType.BANG_EQUAL: opcode = ""
             case TokenType.GREATER: opcode = "operator_gt"
-            case TokenType.GREATER_EQUAL: opcode = ""
             case TokenType.LESS: opcode = "operator_lt"
-            case TokenType.LESS_EQUAL: opcode = ""
             
             case TokenType.PLUS: opcode = "operator_add"
             case TokenType.MINUS: opcode = "operator_subtract"
@@ -229,12 +251,16 @@ class Var(Stmt):
         if not self.initializer is None:
             value = self.initializer.convert(projectFile, sprite, block)
 
-        if value[1][1] is None:
+        if value[0] == 2:
+            literal = ""
+        elif value[1][1] is None:
             value[1][1] = ""
+            literal = ""
+        else:
+            value[1][1] = str(value[1][1])
+            literal = value[1][1]
         
-        value[1][1] = str(value[1][1])
-        
-        projectFile.define(sprite, self.name.lexeme, value[1][1])
+        projectFile.define(sprite, self.name.lexeme, literal)
         projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
         return block
 
