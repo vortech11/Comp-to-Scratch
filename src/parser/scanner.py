@@ -134,7 +134,7 @@ class Scanner:
         self.addToken(TokenType.NUMBER, float(self.source[self.start:self.current+1]))
         
     def identifier(self):
-        while self.getNextChar().isalnum():
+        while self.getNextChar().isalnum() or self.getNextChar() == "_":
             self.advance()
         text = self.source[self.start:self.current+1]
         if text in keywords:
@@ -198,7 +198,7 @@ class Scanner:
             case _: 
                 if char.isdigit():
                     self.scanDigit()
-                elif char.isalpha():
+                elif char.isalpha() or char == "_":
                     self.identifier()
                 else:
                     logger.error(f"{self.line} | Error: Unexpected character {char}")

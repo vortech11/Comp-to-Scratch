@@ -1,9 +1,7 @@
 sprite Stage {
     costume cat "cat.svg";
 
-    for(var i = 0; i < 10; i = i + 1){
-        
-    }
+    motion_movesteps(10);
 }
 
 sprite cat {

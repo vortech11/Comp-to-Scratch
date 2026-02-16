@@ -163,6 +163,26 @@ class Call(Expr):
     def convert(self, projectFile: ProjectFile, sprite: str, previous):
         callee = self.callee.convert(projectFile, sprite, previous)
         assert isinstance(callee, Token), "Function call must have callee as callable object"
+        if callee.lexeme in opcodeMap:
+            funcInfo = opcodeMap[callee.lexeme]
+            assert len(self.arguments) <= len(funcInfo["inputs"]), "Function arity must be equal or less than the number of inputs"
+            block = projectFile.addBlock(callee.lexeme, {}, {}, False, sprite, previous)
+            inputs = {}
+            arguments = {}
+            for index, input in enumerate(self.arguments):
+                match funcInfo["inputtype"][index]:
+                    case "text":
+                        inputs[funcInfo["inputs"][index]] = input.convert(projectFile, sprite, block)
+                    case "dropdown":
+                        arguments[funcInfo["inputs"][index]] = input.convert(projectFile, sprite, block)
+                    case "menu":
+                        ...
+
+            projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
+            projectFile.setBlockAttribute(sprite, block, "arguments", arguments)
+            projectFile.setBlockAttribute(sprite, block, "next", None)
+            return block
+
         
 
 class Variable(Expr):
