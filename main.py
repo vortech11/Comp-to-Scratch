@@ -22,7 +22,7 @@ def loadFile(filePath: Path) -> str:
     
     return fileData
 
-def saveFile(filePath: Path, fileContents: dict, filesToCoppy: list[list[Path]]):
+def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict):
     filesToBeCompressed: list[Path] = []
 
     output = json.dumps(fileContents)
@@ -31,9 +31,9 @@ def saveFile(filePath: Path, fileContents: dict, filesToCoppy: list[list[Path]])
 
     filesToBeCompressed.append(Path(outputFolderName) / "project.json")
 
-    for file in filesToCoppy:
-        path = filePath.parent / outputFolderName / file[1]
-        copyfile(filePath.parent / file[0], path)
+    for fromPath, toPath in filesToCoppy.items():
+        path = filePath.parent / outputFolderName / toPath
+        copyfile(filePath.parent / fromPath, path)
         filesToBeCompressed.append(path)
 
 

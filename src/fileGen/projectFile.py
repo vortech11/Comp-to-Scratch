@@ -16,7 +16,7 @@ class ProjectFile:
 
         self.spriteList: list[str] = []
 
-        self.files: list[list[Path]] = []
+        self.files: dict = {}
 
         self.currentBlock = 0
     
@@ -115,7 +115,7 @@ class ProjectFile:
             }
         )
 
-        self.files.append([Path(path), Path(assetId + suffix)])
+        self.files[str(Path(path))] = Path(assetId + suffix)
     
     def addSound(self, sprite, name, dataFormat, rate, sampleCount):
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["sounds"].append(

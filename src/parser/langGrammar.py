@@ -9,6 +9,9 @@ from typing import Any
 with open("src/OpcodeMap.json") as map:
     opcodeMap = load(map)
 
+def unpack(value, index=0):
+    return value[index] if isinstance(value, (tuple, list)) else value
+
 class Grammar:
     def getPrint(self) -> str:
         return f"()"
@@ -173,10 +176,10 @@ class Block(Stmt):
         references = []
         for statement in self.statements:
             references.append(statement.convert(projectFile, sprite, prev))
-            prev = references[-1]
+            prev = unpack(references[-1], 1)
 
         if len(references) > 0:
-            return references[-1]
+            return unpack(references[0]), unpack(references[-1], 1)
         return None
     
 class Expression(Stmt):
@@ -264,13 +267,13 @@ class IfStmt(Stmt):
 
         condition = self.condition.convert(projectFile, sprite, block)
         
-        thenBranch = self.thenBranch.convert(projectFile, sprite, block)
+        thenBranch = unpack(self.thenBranch.convert(projectFile, sprite, block))
         thenBranch = [2, thenBranch]
         
         inputs = {"CONDITION" : condition, "SUBSTACK": thenBranch}        
 
         if not self.elseBranch is None:
-            elseBranch = self.elseBranch.convert(projectFile, sprite, block)
+            elseBranch = unpack(self.elseBranch.convert(projectFile, sprite, block))
             elseBranch = [2, elseBranch]
             inputs["SUBSTACK2"] = elseBranch
 
@@ -291,7 +294,7 @@ class WhileStmt(Stmt):
         block = projectFile.addBlock("control_repeat_until", {}, {}, False, sprite, previous)
         expression = Unary(Token(TokenType.BANG, "!", "!", 0), self.expression)
         expression = expression.convert(projectFile, sprite, block)
-        statement = self.statement.convert(projectFile, sprite, block)
+        statement = unpack(self.statement.convert(projectFile, sprite, block))
         statement = [2, statement]
         projectFile.setBlockAttribute(sprite, block, "inputs", {"CONDITION": expression, "SUBSTACK": statement})
         projectFile.setBlockAttribute(sprite, block, "next", None)

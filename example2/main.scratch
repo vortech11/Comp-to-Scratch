@@ -1,8 +1,22 @@
 sprite Stage {
     costume cat "cat.svg";
 
-    var num = 10;
-    for(var i = 0; i < 10; i = i + 1){
-        num = num + 2;
+    var num1 = 0;
+    var num2 = 1;
+
+    var temp;
+
+    var distance = 15;
+
+    for(var i = 0; i < distance; i = i + 1){
+        temp = num1 + num2;
+        num1 = num2;
+        num2 = temp;
     }
+}
+
+sprite cat {
+    costume cat "cat.svg";
+
+
 }
