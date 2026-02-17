@@ -204,6 +204,19 @@ class Call(Expr):
         projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
         projectFile.setBlockAttribute(sprite, block, "mutation", mutation)
 
+        return block
+
+class Get(Expr):
+    def __init__(self, object: Expr, name: Token) -> None:
+        self.object: Expr = object
+        self.name: Token = name
+
+    def getPrint(self):
+        return f"{self.object.getPrint()}.{self.name}"
+    
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        print()
+        return []
 
 class Variable(Expr):
     def __init__(self, name: Token) -> None:
