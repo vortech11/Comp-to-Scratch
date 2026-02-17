@@ -217,6 +217,19 @@ class Get(Expr):
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         print()
         return []
+    
+class Set(Expr):
+    def __init__(self, object: Expr, name: Token, value: Expr) -> None:
+        self.object: Expr = object
+        self.name: Token = name
+        self.value: Expr = value
+
+    def getPrint(self):
+        return f"{self.object.getPrint()}.{self.name} = {self.value.getPrint()}"
+    
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        print()
+        return []
 
 class Variable(Expr):
     def __init__(self, name: Token) -> None:
