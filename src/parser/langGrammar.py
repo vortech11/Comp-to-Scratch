@@ -215,8 +215,12 @@ class Get(Expr):
         return f"{self.object.getPrint()}.{self.name}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
-        print()
-        return []
+        object = self.object.convert(projectFile, environment, sprite, previous)
+        assert isinstance(object, Token), "Object Get must act upon an object"
+        if projectFile.isSprite(object.lexeme):
+            match self.name.lexeme:
+                case "volume":
+                    ...
     
 class Set(Expr):
     def __init__(self, object: Expr, name: Token, value: Expr) -> None:
@@ -240,6 +244,9 @@ class Variable(Expr):
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         if self.name.lexeme in opcodeMap:
+            return self.name
+        
+        if projectFile.isSprite(self.name.lexeme):
             return self.name
         
         if projectFile.doesFuncExist(sprite, self.name.lexeme):

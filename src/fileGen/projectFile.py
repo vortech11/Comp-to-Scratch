@@ -136,7 +136,10 @@ class ProjectFile:
 
     def getBlock(self, sprite, name) -> dict:
         return self.fileDict["targets"][self.getSpriteIndex(sprite)]["blocks"][name]
-    
+
+    def isSprite(self, name) -> bool:
+        return name in self.spriteList
+
     def createVar(self, sprite, name, value):
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"][f"{name}{self.currentBlock}"] = [name, value]
 
