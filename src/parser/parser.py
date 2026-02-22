@@ -51,18 +51,18 @@ class Parser:
     def assignment(self) -> Expr:
         expr: Expr = self.logical_or()
         
-        if self.match([TokenType.EQUAL]):
-            equals: Token = self.getToken()
+        if self.match([TokenType.EQUAL, TokenType.PLUS_EQUAL, TokenType.MINUS_EQUAL, TokenType.STAR_EQUAL, TokenType.SLASH_EQUAL]):
+            assignment: Token = self.getToken()
             self.advance()
             value = self.assignment()
             
             if isinstance(expr, Variable):
                 name = expr.name
-                return Assign(name, value)
+                return Assign(name, assignment, value)
             elif isinstance(expr, Get):
                 return Set(expr.object, expr.name, value)
             
-            self.error(equals, "Invalid assignment target.")
+            self.error(assignment, "Invalid assignment target.")
             
         return expr
     

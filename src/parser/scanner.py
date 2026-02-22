@@ -9,11 +9,16 @@ class TokenType(Enum):
     RIGHT_BRACE = auto()
     COMMA = auto()
     DOT = auto()
-    MINUS = auto()
-    PLUS = auto()
     SEMICOLON = auto()
-    SLASH = auto()
+    
+    PLUS = auto()
+    PLUS_EQUAL = auto()
+    MINUS = auto()
+    MINUS_EQUAL = auto()
     STAR = auto()
+    STAR_EQUAL = auto()
+    SLASH = auto()
+    SLASH_EQUAL = auto()
 
     BANG = auto()
     BANG_EQUAL = auto()
@@ -71,10 +76,11 @@ keywords = {
     "sprite": TokenType.SPRITE,
     "costume": TokenType.COSTUME,
     "sound": TokenType.SOUND,
+    "this": TokenType.THIS,
 }
 
 class Token:
-    def __init__(self, type: TokenType, lexeme: str, literal, line: int) -> None:
+    def __init__(self, type: TokenType, lexeme: str="", literal=None, line: int=0) -> None:
         self.type: TokenType = type
         self.lexeme: str = lexeme
         self.literal = literal
@@ -152,10 +158,26 @@ class Scanner:
             case '}': self.addToken(TokenType.RIGHT_BRACE)
             case ',': self.addToken(TokenType.COMMA)
             case '.': self.addToken(TokenType.DOT)
-            case '-': self.addToken(TokenType.MINUS)
-            case '+': self.addToken(TokenType.PLUS)
             case ';': self.addToken(TokenType.SEMICOLON)
-            case '*': self.addToken(TokenType.STAR)
+            
+            case '+': 
+                if self.getNextChar() == "=":
+                    self.advance()
+                    self.addToken(TokenType.PLUS_EQUAL)
+                else:
+                    self.addToken(TokenType.PLUS)
+            case '-': 
+                if self.getNextChar() == "=":
+                    self.advance()
+                    self.addToken(TokenType.MINUS_EQUAL)
+                else:
+                    self.addToken(TokenType.MINUS)
+            case '*': 
+                if self.getNextChar() == "=":
+                    self.advance()
+                    self.addToken(TokenType.STAR_EQUAL)
+                else:
+                    self.addToken(TokenType.STAR)
             
             case "!": 
                 if self.getNextChar() == "=":
@@ -186,6 +208,9 @@ class Scanner:
                 if self.getNextChar() == "/":
                     while not self.getNextChar() in ["\n", "\0"]:
                         self.advance()
+                elif self.getNextChar(1) == "=":
+                    self.advance()
+                    self.addToken(TokenType.SLASH_EQUAL)
                 else:
                     self.addToken(TokenType.SLASH)
                     

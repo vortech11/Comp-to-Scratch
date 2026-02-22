@@ -22,8 +22,9 @@ class Expr(Grammar):
         ...
 
 class Assign(Expr):
-    def __init__(self, name: Token, value: Expr) -> None:
+    def __init__(self, name: Token, assignment: Token, value: Expr) -> None:
         self.name: Token = name
+        self.assignment: Token = assignment
         self.value: Expr = value
     
     def getPrint(self) -> str:
@@ -31,8 +32,21 @@ class Assign(Expr):
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous):
         block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]}, False, sprite, previous)
-        value = self.value.convert(projectFile, environment, sprite, block)
-        projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
+        
+        operator = Token(TokenType.PLUS)
+        match self.assignment.type:
+            case TokenType.EQUAL:
+                value = self.value.convert(projectFile, environment, sprite, block)
+                projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
+                return block
+            case TokenType.PLUS_EQUAL: operator = Token(TokenType.PLUS)
+            case TokenType.MINUS_EQUAL: operator = Token(TokenType.MINUS)
+            case TokenType.STAR_EQUAL: operator = Token(TokenType.STAR)
+            case TokenType.SLASH_EQUAL: operator = Token(TokenType.SLASH)
+        
+        subGramar = Binary(Variable(self.name), operator, self.value)
+        subBlock = subGramar.convert(projectFile, environment, sprite, block)
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": subBlock})
         return block
 
 class Binary(Expr):

@@ -5,6 +5,7 @@ sprite Stage {
 sprite cat {
     costume cat "cat.svg";
 
-    var thing = Stage.currentCostume;
+    var thing = 10;
+    thing *= 2;
 
 }

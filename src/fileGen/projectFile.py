@@ -70,6 +70,7 @@ class ProjectFile:
 
         self.fileDict["targets"].append(sprite)
         self.spriteList.append(name)
+        self.funcs[name] = {}
 
     def addBlock(self, opcode: str, inputs: dict, fields: dict, shadow: bool, sprite: str, previous=None, mendPrevious=True):
         self.currentBlock += 1
@@ -159,9 +160,6 @@ class ProjectFile:
         return True
     
     def createFunc(self, sprite, name, proccode, parameterIdList, parameterIdText, warp):
-        if not sprite in self.funcs:
-            self.funcs[sprite] = {}
-
         self.funcs[sprite][name] = {
             "proccode": proccode, 
             "parameterIdList": parameterIdList, 
