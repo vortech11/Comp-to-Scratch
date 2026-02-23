@@ -56,6 +56,8 @@ class TokenType(Enum):
     COSTUME = auto()
     SOUND = auto()
 
+    LIST = auto()
+
 keywords = {
     "and": TokenType.AND,
     "class": TokenType.CLASS,
@@ -76,7 +78,7 @@ keywords = {
     "sprite": TokenType.SPRITE,
     "costume": TokenType.COSTUME,
     "sound": TokenType.SOUND,
-    "this": TokenType.THIS,
+    "list": TokenType.LIST,
 }
 
 class Token:

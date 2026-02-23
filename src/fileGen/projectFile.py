@@ -147,6 +147,9 @@ class ProjectFile:
     def setVarDefault(self, sprite, name, value):
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"][self.getVarId(sprite, name)] = [name, value]
 
+    def createList(self, sprite, name, value):
+        self.fileDict["targets"][self.getSpriteIndex(sprite)]["lists"][f"{name}{self.currentBlock}"] = [name, value]
+
     def getVarId(self, sprite, name) -> str:
         for key, value in self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"].items():
             if value[0] == name:

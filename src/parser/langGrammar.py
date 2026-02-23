@@ -373,7 +373,8 @@ class Return(Stmt):
         return f"{self.keyword.lexeme} {value}"
     
 class Var(Stmt):
-    def __init__(self, name: Token, initializer: Expr | None) -> None:
+    def __init__(self, declarationType: Token, name: Token, initializer: Expr | None) -> None:
+        self.declarationType: Token = declarationType
         self.name: Token = name
         self.initializer: Expr | None = initializer
         
@@ -385,25 +386,28 @@ class Var(Stmt):
         return f"var {self.name} {value}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
-        projectFile.createVar(sprite, self.name.lexeme, "")
-        block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]}, False, sprite, previous)
+        if self.declarationType.type == TokenType.VAR:
+            projectFile.createVar(sprite, self.name.lexeme, "")
+            block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]}, False, sprite, previous)
 
-        value = [1, [10, None]]
-        if not self.initializer is None:
-            value = self.initializer.convert(projectFile, environment, sprite, block)
+            value = [1, [10, None]]
+            if not self.initializer is None:
+                value = self.initializer.convert(projectFile, environment, sprite, block)
 
-        if value[0] == 2:
-            literal = ""
-        elif value[1][1] is None:
-            value[1][1] = ""
-            literal = ""
-        else:
-            value[1][1] = str(value[1][1])
-            literal = value[1][1]
-        
-        projectFile.setVarDefault(sprite, self.name.lexeme, literal)
-        projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
-        return block
+            if value[0] == 2:
+                literal = ""
+            elif value[1][1] is None:
+                value[1][1] = ""
+                literal = ""
+            else:
+                value[1][1] = str(value[1][1])
+                literal = value[1][1]
+            
+            projectFile.setVarDefault(sprite, self.name.lexeme, literal)
+            projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
+            return block
+        if self.declarationType.type == TokenType.LIST:
+            ...
 
 class Function(Stmt):
     def __init__(self, name: Token, params: list[Token], body: Stmt) -> None:

@@ -306,6 +306,7 @@ class Parser:
                 return self.expressionStatement()
     
     def varDeclaration(self):
+        declarationType: Token = self.getToken()
         name: Token = self.consume(TokenType.IDENTIFIER, "Expect variable name.")
         
         initializer: Expr | None = None
@@ -314,7 +315,7 @@ class Parser:
             initializer = self.expression()
         
         self.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
-        return Var(name, initializer)
+        return Var(declarationType, name, initializer)
     
     def funcDeclaration(self, kind: str):
         name: Token = self.consume(TokenType.IDENTIFIER, f"Expect {kind} name.")
@@ -347,7 +348,7 @@ class Parser:
         match self.getToken().type:
             case TokenType.FUNC:
                 return self.funcDeclaration("function")
-            case TokenType.VAR:
+            case TokenType.VAR | TokenType.LIST:
                 return self.varDeclaration()
             case TokenType.COSTUME:
                 return self.costumeDeclaration()
