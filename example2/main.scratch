@@ -6,6 +6,6 @@ sprite cat {
     costume cat "cat.svg";
 
     var thing = 10;
-    thing *= 2;
+    this.rotationStyle = "All around";
 
 }

@@ -231,6 +231,23 @@ class Get(Expr):
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         object = self.object.convert(projectFile, environment, sprite, previous)
         assert isinstance(object, Token), "Object Get must act upon an object"
+        if object.type == TokenType.THIS:
+            opcode = ""
+            match self.name.lexeme:
+                case "x": opcode = "motion_xposition"
+                case "y": opcode = "motion_yposition"
+                case "direction": opcode = "motion_direction"
+                case "size": opcode = "looks_size"
+                case "volume": opcode = "sound_volume"
+                case "answer": opcode = "sensing_answer" # don't know how well this will work
+                case "mouseX": opcode = "sensing_mousex"
+                case "mouseY": opcode = "sensing_mousey"
+                case "loudness": opcode = "sensing_loudness" # mabey
+                case "timer": opcode = "sensing_timer" # mabey
+            
+            block = projectFile.addBlock(opcode, {}, {}, False, sprite, previous, False)
+            return [2, block]
+
         if projectFile.isSprite(object.lexeme):
             match self.name.lexeme:
                 case "volume":
@@ -246,8 +263,34 @@ class Set(Expr):
         return f"{self.object.getPrint()}.{self.name} = {self.value.getPrint()}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
-        print()
-        return []
+        object = self.object.convert(projectFile, environment, sprite, previous)
+        assert isinstance(object, Token), "Object Get must act upon an object"
+        if object.type == TokenType.THIS:
+            opcode = ""
+            match self.name.lexeme:
+                case "x": opcode = "motion_setx"
+                case "y": opcode = "motion_sety"
+                case "direction": opcode = "motion_pointindirection"
+                case "rotationStyle": opcode = "motion_setrotationstyle"
+                case "currentCostume": opcode = "looks_switchcostumeto"
+                case "size": opcode = "looks_setsizeto"
+                case "volume": opcode = "sound_setvolumeto"
+                case "dragMode": opcode = "sensing_setdragmode"
+
+            blockGram = Call(Variable(Token(TokenType.IDENTIFIER, opcode)), Token(TokenType.LEFT_PAREN), [self.value])
+
+            block = blockGram.convert(projectFile, environment, sprite, previous)
+            return block
+    
+class This(Expr):
+    def __init__(self, keyword: Token) -> None:
+        self.keyword: Token = keyword
+    
+    def getPrint(self):
+        return f"{self.keyword.lexeme}"
+    
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        return self.keyword
 
 class Variable(Expr):
     def __init__(self, name: Token) -> None:

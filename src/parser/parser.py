@@ -179,6 +179,7 @@ class Parser:
                 self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
                 return Grouping(expr)
             
+            case TokenType.THIS: return This(self.getToken())
             case TokenType.IDENTIFIER: return Variable(self.getToken())
             
             case _: 
