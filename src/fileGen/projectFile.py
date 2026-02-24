@@ -135,33 +135,48 @@ class ProjectFile:
             }
         )
 
-    def getBlock(self, sprite, name) -> dict:
+    def getBlock(self, sprite: str, name: str) -> dict:
         return self.fileDict["targets"][self.getSpriteIndex(sprite)]["blocks"][name]
 
-    def isSprite(self, name) -> bool:
+    def isSprite(self, name: str) -> bool:
         return name in self.spriteList
 
-    def createVar(self, sprite, name, value):
+    def createVar(self, sprite: str, name: str, value):
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"][f"{name}{self.currentBlock}"] = [name, value]
 
-    def setVarDefault(self, sprite, name, value):
+    def setVarDefault(self, sprite: str, name: str, value):
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"][self.getVarId(sprite, name)] = [name, value]
 
-    def createList(self, sprite, name, value):
+    def createList(self, sprite: str, name: str, value):
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["lists"][f"{name}{self.currentBlock}"] = [name, value]
 
-    def getVarId(self, sprite, name) -> str:
+    def setListDefault(self, sprite: str, name: str, value):
+        self.fileDict["targets"][self.getSpriteIndex(sprite)]["lists"][self.getVarId(sprite, name)] = [name, value]
+
+    def getVarId(self, sprite: str, name: str) -> str:
         for key, value in self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"].items():
             if value[0] == name:
                 return key
         return ""
+    
+    def getListId(self, sprite: str, name: str) -> str:
+        for key, value in self.fileDict["targets"][self.getSpriteIndex(sprite)]["lists"].items():
+            if value[0] == name:
+                return key
+        return ""
 
-    def isVar(self, sprite, name) -> bool:
+    def isVar(self, sprite: str, name: str) -> bool:
         for _, value in self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"].items():
             if value[0] == name:
                 return True
         return True
     
+    def isList(self, sprite: str, name: str) -> bool:
+        for _, value in self.fileDict["targets"][self.getSpriteIndex(sprite)]["lists"].items():
+            if value[0] == name:
+                return True
+        return True
+
     def createFunc(self, sprite, name, proccode, parameterIdList, parameterIdText, warp):
         self.funcs[sprite][name] = {
             "proccode": proccode, 

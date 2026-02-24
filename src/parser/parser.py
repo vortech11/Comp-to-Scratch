@@ -1,3 +1,4 @@
+from typing import Sequence
 from src.parser.langGrammar import *
 import logging
 logger = logging.getLogger(__name__)
@@ -309,13 +310,20 @@ class Parser:
         declarationType: Token = self.getToken()
         name: Token = self.consume(TokenType.IDENTIFIER, "Expect variable name.")
         
-        initializer: Expr | None = None
+        initializer: Expr | list[Expr] | None = None
         if self.match([TokenType.EQUAL]):
             self.advance()
-            initializer = self.expression()
-        
+            if declarationType.type == TokenType.VAR:
+                initializer = self.expression()
+            else:
+                initializer = []
+                while not self.getToken().type == TokenType.RIGHT_BRACKET:
+                    self.advance()
+                    initializer.append(self.expression())
+                    self.advance()
+
         self.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
-        return Var(declarationType, name, initializer)
+        return Var(declarationType, name, initializer) # type: ignore
     
     def funcDeclaration(self, kind: str):
         name: Token = self.consume(TokenType.IDENTIFIER, f"Expect {kind} name.")
@@ -368,7 +376,7 @@ class Parser:
             case TokenType.SPRITE:
                 return self.sprite()
     
-    def parse(self):
+    def parse(self) -> list[FileStmt]:
         tokenList = []
         while not self.isAtEnd():
             tokenList.append(self.fileStatement())

@@ -5,5 +5,9 @@ sprite Stage {
 sprite cat {
     costume cat "cat.svg";
 
-    list thing;
+    list thing = [
+        10 + 2 / 43, 
+        20 / 2, 
+        40 + 4 * 2
+    ];
 }

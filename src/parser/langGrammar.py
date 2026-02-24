@@ -4,6 +4,7 @@ from src.parser.scanner import Token, TokenType
 
 from src.fileGen.projectFile import ProjectFile
 from src.fileGen.environment import Environment
+from src.fileGen.envObjects import ObjMethod
 
 from typing import Any
 
@@ -177,6 +178,25 @@ class Call(Expr):
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         callee = self.callee.convert(projectFile, environment, sprite, previous)
+
+        if isinstance(callee, ObjMethod):
+            if projectFile.isList(sprite, callee.object.lexeme):
+                opcode = ""
+                gramArgs = []
+                match callee.name.lexeme:
+                    case "add": 
+                        opcode = "data_addtolist"
+                        gramArgs = self.arguments + [Variable(callee.object)]
+                    case "clear": 
+                        opcode = "data_deletealloflist"
+                        gramArgs: list[Expr] = [Variable(callee.object)]
+                blockGramar = Call(Variable(Token(TokenType.IDENTIFIER, opcode, line=self.paren.line)), self.paren, gramArgs)
+                args = {"LIST": [callee.object.lexeme, projectFile.getListId(sprite, callee.object.lexeme)]}
+                block = blockGramar.convert(projectFile, environment, sprite, previous)
+                projectFile.setBlockAttribute(sprite, block, "fields", args)
+                return block
+            assert False, "Object in Method Call is not list: Other objects have not been implamented yet"
+
         assert isinstance(callee, Token), "Function call must have callee as callable object"
         if callee.lexeme in opcodeMap:
             funcInfo = opcodeMap[callee.lexeme]
@@ -194,7 +214,7 @@ class Call(Expr):
                         ...
 
             projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
-            projectFile.setBlockAttribute(sprite, block, "arguments", arguments)
+            projectFile.setBlockAttribute(sprite, block, "fields", arguments)
             projectFile.setBlockAttribute(sprite, block, "next", None)
             return block
         
@@ -230,6 +250,11 @@ class Get(Expr):
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         object = self.object.convert(projectFile, environment, sprite, previous)
+        if isinstance(object, list):
+            if object[0] == 2:
+                if isinstance(object, list):
+                    if object[1][0] == 13:
+                        return ObjMethod(Token(TokenType.IDENTIFIER, object[1][1], line=self.name.line), self.name)
         assert isinstance(object, Token), "Object Get must act upon an object"
         if object.type == TokenType.THIS:
             opcode = ""
@@ -314,6 +339,9 @@ class Variable(Expr):
             block = projectFile.addBlock("argument_reporter_boolean", {}, {"VALUE": [inputName]}, False, sprite, previous, mendPrevious=False)
             return [2, block]
         
+        if projectFile.isList(sprite, self.name.lexeme):
+            return [2, [13, self.name.lexeme, projectFile.getListId(sprite, self.name.lexeme)]]
+        
         if projectFile.isVar(sprite, self.name.lexeme):
             return [2, [12, self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]]
 
@@ -376,28 +404,28 @@ class Var(Stmt):
     def __init__(self, declarationType: Token, name: Token, initializer: Expr | None) -> None:
         self.declarationType: Token = declarationType
         self.name: Token = name
-        self.initializer: Expr | None = initializer
+        self.initializer: Expr | list[Expr] | None = initializer
         
     def getPrint(self) -> str:
         if self.initializer == None:
             value = None
+        elif isinstance(self.initializer, list):
+            value = ", ".join([value.getPrint() for value in self.initializer])
         else:
             value = self.initializer.getPrint()
         return f"var {self.name} {value}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         if self.declarationType.type == TokenType.VAR:
+            assert not isinstance(self.initializer, list), "For var declaration, initializer cannot be list. Use list data type for list values"
             projectFile.createVar(sprite, self.name.lexeme, "")
+            if self.initializer is None:
+                return
             block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]}, False, sprite, previous)
 
-            value = [1, [10, None]]
-            if not self.initializer is None:
-                value = self.initializer.convert(projectFile, environment, sprite, block)
+            value = self.initializer.convert(projectFile, environment, sprite, block)
 
             if value[0] == 2:
-                literal = ""
-            elif value[1][1] is None:
-                value[1][1] = ""
                 literal = ""
             else:
                 value[1][1] = str(value[1][1])
@@ -406,8 +434,23 @@ class Var(Stmt):
             projectFile.setVarDefault(sprite, self.name.lexeme, literal)
             projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
             return block
+        
         if self.declarationType.type == TokenType.LIST:
-            ...
+            projectFile.createList(sprite, self.name.lexeme, [])
+            if self.initializer is None:
+                return previous
+            if isinstance(self.initializer, list):
+                exprInitializer = self.initializer
+            else:
+                exprInitializer = [self.initializer]
+            
+            StmtClear = [Call(Get(Variable(self.name), Token(TokenType.IDENTIFIER, "clear", line=self.name.line)), Token(TokenType.LEFT_PAREN, line=self.name.line), [])]
+            StmtInitializer = [Call(Get(Variable(self.name), Token(TokenType.IDENTIFIER, "add", line=self.name.line)), Token(TokenType.LEFT_PAREN, line=self.name.line), [expression]) for expression in exprInitializer]
+            
+            initializerGrammar = Block(StmtClear + StmtInitializer) # type: ignore
+
+            return initializerGrammar.convert(projectFile, environment, sprite, previous)
+
 
 class Function(Stmt):
     def __init__(self, name: Token, params: list[Token], body: Stmt) -> None:
@@ -540,6 +583,9 @@ class CostumeStmt(Stmt):
     def __init__(self, name: Token, path: Token) -> None:
         self.name: Token = name
         self.path: Token = path
+
+    def getPrint(self) -> str:
+        return f"costume {self.name} {self.path}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous):
         projectFile.addCostume(sprite, self.name.lexeme, self.path.lexeme, (1, 1))
@@ -555,13 +601,16 @@ class Sprite(FileStmt):
         self.body: Stmt = body
     
     def getPrint(self) -> str:
-        return f"sprite {self.name.lexeme} {{{self.body.getPrint()}}}"
+        return f"sprite {self.name.lexeme} {{\n{self.body.getPrint()}\n}}"
     
     def convert(self, projectFile: ProjectFile):
         isStage = self.name.lexeme == "Stage"
         projectFile.addSprite(self.name.lexeme, isStage)
         spriteEnvironment = Environment(None, None)
         self.body.convert(projectFile, spriteEnvironment, self.name.lexeme, None)
+
+def formatAST(grammar: list[Any]) -> str:
+    return "\n".join([gram.getPrint() for gram in grammar])
 
 def printAST(grammar: Grammar):
     print(f"{grammar.getPrint()}")

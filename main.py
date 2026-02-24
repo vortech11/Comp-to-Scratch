@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 from src.parser.scanner import Scanner
 from src.parser.parser import Parser
 from src.fileGen.converter import FileGenerator
+from src.parser.langGrammar import formatAST
 
 scratchCompVersion = "0.3.0b"
 outputFolderName = "build"
@@ -57,6 +58,7 @@ def main():
     tokens = scanner.scanTokens()
     parser = Parser(tokens)
     fileAST = parser.parse()
+    logger.debug(formatAST(fileAST))
     generator = FileGenerator(fileAST)
     project = generator.generate()
     saveFile(filePath, project.fileDict, project.files)
