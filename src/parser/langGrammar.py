@@ -184,21 +184,28 @@ class Call(Expr):
                 opcode = ""
                 gramArgs = []
                 addValue = 0
+                listGram = Variable(callee.object)
                 match callee.name.lexeme:
                     case "add": 
                         opcode = "data_addtolist"
-                        gramArgs = self.arguments + [Variable(callee.object)]
+                        gramArgs = self.arguments + [listGram]
                     case "clear": 
                         opcode = "data_deletealloflist"
-                        gramArgs: list[Expr] = [Variable(callee.object)]
+                        gramArgs: list[Expr] = [listGram]
                     case "index":
                         opcode = "data_itemnumoflist"
-                        gramArgs = self.arguments + [Variable(callee.object)]
+                        gramArgs = self.arguments + [listGram]
                         addValue = -1
                     case "delete":
                         opcode = "data_deleteoflist"
-                        gramArgs = [Binary(self.arguments[0], Token(TokenType.PLUS), Literal(1)), Variable(callee.object)]
+                        gramArgs = [Binary(self.arguments[0], Token(TokenType.PLUS), Literal(1)), listGram]
                         addValue = 1
+                    case "contains":
+                        opcode = "data_listcontainsitem"
+                        gramArgs = [listGram] + self.arguments
+                    case "insert":
+                        opcode = "data_insertatlist"
+                        gramArgs = [self.arguments[0], Binary(self.arguments[1], Token(TokenType.PLUS), Literal(1)), listGram]
                 blockGramar = Call(Variable(Token(TokenType.IDENTIFIER, opcode, line=self.paren.line)), self.paren, gramArgs)
                 args = {"LIST": [callee.object.lexeme, projectFile.getListId(sprite, callee.object.lexeme)]}
                 if opcode in ["data_itemnumoflist"]:
@@ -301,6 +308,10 @@ class Get(Expr):
             if object[0] == 2:
                 if isinstance(object, list):
                     if object[1][0] == 13:
+                        match self.name.lexeme:
+                            case "length":
+                                block = projectFile.addBlock("data_lengthoflist", {}, {"LIST": [object[1][1], projectFile.getListId(sprite, object[1][1])]}, False, sprite, previous, False)
+                                return [2, block]
                         return ObjMethod(Token(TokenType.IDENTIFIER, object[1][1], line=self.name.line), self.name)
         assert isinstance(object, Token), "Object Get must act upon an object"
         if object.type == TokenType.THIS:

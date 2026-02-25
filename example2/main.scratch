@@ -12,6 +12,7 @@ sprite cat {
         keys.add("erm");
         values.add(10);
         printList.add(values[keys.index("erm")]);
-        printList.delete(0);
+        printList.delete(printList.length);
+        printList.insert("hi", 1);
     }
 }
