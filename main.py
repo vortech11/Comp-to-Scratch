@@ -43,7 +43,9 @@ def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict):
             myzip.write(filePath.parent / file, Path(file).name)
 
 def main():
-    logging.basicConfig(level=logging.INFO)
+    loggingLevel = logging.INFO
+    #loggingLevel = logging.DEBUG
+    logging.basicConfig(level=loggingLevel)
     logger.info("Started")
 
     assert len(sys.argv) > 1, "No file Selected!"

@@ -5,6 +5,13 @@ sprite Stage {
 sprite cat {
     costume cat "cat.svg";
 
-    list thing = [5];
-    thing.add(thing[100 * 2 / 3 + 4]);
+    func main(){
+        list keys = [];
+        list values = [];
+        list printList = [];
+        keys.add("erm");
+        values.add(10);
+        printList.add(values[keys.index("erm")]);
+        printList.delete(0);
+    }
 }

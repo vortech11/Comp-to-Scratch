@@ -183,6 +183,7 @@ class Call(Expr):
             if projectFile.isList(sprite, callee.object.lexeme):
                 opcode = ""
                 gramArgs = []
+                addValue = 0
                 match callee.name.lexeme:
                     case "add": 
                         opcode = "data_addtolist"
@@ -190,11 +191,28 @@ class Call(Expr):
                     case "clear": 
                         opcode = "data_deletealloflist"
                         gramArgs: list[Expr] = [Variable(callee.object)]
+                    case "index":
+                        opcode = "data_itemnumoflist"
+                        gramArgs = self.arguments + [Variable(callee.object)]
+                        addValue = -1
+                    case "delete":
+                        opcode = "data_deleteoflist"
+                        gramArgs = [Binary(self.arguments[0], Token(TokenType.PLUS), Literal(1)), Variable(callee.object)]
+                        addValue = 1
                 blockGramar = Call(Variable(Token(TokenType.IDENTIFIER, opcode, line=self.paren.line)), self.paren, gramArgs)
                 args = {"LIST": [callee.object.lexeme, projectFile.getListId(sprite, callee.object.lexeme)]}
+                if opcode in ["data_itemnumoflist"]:
+                    subBlock = projectFile.addBlock("operator_add", {}, {}, False, sprite, previous)
+                    block = blockGramar.convert(projectFile, environment, sprite, subBlock)
+                    projectFile.setBlockAttribute(sprite, subBlock, "next", None)
+                    projectFile.setBlockAttribute(sprite, subBlock, "inputs", {"NUM1": [2, block], "NUM2": [1, [10, str(addValue)]]})
+                    projectFile.setBlockAttribute(sprite, block, "fields", args) # type: ignore
+                    return [2, subBlock]
+                
                 block = blockGramar.convert(projectFile, environment, sprite, previous)
+                
                 projectFile.setBlockAttribute(sprite, block, "fields", args)
-                return block
+                return [2, block]
             assert False, "Object in Method Call is not list: Other objects have not been implamented yet"
 
         assert isinstance(callee, Token), "Function call must have callee as callable object"
@@ -247,7 +265,7 @@ class ListIndex(Expr):
         self.index: Expr = index
 
     def getPrint(self):
-        return f"{self.object.convert}[{self.index.convert}]"
+        return f"{self.object.getPrint()}[{self.index.getPrint()}]"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         listReference = self.object.convert(projectFile, environment, sprite, previous)
@@ -261,12 +279,13 @@ class ListIndex(Expr):
         assert not listName is None, "Item before list index operation must be indexable"
 
         block = projectFile.addBlock("data_itemoflist", {}, {}, False, sprite, previous)
-        indexGramar = Binary(self.index, Token(TokenType.PLUS), Literal(1))
-        indexBlock = indexGramar.convert(projectFile, environment, sprite, block)
-        projectFile.setBlockAttribute(sprite, block, "inputs", {"INDEX": indexBlock})
+        addBlock = projectFile.addBlock("operator_add", {}, {}, False, sprite, block, False)
+        indexBlock = self.index.convert(projectFile, environment, sprite, addBlock)
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"INDEX": [2, addBlock]})
         projectFile.setBlockAttribute(sprite, block, "fields", {"LIST": [listName, projectFile.getListId(sprite, listName)]})
+        projectFile.setBlockAttribute(sprite, addBlock, "inputs", {"NUM1": indexBlock, "NUM2": [1, [10, "1"]]})
+        projectFile.setBlockAttribute(sprite, addBlock, "next", None)
         return [2, block]
-        #blockGramar = Call(Variable(Token(TokenType.IDENTIFIER, opcode, line=self.paren.line)), self.paren, gramArgs)
 
 class Get(Expr):
     def __init__(self, object: Expr, name: Token) -> None:
@@ -473,9 +492,11 @@ class Var(Stmt):
                 exprInitializer = [self.initializer]
             
             StmtClear = [Call(Get(Variable(self.name), Token(TokenType.IDENTIFIER, "clear", line=self.name.line)), Token(TokenType.LEFT_PAREN, line=self.name.line), [])]
-            StmtInitializer = [Call(Get(Variable(self.name), Token(TokenType.IDENTIFIER, "add", line=self.name.line)), Token(TokenType.LEFT_PAREN, line=self.name.line), [expression]) for expression in exprInitializer]
-            
-            initializerGrammar = Block(StmtClear + StmtInitializer) # type: ignore
+            if not len(exprInitializer) == 0:
+                StmtInitializer = [Call(Get(Variable(self.name), Token(TokenType.IDENTIFIER, "add", line=self.name.line)), Token(TokenType.LEFT_PAREN, line=self.name.line), [expression]) for expression in exprInitializer]
+                initializerGrammar = Block(StmtClear + StmtInitializer) # type: ignore
+            else:
+                initializerGrammar = Block(StmtClear) # type: ignore
 
             return initializerGrammar.convert(projectFile, environment, sprite, previous)
 
@@ -488,7 +509,7 @@ class Function(Stmt):
     
     def getPrint(self) -> str:
         params = ", ".join([str(param) for param in self.params])
-        return f"func {self.name} ({params}) {{{self.body}}}"
+        return f"func {self.name} ({", ".join(params)}) {{\n{self.body.getPrint()}\n}}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         match self.name.lexeme:
@@ -499,7 +520,7 @@ class Function(Stmt):
         if not opcode is None:
             params: list[Expr] = [Literal(value) for value in self.params]
             block = Call(Variable(Token(TokenType.IDENTIFIER, opcode, None, 0)), Token(TokenType.LEFT_PAREN, "(", None, 0), params).convert(projectFile, environment, sprite, None)
-            endBlock = self.body.convert(projectFile, environment, sprite, block)
+            endBlock = self.body.convert(projectFile, environment, sprite, block) # type: ignore
             return previous
         
         block = projectFile.addBlock("procedures_definition", {}, {}, False, sprite)

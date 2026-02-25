@@ -322,14 +322,18 @@ class Parser:
         if self.match([TokenType.EQUAL]):
             self.advance()
             if declarationType.type == TokenType.VAR:
+                self.advance()
                 initializer = self.expression()
             else:
-                initializer = []
-                while not self.getToken().type == TokenType.RIGHT_BRACKET:
-                    self.advance()
-                    initializer.append(self.expression())
-                    self.advance()
-
+                if not self.match([TokenType.RIGHT_BRACKET]):
+                    initializer = []
+                    while not self.getToken().type == TokenType.RIGHT_BRACKET:
+                        self.advance()
+                        initializer.append(self.expression())
+                        self.advance()
+                else:
+                    initializer = []
+        
         self.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
         return Var(declarationType, name, initializer) # type: ignore
     
