@@ -240,6 +240,34 @@ class Call(Expr):
 
         return block
 
+class ListIndex(Expr):
+    def __init__(self, object, bracket, index) -> None:
+        self.object: Expr = object
+        self.bracket: Token = bracket
+        self.index: Expr = index
+
+    def getPrint(self):
+        return f"{self.object.convert}[{self.index.convert}]"
+    
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        listReference = self.object.convert(projectFile, environment, sprite, previous)
+        listName = None
+        if isinstance(listReference, list):
+            if listReference[0] == 2:
+                if isinstance(listReference[1], list):
+                    if listReference[1][0] == 13:
+                        listName = listReference[1][1]
+        
+        assert not listName is None, "Item before list index operation must be indexable"
+
+        block = projectFile.addBlock("data_itemoflist", {}, {}, False, sprite, previous)
+        indexGramar = Binary(self.index, Token(TokenType.PLUS), Literal(1))
+        indexBlock = indexGramar.convert(projectFile, environment, sprite, block)
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"INDEX": indexBlock})
+        projectFile.setBlockAttribute(sprite, block, "fields", {"LIST": [listName, projectFile.getListId(sprite, listName)]})
+        return [2, block]
+        #blockGramar = Call(Variable(Token(TokenType.IDENTIFIER, opcode, line=self.paren.line)), self.paren, gramArgs)
+
 class Get(Expr):
     def __init__(self, object: Expr, name: Token) -> None:
         self.object: Expr = object

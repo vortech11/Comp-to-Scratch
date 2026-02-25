@@ -38,6 +38,8 @@ class Parser:
         else:
             lexeme = f"at '{token.lexeme}'"
         logger.error(f"{token.line} {lexeme} {message}")
+        logger.error("Error found in parsing file. Exiting...")
+        exit()
     
     def consume(self, type: TokenType, message, offset=0, advance=True):
         if self.match([type], advance, offset):
@@ -151,6 +153,12 @@ class Parser:
             elif self.match([TokenType.DOT]):
                 name = self.consume(TokenType.IDENTIFIER, "Expect property name after '.'.")
                 expr = Get(expr, name)
+            elif self.match([TokenType.LEFT_BRACKET], False):
+                bracket = self.consume(TokenType.LEFT_BRACKET, "")
+                self.advance()                
+                tmp = self.expression()
+                self.consume(TokenType.RIGHT_BRACKET, "Expect right bracket ']' after list index.")
+                expr = ListIndex(expr, bracket, tmp)
             else:
                 break
         

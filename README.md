@@ -21,7 +21,6 @@ Compared to the main branch, this rewrite is not yet feature complete.
 ### Things yet to implament:
 
 * More list functionality
-    * List indexing
     * List indexOf
     * Other list methods
 * Importing and exporting of `.scratch` files
