@@ -7,6 +7,11 @@ import "other.scratch";
 sprite cat {
     costume cat "cat.svg";
 
+    require "other.scratch";
+    require "other.scratch";
+    require "other.scratch";
+    import "other.scratch";
+    import "other.scratch";
     import "other.scratch";
 
     func main(){

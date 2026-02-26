@@ -62,6 +62,7 @@ class TokenType(Enum):
 
     IMPORT = auto()
     EXPORT = auto()
+    REQUIRE = auto()
 
 keywords = {
     "and": TokenType.AND,
@@ -86,6 +87,7 @@ keywords = {
     "list": TokenType.LIST,
     "import": TokenType.IMPORT,
     "export": TokenType.EXPORT,
+    "require": TokenType.REQUIRE,
 }
 
 class Token:

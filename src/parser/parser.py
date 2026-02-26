@@ -6,11 +6,30 @@ import logging
 logger = logging.getLogger(__name__)
 
 class Parser:
-    def __init__(self, tokens: list[Token], directory):
+    def __init__(self, tokens: list[Token], directory, parent=None):
         self.current: int = 0
         self.tokens: list[Token] = tokens
         self.directory: Path = directory
+        self.requires: dict = {}
+        self.parent: Parser | None = parent
+
+        self.currentSprite = None
+
+    def packageImported(self, packageName, context=1|2) -> bool:
+
         
+        match context:
+            case 1:
+                if packageName in self.requires.keys:
+                    return True
+            case 2:
+                if not self.currentSprite is None:
+                    if packageName in self.requires[self.currentSprite]:
+                        return True
+        if not self.parent is None:
+            return self.parent.packageImported(packageName, context)
+        return False
+
     def getToken(self, offset=0) -> Token:
         return self.tokens[self.current + offset]
         
@@ -301,12 +320,18 @@ class Parser:
         return Return(keyword, value)
     
     def importStmt(self):
+        token = self.getToken()
         filePathToken = self.consume(TokenType.STRING, "Expect path to import after import keyword.")
         filePath: Path = self.directory.parent / Path(filePathToken.lexeme)
+        if token.type == TokenType.REQUIRE:
+            if self.packageImported(str(filePath), 2):
+                self.consume(TokenType.SEMICOLON, "Expect semicolon after import keyword.")
+                return Block([])
+            self.requires[self.currentSprite][str(filePath)] = None
         text = loadFile(filePath)
         scanner = Scanner(text)
         tokens = scanner.scanTokens()
-        parser = Parser(tokens, filePath)
+        parser = Parser(tokens, filePath, self)
         fullGramar = parser.parse()
         self.consume(TokenType.SEMICOLON, "Expect semicolon after import keyword.")
 
@@ -330,7 +355,7 @@ class Parser:
                 return self.whileStatement()
             case TokenType.FOR:
                 return self.forStatement()
-            case TokenType.IMPORT:
+            case TokenType.IMPORT | TokenType.REQUIRE:
                 return self.importStmt()
             case _:
                 return self.expressionStatement()
@@ -400,17 +425,24 @@ class Parser:
         name = self.consume(TokenType.IDENTIFIER, "Expect name of sprite after sprite keyword.")
         self.consume(TokenType.LEFT_BRACE, "Expect '{' after sprite name.")
         self.advance()
+        self.currentSprite = name.lexeme
+        self.requires[name.lexeme] = {}
         body = self.block()
-
+        self.currentSprite = None
         return Sprite(name, body)
     
     def importFileStmt(self):
-        filePathToken = self.consume(TokenType.STRING, "Expect path to import after import keyword.")
+        token = self.getToken()
+        filePathToken = self.consume(TokenType.STRING, f"Expect path to import after {token.lexeme} keyword.")
         filePath: Path = self.directory.parent / Path(filePathToken.lexeme)
+        if token.type == TokenType.REQUIRE:
+            if self.packageImported(str(filePath), 1):
+                return []
+            self.requires[str(filePath)] = None
         text = loadFile(filePath)
         scanner = Scanner(text)
         tokens = scanner.scanTokens()
-        parser = Parser(tokens, filePath)
+        parser = Parser(tokens, filePath, self)
         gramar = parser.parse()
         self.consume(TokenType.SEMICOLON, "Expect semicolon after import keyword.")
         return gramar
@@ -425,7 +457,7 @@ class Parser:
         match self.getToken().type:
             case TokenType.SPRITE:
                 return [self.sprite()]
-            case TokenType.IMPORT:
+            case TokenType.IMPORT | TokenType.REQUIRE:
                 return self.importFileStmt()
             case TokenType.EXPORT:
                 return [self.exportFileStmt()]
