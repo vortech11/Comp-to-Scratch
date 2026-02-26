@@ -209,7 +209,7 @@ class Call(Expr):
                 blockGramar = Call(Variable(Token(TokenType.IDENTIFIER, opcode, line=self.paren.line)), self.paren, gramArgs)
                 args = {"LIST": [callee.object.lexeme, projectFile.getListId(sprite, callee.object.lexeme)]}
                 if opcode in ["data_itemnumoflist"]:
-                    subBlock = projectFile.addBlock("operator_add", {}, {}, False, sprite, previous)
+                    subBlock = projectFile.addBlock("operator_add", {}, {}, False, sprite, previous, False)
                     block = blockGramar.convert(projectFile, environment, sprite, subBlock)
                     projectFile.setBlockAttribute(sprite, subBlock, "next", None)
                     projectFile.setBlockAttribute(sprite, subBlock, "inputs", {"NUM1": [2, block], "NUM2": [1, [10, str(addValue)]]})
@@ -285,7 +285,7 @@ class ListIndex(Expr):
         
         assert not listName is None, "Item before list index operation must be indexable"
 
-        block = projectFile.addBlock("data_itemoflist", {}, {}, False, sprite, previous)
+        block = projectFile.addBlock("data_itemoflist", {}, {}, False, sprite, previous, False)
         addBlock = projectFile.addBlock("operator_add", {}, {}, False, sprite, block, False)
         indexBlock = self.index.convert(projectFile, environment, sprite, addBlock)
         projectFile.setBlockAttribute(sprite, block, "inputs", {"INDEX": [2, addBlock]})
