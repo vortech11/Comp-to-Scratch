@@ -20,9 +20,6 @@ Compared to the main branch, this rewrite is not yet feature complete.
 
 ### Things yet to implament:
 
-* More list functionality
-    * Other list methods
-* Importing and exporting of `.scratch` files
 * `Static` Variables (To be renamed to ptr or something of the like)
     * Basic implamentation
     * Garbage collection
