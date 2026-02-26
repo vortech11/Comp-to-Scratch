@@ -708,6 +708,16 @@ class Sprite(FileStmt):
         spriteEnvironment = Environment(None, None)
         self.body.convert(projectFile, spriteEnvironment, self.name.lexeme, None)
 
+class Export(FileStmt):
+    def __init__(self, body) -> None:
+        self.body: Stmt = body
+    
+    def getPrint(self) -> str:
+        return f"export {self.body.getPrint()}"
+    
+    def convert(self, projectFile: ProjectFile):
+        return
+
 def formatAST(grammar: list[Any]) -> str:
     return "\n".join([gram.getPrint() for gram in grammar])
 

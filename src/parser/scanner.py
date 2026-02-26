@@ -60,6 +60,9 @@ class TokenType(Enum):
 
     LIST = auto()
 
+    IMPORT = auto()
+    EXPORT = auto()
+
 keywords = {
     "and": TokenType.AND,
     "class": TokenType.CLASS,
@@ -81,6 +84,8 @@ keywords = {
     "costume": TokenType.COSTUME,
     "sound": TokenType.SOUND,
     "list": TokenType.LIST,
+    "import": TokenType.IMPORT,
+    "export": TokenType.EXPORT,
 }
 
 class Token:

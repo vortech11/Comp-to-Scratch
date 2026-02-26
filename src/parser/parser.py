@@ -1,12 +1,15 @@
-from typing import Sequence
 from src.parser.langGrammar import *
+from src.parser.scanner import Scanner
+from src.parser.fileReader import loadFile
+from pathlib import Path
 import logging
 logger = logging.getLogger(__name__)
 
 class Parser:
-    def __init__(self, tokens: list[Token]):
+    def __init__(self, tokens: list[Token], directory):
         self.current: int = 0
         self.tokens: list[Token] = tokens
+        self.directory: Path = directory
         
     def getToken(self, offset=0) -> Token:
         return self.tokens[self.current + offset]
@@ -296,6 +299,20 @@ class Parser:
         
         self.consume(TokenType.SEMICOLON, "Expect ';' after return value.")
         return Return(keyword, value)
+    
+    def importStmt(self):
+        filePathToken = self.consume(TokenType.STRING, "Expect path to import after import keyword.")
+        filePath: Path = self.directory.parent / Path(filePathToken.lexeme)
+        text = loadFile(filePath)
+        scanner = Scanner(text)
+        tokens = scanner.scanTokens()
+        parser = Parser(tokens, filePath)
+        fullGramar = parser.parse()
+        self.consume(TokenType.SEMICOLON, "Expect semicolon after import keyword.")
+
+        exports = [fileStmt.body for fileStmt in fullGramar if isinstance(fileStmt, Export)]
+
+        return Block(exports)
 
     def statement(self):
         match self.getToken().type:
@@ -313,6 +330,8 @@ class Parser:
                 return self.whileStatement()
             case TokenType.FOR:
                 return self.forStatement()
+            case TokenType.IMPORT:
+                return self.importStmt()
             case _:
                 return self.expressionStatement()
     
@@ -384,16 +403,39 @@ class Parser:
         body = self.block()
 
         return Sprite(name, body)
+    
+    def importFileStmt(self):
+        filePathToken = self.consume(TokenType.STRING, "Expect path to import after import keyword.")
+        filePath: Path = self.directory.parent / Path(filePathToken.lexeme)
+        text = loadFile(filePath)
+        scanner = Scanner(text)
+        tokens = scanner.scanTokens()
+        parser = Parser(tokens, filePath)
+        gramar = parser.parse()
+        self.consume(TokenType.SEMICOLON, "Expect semicolon after import keyword.")
+        return gramar
+    
+    def exportFileStmt(self):
+        self.consume(TokenType.LEFT_BRACE, "Expect block statement after export keyword.")
+        self.advance()
+        body = self.block()
+        return Export(body)
             
     def fileStatement(self):
         match self.getToken().type:
             case TokenType.SPRITE:
-                return self.sprite()
+                return [self.sprite()]
+            case TokenType.IMPORT:
+                return self.importFileStmt()
+            case TokenType.EXPORT:
+                return [self.exportFileStmt()]
+            case _:
+                return []
     
     def parse(self) -> list[FileStmt]:
         tokenList = []
         while not self.isAtEnd():
-            tokenList.append(self.fileStatement())
+            tokenList.extend(self.fileStatement())
             self.advance()
         return tokenList
 

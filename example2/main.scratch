@@ -2,11 +2,16 @@ sprite Stage {
     costume cat "cat.svg";
 }
 
+import "other.scratch";
+
 sprite cat {
     costume cat "cat.svg";
+
+    import "other.scratch";
 
     func main(){
         list values = [];
         values[0] += 10;
+        
     }
 }

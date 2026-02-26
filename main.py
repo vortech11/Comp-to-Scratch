@@ -7,6 +7,7 @@ import warnings
 import logging
 logger = logging.getLogger(__name__)
 
+from src.parser.fileReader import loadFile
 from src.parser.scanner import Scanner
 from src.parser.parser import Parser
 from src.fileGen.converter import FileGenerator
@@ -14,14 +15,6 @@ from src.parser.langGrammar import formatAST
 
 scratchCompVersion = "0.3.0b"
 outputFolderName = "build"
-
-def loadFile(filePath: Path) -> str:
-    with open(filePath, "r") as file:
-        fileData = ""
-        for line in file:
-            fileData += line
-    
-    return fileData
 
 def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict):
     filesToBeCompressed: list[Path] = []
@@ -58,7 +51,7 @@ def main():
     fileText = loadFile(filePath)
     scanner = Scanner(fileText)
     tokens = scanner.scanTokens()
-    parser = Parser(tokens)
+    parser = Parser(tokens, filePath)
     fileAST = parser.parse()
     logger.debug(formatAST(fileAST))
     generator = FileGenerator(fileAST)
