@@ -59,6 +59,8 @@ class TokenType(Enum):
     SOUND = auto()
 
     LIST = auto()
+    DUMB_POINTER = auto()
+    SMART_POINTER = auto()
 
     IMPORT = auto()
     EXPORT = auto()
@@ -88,6 +90,8 @@ keywords = {
     "import": TokenType.IMPORT,
     "export": TokenType.EXPORT,
     "require": TokenType.REQUIRE,
+    "ptr": TokenType.SMART_POINTER,
+    "dptr": TokenType.DUMB_POINTER,
 }
 
 class Token:
