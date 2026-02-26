@@ -6,13 +6,7 @@ sprite cat {
     costume cat "cat.svg";
 
     func main(){
-        list keys = [];
         list values = [];
-        list printList = [];
-        keys.add("erm");
-        values.add(10);
-        printList.add(values[keys.index("erm")]);
-        printList.delete(printList.length);
-        printList.insert("hi", 1);
+        values[0] += 10;
     }
 }

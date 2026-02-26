@@ -62,6 +62,8 @@ class Parser:
             if isinstance(expr, Variable):
                 name = expr.name
                 return Assign(name, assignment, value)
+            elif isinstance(expr, ListIndex):
+                return ListSetIndex(expr, assignment, value)
             elif isinstance(expr, Get):
                 return Set(expr.object, expr.name, value)
             

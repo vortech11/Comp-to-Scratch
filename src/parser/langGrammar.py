@@ -293,6 +293,45 @@ class ListIndex(Expr):
         projectFile.setBlockAttribute(sprite, addBlock, "inputs", {"NUM1": indexBlock, "NUM2": [1, [10, "1"]]})
         projectFile.setBlockAttribute(sprite, addBlock, "next", None)
         return [2, block]
+    
+class ListSetIndex(Expr):
+    def __init__(self, object, assignment, value) -> None:
+        self.object: Expr = object
+        self.assignment: Token = assignment
+        self.value: Expr = value
+    
+    def getPrint(self) -> str:
+        return f"{self.object.getPrint()} {self.assignment} {self.value.getPrint()}"
+    
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        assert isinstance(self.object, ListIndex), "Internal Error: in ListSetIndex, obj is not ListIndex"
+        assert isinstance(self.object.object, Variable), "Language does not support multidementional arrays"
+        assert projectFile.isList(sprite, self.object.object.name.lexeme), "💔"
+        listName = self.object.object.name.lexeme
+        block = projectFile.addBlock("data_replaceitemoflist", {}, {"LIST": [listName, projectFile.getListId(sprite, listName)]}, False, sprite, previous)
+        indexGram = Binary(self.object.index, Token(TokenType.PLUS), Literal(1))
+        index = indexGram.convert(projectFile, environment, sprite, block)
+        if self.assignment.type == TokenType.EQUAL:
+            value = self.value.convert(projectFile, environment, sprite, block)
+        else:
+            match self.assignment.type:
+                case TokenType.PLUS_EQUAL: opcode = "operator_add"
+                case TokenType.MINUS_EQUAL: opcode = "operator_subtract"
+                case TokenType.STAR_EQUAL: opcode = "operator_multiply"
+                case TokenType.SLASH_EQUAL: opcode = "operator_divide"
+                case _: opcode = "operator_add"
+    
+            valueBlock = projectFile.addBlock(opcode, {}, {}, False, sprite, block)
+            value = self.value.convert(projectFile, environment, sprite, valueBlock)
+            listRef = self.object.convert(projectFile, environment, sprite, valueBlock)
+            projectFile.setBlockAttribute(sprite, valueBlock, "next", None)
+            projectFile.setBlockAttribute(sprite, valueBlock, "inputs", {"NUM1": listRef, "NUM2": value})
+            value = [2, valueBlock]
+
+        projectFile.setBlockAttribute(sprite, block, "next", None)
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"INDEX": index, "ITEM": value})
+        return block
+        
 
 class Get(Expr):
     def __init__(self, object: Expr, name: Token) -> None:
