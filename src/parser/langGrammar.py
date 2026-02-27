@@ -1,4 +1,6 @@
 from json import load
+import logging
+logger = logging.getLogger(__name__)
 
 from src.parser.scanner import Token, TokenType
 
@@ -13,6 +15,11 @@ with open("src/OpcodeMap.json") as map:
 
 def unpack(value, index=0):
     return value[index] if isinstance(value, (tuple, list)) else value
+
+def error(token: Token, message: str):
+    logger.error(f"From {token.filePath.name} on line {token.line}: {message}")
+    logger.error("Error found in converting file")
+    assert False, "Exiting..."
 
 class Grammar:
     def getPrint(self) -> str:
@@ -196,7 +203,7 @@ class Call(Expr):
                         opcode = "data_itemnumoflist"
                         gramArgs = self.arguments + [listGram]
                         addValue = -1
-                    case "delete":
+                    case "remove":
                         opcode = "data_deleteoflist"
                         gramArgs = [Binary(self.arguments[0], Token(TokenType.PLUS), Literal(1)), listGram]
                         addValue = 1
@@ -206,6 +213,8 @@ class Call(Expr):
                     case "insert":
                         opcode = "data_insertatlist"
                         gramArgs = [self.arguments[0], Binary(self.arguments[1], Token(TokenType.PLUS), Literal(1)), listGram]
+                    case _:
+                        error(self.paren, f"List operation {callee.name.lexeme} not supported.")
                 blockGramar = Call(Variable(Token(TokenType.IDENTIFIER, opcode, line=self.paren.line)), self.paren, gramArgs)
                 args = {"LIST": [callee.object.lexeme, projectFile.getListId(sprite, callee.object.lexeme)]}
                 if opcode in ["data_itemnumoflist"]:
@@ -220,12 +229,15 @@ class Call(Expr):
                 
                 projectFile.setBlockAttribute(sprite, block, "fields", args)
                 return [2, block]
-            assert False, "Object in Method Call is not list: Other objects have not been implamented yet"
+            error(self.paren, "Object in Method Call is not list: Other objects have not been implamented yet")
 
-        assert isinstance(callee, Token), "Function call must have callee as callable object"
+        if not isinstance(callee, Token):
+            error(self.paren, f"Function call must have callee as callable object, not '{callee}'")
+            exit()
         if callee.lexeme in opcodeMap:
             funcInfo = opcodeMap[callee.lexeme]
-            assert len(self.arguments) <= len(funcInfo["inputs"]), "Function arity must be equal or less than the number of inputs"
+            if len(self.arguments) > len(funcInfo["inputs"]):
+                error(self.paren, f"Function \"{callee.lexeme}\" arity must be equal or less than the number of inputs, {self.arguments}")
             block = projectFile.addBlock(callee.lexeme, {}, {}, False, sprite, previous)
             inputs = {}
             arguments = {}
@@ -283,7 +295,9 @@ class ListIndex(Expr):
                     if listReference[1][0] == 13:
                         listName = listReference[1][1]
         
-        assert not listName is None, "Item before list index operation must be indexable"
+        if listName is None:
+            error(self.bracket, "Item before list index operation must be indexable")
+            exit()
 
         block = projectFile.addBlock("data_itemoflist", {}, {}, False, sprite, previous, False)
         addBlock = projectFile.addBlock("operator_add", {}, {}, False, sprite, block, False)
@@ -304,9 +318,14 @@ class ListSetIndex(Expr):
         return f"{self.object.getPrint()} {self.assignment} {self.value.getPrint()}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
-        assert isinstance(self.object, ListIndex), "Internal Error: in ListSetIndex, obj is not ListIndex"
-        assert isinstance(self.object.object, Variable), "Language does not support multidementional arrays"
-        assert projectFile.isList(sprite, self.object.object.name.lexeme), "💔"
+        if not isinstance(self.object, ListIndex):
+            error(self.assignment, "Internal Error: in ListSetIndex, obj is not ListIndex")
+            exit()
+        if not isinstance(self.object.object, Variable):
+            error(self.assignment, "Language does not support multidementional arrays")
+            exit()
+        if not projectFile.isList(sprite, self.object.object.name.lexeme):
+            error(self.assignment, "💔")
         listName = self.object.object.name.lexeme
         block = projectFile.addBlock("data_replaceitemoflist", {}, {"LIST": [listName, projectFile.getListId(sprite, listName)]}, False, sprite, previous)
         indexGram = Binary(self.object.index, Token(TokenType.PLUS), Literal(1))
@@ -352,7 +371,9 @@ class Get(Expr):
                                 block = projectFile.addBlock("data_lengthoflist", {}, {"LIST": [object[1][1], projectFile.getListId(sprite, object[1][1])]}, False, sprite, previous, False)
                                 return [2, block]
                         return ObjMethod(Token(TokenType.IDENTIFIER, object[1][1], line=self.name.line), self.name)
-        assert isinstance(object, Token), "Object Get must act upon an object"
+        if not isinstance(object, Token):
+            error(self.name, "Object Get must act upon an object")
+            exit()
         if object.type == TokenType.THIS:
             opcode = ""
             match self.name.lexeme:
@@ -374,6 +395,8 @@ class Get(Expr):
             match self.name.lexeme:
                 case "volume":
                     ...
+
+        error(self.name, f"Object {self.object} or name {self.name.lexeme} is unsupported.")
     
 class Set(Expr):
     def __init__(self, object: Expr, name: Token, value: Expr) -> None:
@@ -386,7 +409,8 @@ class Set(Expr):
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         object = self.object.convert(projectFile, environment, sprite, previous)
-        assert isinstance(object, Token), "Object Get must act upon an object"
+        if not isinstance(object, Token):
+            error(self.name, "Object Get must act upon an object")
         if object.type == TokenType.THIS:
             opcode = ""
             match self.name.lexeme:
@@ -462,10 +486,15 @@ class Block(Stmt):
         for statement in self.statements:
             block = statement.convert(projectFile, environment, sprite, bottomBlock)
             if (not unpack(block, 1) == previous) and topBlock is None:
-                topBlock = unpack(block, 0)
+                if unpack(block, 0) == 2:
+                    topBlock = unpack(block, 1)
+                else:
+                    topBlock = unpack(block, 0)
             bottomBlock = unpack(block, 1)
 
         if topBlock is None:
+            if bottomBlock is previous:
+                return None
             return bottomBlock
         return topBlock, bottomBlock
     
@@ -485,6 +514,11 @@ class Print(Stmt):
 
     def getPrint(self) -> str:
         return f"print ({self.expression.getPrint()})"
+    
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        #print(self.expression.convert(projectFile, environment, sprite, previous))
+        #print(self.expression.getPrint())
+        return previous
 
 class Return(Stmt):
     def __init__(self, keyword: Token, value: Expr | None):
@@ -514,7 +548,9 @@ class Var(Stmt):
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         if self.declarationType.type == TokenType.VAR:
-            assert not isinstance(self.initializer, list), "For var declaration, initializer cannot be list. Use list data type for list values"
+            if isinstance(self.initializer, list):
+                error(self.name, "For var declaration, initializer cannot be list. Use list data type for list values")
+                exit()
             projectFile.createVar(sprite, self.name.lexeme, "")
             if self.initializer is None:
                 return

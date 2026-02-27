@@ -169,13 +169,13 @@ class ProjectFile:
         for _, value in self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"].items():
             if value[0] == name:
                 return True
-        return True
+        return False
     
     def isList(self, sprite: str, name: str) -> bool:
         for _, value in self.fileDict["targets"][self.getSpriteIndex(sprite)]["lists"].items():
             if value[0] == name:
                 return True
-        return True
+        return False
 
     def createFunc(self, sprite, name, proccode, parameterIdList, parameterIdText, warp):
         self.funcs[sprite][name] = {

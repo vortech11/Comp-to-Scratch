@@ -2,6 +2,8 @@ from enum import Enum, auto
 import logging
 logger = logging.getLogger(__name__)
 
+from pathlib import Path
+
 class TokenType(Enum):
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
@@ -76,7 +78,7 @@ keywords = {
     "if": TokenType.IF,
     "null": TokenType.NULL,
     "or": TokenType.OR,
-    "print": TokenType.PRINT,
+    "DEBUG": TokenType.PRINT,
     "return": TokenType.RETURN,
     "super": TokenType.SUPER,
     "this": TokenType.THIS,
@@ -95,10 +97,11 @@ keywords = {
 }
 
 class Token:
-    def __init__(self, type: TokenType, lexeme: str="", literal=None, line: int=0) -> None:
+    def __init__(self, type: TokenType, lexeme: str="", literal=None, line: int=0, filePath: Path = Path()) -> None:
         self.type: TokenType = type
         self.lexeme: str = lexeme
         self.literal = literal
+        self.filePath: Path = Path(filePath)
         self.line: int = line
         
     def __repr__(self):
@@ -107,10 +110,12 @@ class Token:
     def __str__(self):
         #return f"{self.type} {self.lexeme} {self.literal} {self.line}"
         return f"{self.type} {self.lexeme}"
+        #return f"{self.type}"
 
 class Scanner:
-    def __init__(self, source: str) -> None:
+    def __init__(self, source: str, filePath: str) -> None:
         self.source: str = source
+        self.filePath: str = filePath
         self.tokens: list[Token] = []
         self.start: int = 0
         self.current: int = 0
@@ -132,7 +137,7 @@ class Scanner:
     
     def addToken(self, type, literal=None):
         lexeme = self.source[self.start:self.current+1]
-        self.tokens.append(Token(type, lexeme, literal, self.line))
+        self.tokens.append(Token(type, lexeme, literal, self.line, Path(self.filePath)))
         
     def scanString(self):
         self.start += 1

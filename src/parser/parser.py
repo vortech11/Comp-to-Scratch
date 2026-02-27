@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class Parser:
-    def __init__(self, tokens: list[Token], directory, parent=None):
+    def __init__(self, tokens: list[Token], directory, parent=None, defaultSprite=None):
         self.current: int = 0
         self.tokens: list[Token] = tokens
         self.directory: Path = directory
@@ -14,10 +14,9 @@ class Parser:
         self.parent: Parser | None = parent
 
         self.currentSprite = None
+        self.defaultSprite = defaultSprite
 
     def packageImported(self, packageName, context=1|2) -> bool:
-
-        
         match context:
             case 1:
                 if packageName in self.requires.keys:
@@ -29,6 +28,15 @@ class Parser:
         if not self.parent is None:
             return self.parent.packageImported(packageName, context)
         return False
+    
+    def updateRequirements(self, sprite, packageName):
+        if self.currentSprite == sprite:
+            self.requires[sprite][packageName] = None
+            return
+        if not self.parent is None:
+            self.parent.updateRequirements(sprite, packageName)
+            return
+        "🤔"
 
     def getToken(self, offset=0) -> Token:
         return self.tokens[self.current + offset]
@@ -59,7 +67,7 @@ class Parser:
             lexeme = "at end"
         else:
             lexeme = f"at '{token.lexeme}'"
-        logger.error(f"{token.line} {lexeme} {message}")
+        logger.error(f"From {token.filePath.name} on line {token.line} {lexeme}: {message}")
         logger.error("Error found in parsing file. Exiting...")
         exit()
     
@@ -327,11 +335,14 @@ class Parser:
             if self.packageImported(str(filePath), 2):
                 self.consume(TokenType.SEMICOLON, "Expect semicolon after import keyword.")
                 return Block([])
-            self.requires[self.currentSprite][str(filePath)] = None
+            self.updateRequirements(self.defaultSprite, str(filePath))
         text = loadFile(filePath)
-        scanner = Scanner(text)
+        scanner = Scanner(text, str(filePath))
         tokens = scanner.scanTokens()
-        parser = Parser(tokens, filePath, self)
+        sprite = self.defaultSprite
+        if not self.currentSprite is None:
+            sprite = self.currentSprite
+        parser = Parser(tokens, filePath, self, sprite)
         fullGramar = parser.parse()
         self.consume(TokenType.SEMICOLON, "Expect semicolon after import keyword.")
 
@@ -367,10 +378,9 @@ class Parser:
         initializer: Expr | list[Expr] | None = None
         if self.match([TokenType.EQUAL]):
             self.advance()
-            if declarationType.type == TokenType.VAR:
-                self.advance()
+            if declarationType.type in [TokenType.VAR, TokenType.DUMB_POINTER, TokenType.SMART_POINTER]:
                 initializer = self.expression()
-            else:
+            elif declarationType.type == TokenType.LIST:
                 if not self.match([TokenType.RIGHT_BRACKET]):
                     initializer = []
                     while not self.getToken().type == TokenType.RIGHT_BRACKET:
@@ -414,7 +424,7 @@ class Parser:
         match self.getToken().type:
             case TokenType.FUNC:
                 return self.funcDeclaration("function")
-            case TokenType.VAR | TokenType.LIST:
+            case TokenType.VAR | TokenType.LIST | TokenType.DUMB_POINTER | TokenType.SMART_POINTER:
                 return self.varDeclaration()
             case TokenType.COSTUME:
                 return self.costumeDeclaration()
@@ -428,7 +438,7 @@ class Parser:
         self.currentSprite = name.lexeme
         self.requires[name.lexeme] = {}
         body = self.block()
-        self.currentSprite = None
+        self.currentSprite = self.defaultSprite
         return Sprite(name, body)
     
     def importFileStmt(self):
@@ -440,7 +450,7 @@ class Parser:
                 return []
             self.requires[str(filePath)] = None
         text = loadFile(filePath)
-        scanner = Scanner(text)
+        scanner = Scanner(text, str(filePath))
         tokens = scanner.scanTokens()
         parser = Parser(tokens, filePath, self)
         gramar = parser.parse()

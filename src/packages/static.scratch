@@ -7,46 +7,42 @@ export{
         var ERRORTYPE = 0;
     }
 
-    func ERROR(errortype: text){
+    func ERROR(errortype){
         ERRORTYPE = errortype;
+        ERRORTYPE = 10;
         print(ERRORTYPE);
     }
 
-    func createVar(varName: text, varValue: text){
-        if (contains(key, varName)){
+    func createVar(varName, varValue){
+        if (key.contains(varName)){
             ERROR("Var already exists");
         }
         else{
-            key.push(varName);
-            value.push(varValue);
+            key.add(varName);
+            value.add(varValue);
         }
     }
 
-    func deleteVar(varName: text){
-        if (contains(key, varName)){
-            value.remove(indexOf(key, varName));
-            key.remove(indexOf(key, varName));
+    func deleteVar(varName){
+        if (key.contains(varName)){
+            value.remove(key.index(varName));
+            key.remove(key.index(varName));
         }
         else{
             ERROR("Var does not exist");
         }
     }
 
-    func setVar(varName: text, varValue: text){
-        if (contains(key, varName)){
-            if (contains(key, varValue)){
-                value[indexOf(key, varName)] = value[indexOf(key, varValue)];
-            }
-            else{
-                value[indexOf(key, varName)] = varValue;
-            }
+    func setVar(varName, varValue){
+        if (key.contains(varName)){
+            value[key.index(varName)] = varValue;
         }
         else{
             ERROR("Var does not exist");
         }
     }
 
-    func changeVar(varName: text, varValue: text){
-        setVar(varName, value[indexOf(key, varName)] + varValue);
+    func changeVar(varName, varValue){
+        setVar(varName, value[key.index(varName)] + varValue);
     }
 }

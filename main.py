@@ -49,7 +49,7 @@ def main():
     (filePath.parent / outputFolderName).mkdir(exist_ok=True)
 
     fileText = loadFile(filePath)
-    scanner = Scanner(fileText)
+    scanner = Scanner(fileText, str(filePath))
     tokens = scanner.scanTokens()
     parser = Parser(tokens, filePath)
     fileAST = parser.parse()
