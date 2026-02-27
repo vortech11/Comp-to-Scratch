@@ -7,7 +7,7 @@ sprite cat {
 
     require "./../src/packages/static.scratch";
     
-    func main(){
-        createVar("Hello world!", 100);
-    }
+    //func main(){
+    //    //dptr thing;
+    //}
 }

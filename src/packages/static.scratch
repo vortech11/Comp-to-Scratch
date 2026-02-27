@@ -25,8 +25,8 @@ export{
 
     func deleteVar(varName){
         if (key.contains(varName)){
-            value.remove(key.index(varName));
-            key.remove(key.index(varName));
+            data_deleteoflist(data_itemnumoflist(varName, key), value);
+            data_deleteoflist(data_itemnumoflist(varName, key), key);
         }
         else{
             ERROR("Var does not exist");
@@ -35,7 +35,8 @@ export{
 
     func setVar(varName, varValue){
         if (key.contains(varName)){
-            value[key.index(varName)] = varValue;
+            data_replaceitemoflist(data_itemnumoflist(varName, key), value, varValue);
+            //value[key.index(varName)] = varValue;
         }
         else{
             ERROR("Var does not exist");
@@ -43,6 +44,6 @@ export{
     }
 
     func changeVar(varName, varValue){
-        setVar(varName, value[key.index(varName)] + varValue);
+        setVar(varName, data_itemoflist(data_itemnumoflist(varName, key), value) + varValue);
     }
 }

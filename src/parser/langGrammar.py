@@ -227,6 +227,10 @@ class Call(Expr):
                 
                 block = blockGramar.convert(projectFile, environment, sprite, previous)
                 
+                if isinstance(block, list):
+                    if block[0] == 2:
+                        block = block[1]
+                                
                 projectFile.setBlockAttribute(sprite, block, "fields", args)
                 return [2, block]
             error(self.paren, "Object in Method Call is not list: Other objects have not been implamented yet")
@@ -238,22 +242,36 @@ class Call(Expr):
             funcInfo = opcodeMap[callee.lexeme]
             if len(self.arguments) > len(funcInfo["inputs"]):
                 error(self.paren, f"Function \"{callee.lexeme}\" arity must be equal or less than the number of inputs, {self.arguments}")
-            block = projectFile.addBlock(callee.lexeme, {}, {}, False, sprite, previous)
+            if funcInfo["blocktype"] in ["reporter", "boolean"]:
+                mendPrevious = False
+            else:
+                mendPrevious = True
+            block = projectFile.addBlock(callee.lexeme, {}, {}, False, sprite, previous, mendPrevious)
             inputs = {}
             arguments = {}
             for index, input in enumerate(self.arguments):
                 match funcInfo["inputtype"][index]:
                     case "text":
-                        inputs[funcInfo["inputs"][index]] = input.convert(projectFile, environment, sprite, block)
+                        inputBlock = input.convert(projectFile, environment, sprite, block)
+                        if not isinstance(inputBlock, list):
+                            inputBlock = [2, inputBlock]
+                        inputs[funcInfo["inputs"][index]] = inputBlock
                     case "dropdown":
-                        arguments[funcInfo["inputs"][index]] = input.convert(projectFile, environment, sprite, block)
+                        inputReference = input.convert(projectFile, environment, sprite, block)
+                        inputReference = inputReference[1][1]
+                        if projectFile.isList(sprite, inputReference):
+                            inputReference = [inputReference, projectFile.getListId(sprite, inputReference)]
+                        arguments[funcInfo["inputs"][index]] = inputReference
                     case "menu":
                         ...
 
             projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
             projectFile.setBlockAttribute(sprite, block, "fields", arguments)
             projectFile.setBlockAttribute(sprite, block, "next", None)
-            return block
+            if funcInfo["blocktype"] in ["reporter", "boolean"]:
+                return [2, block]
+            else:
+                return block
         
         func = projectFile.getFunc(sprite, callee.lexeme)
         block = projectFile.addBlock("procedures_call", {}, {}, False, sprite, previous)
@@ -585,6 +603,9 @@ class Var(Stmt):
                 initializerGrammar = Block(StmtClear) # type: ignore
 
             return initializerGrammar.convert(projectFile, environment, sprite, previous)
+        
+        if self.declarationType.type == TokenType.DUMB_POINTER:
+            ...
 
 
 class Function(Stmt):
