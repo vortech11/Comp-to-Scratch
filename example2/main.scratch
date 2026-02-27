@@ -7,7 +7,7 @@ sprite cat {
 
     require "./../src/packages/static.scratch";
     
-    //func main(){
-    //    //dptr thing;
-    //}
+    func main(){
+        dptr thing = 10 * 2 / 4 + 3;
+    }
 }

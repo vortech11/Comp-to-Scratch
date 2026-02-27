@@ -605,8 +605,16 @@ class Var(Stmt):
             return initializerGrammar.convert(projectFile, environment, sprite, previous)
         
         if self.declarationType.type == TokenType.DUMB_POINTER:
-            ...
-
+            if self.initializer is None:
+                initializer = Literal("")
+            elif isinstance(self.initializer, list):
+                error(self.name, "Initializer to pointer declaration cannot be list")
+                assert False
+            else:
+                initializer = self.initializer
+            blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "createVar")), Token(TokenType.LEFT_PAREN), [Literal(self.name.lexeme), initializer])
+            block = blockGram.convert(projectFile, environment, sprite, previous)
+            return block
 
 class Function(Stmt):
     def __init__(self, name: Token, params: list[Token], body: Stmt) -> None:
