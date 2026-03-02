@@ -1,4 +1,4 @@
-from src.parser.langGrammar import *
+from src.parser.StatementGrammar import *
 from src.parser.scanner import Scanner
 from src.parser.fileReader import loadFile
 from pathlib import Path

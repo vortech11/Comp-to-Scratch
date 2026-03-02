@@ -11,7 +11,7 @@ from src.parser.fileReader import loadFile
 from src.parser.scanner import Scanner
 from src.parser.parser import Parser
 from src.fileGen.converter import FileGenerator
-from src.parser.langGrammar import formatAST
+from src.parser.StatementGrammar import formatAST
 
 scratchCompVersion = "0.3.0b"
 outputFolderName = "build"
