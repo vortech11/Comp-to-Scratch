@@ -2,6 +2,12 @@ from enum import Enum, auto
 import logging
 logger = logging.getLogger(__name__)
 
+from re import sub
+from json import load
+
+with open("src/parser/opcodeMacros.json") as file:
+    aliases = load(file)
+
 from pathlib import Path
 
 class TokenType(Enum):
@@ -114,6 +120,8 @@ class Token:
 
 class Scanner:
     def __init__(self, source: str, filePath: str) -> None:
+        for key, value in aliases.items():
+            source = sub(key, value, source)
         self.source: str = source
         self.filePath: str = filePath
         self.tokens: list[Token] = []

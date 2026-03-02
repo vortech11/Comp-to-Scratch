@@ -5,9 +5,11 @@ sprite Stage {
 sprite cat {
     costume cat "cat.svg";
 
-    require "./../src/packages/static.scratch";
-    
-    func main(){
-        dptr thing = 10 * 2 / 4 + 3;
-    }
+    move(10);
+
+    //require "./../src/packages/static.scratch";
+    //
+    //func main(){
+    //    dptr thing = 10 * 2 / 4 + 3;
+    //}
 }
