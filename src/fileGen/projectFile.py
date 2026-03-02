@@ -9,7 +9,7 @@ class ProjectFile:
             "extensions": [],
             "meta": {
                 "semver": "3.0.0",
-                "vm": "11.0.0-beta.2",
+                "vm": "12.7.0",
                 "agent": "Scratch Compiler v0.3.0b"
             }
         }

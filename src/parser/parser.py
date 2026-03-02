@@ -2,6 +2,7 @@ from src.parser.StatementGrammar import *
 from src.parser.scanner import Scanner
 from src.parser.fileReader import loadFile
 from pathlib import Path
+import importlib.resources as resources
 import logging
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,12 @@ class Parser:
 
         self.currentSprite = None
         self.defaultSprite = defaultSprite
+
+    def isPathPackage(self, path):
+        assert isinstance(__package__, str)
+        ROOT_PACKAGE = __package__.split('.')[0]
+        PROJECT_ROOT = Path(resources.files(ROOT_PACKAGE)) # type: ignore
+        print(PROJECT_ROOT / "packages")
 
     def packageImported(self, packageName, context=1|2) -> bool:
         match context:
@@ -444,6 +451,7 @@ class Parser:
     def importFileStmt(self):
         token = self.getToken()
         filePathToken = self.consume(TokenType.STRING, f"Expect path to import after {token.lexeme} keyword.")
+        self.isPathPackage(filePathToken.lexeme)
         filePath: Path = self.directory.parent / Path(filePathToken.lexeme)
         if token.type == TokenType.REQUIRE:
             if self.packageImported(str(filePath), 1):

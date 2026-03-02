@@ -2,10 +2,12 @@ sprite Stage {
     costume cat "cat.svg";
 }
 
+import "static.scratch";
+
 sprite cat {
     costume cat "cat.svg";
 
-    move(10);
+    sleep(10);
 
     //require "./../src/packages/static.scratch";
     //
