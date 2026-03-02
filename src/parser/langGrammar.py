@@ -6,7 +6,7 @@ from src.parser.scanner import Token, TokenType
 
 from src.fileGen.projectFile import ProjectFile
 from src.fileGen.environment import Environment
-from src.fileGen.envObjects import ObjMethod
+from src.fileGen.envObjects import *
 
 from typing import Any
 
@@ -39,13 +39,16 @@ class Assign(Expr):
         return f"{self.name.lexeme} = {self.value.getPrint()}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous):
-        block = projectFile.addBlock("data_setvariableto", {}, {"VARIABLE": [self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]}, False, sprite, previous)
+        block = projectFile.addBlock(
+            "data_setvariableto", {}, 
+            {"VARIABLE": VarRef(self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)).getReference()}, 
+            False, sprite, previous)
         
         operator = Token(TokenType.PLUS)
         match self.assignment.type:
             case TokenType.EQUAL:
                 value = self.value.convert(projectFile, environment, sprite, block)
-                projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
+                projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value.format()})
                 return block
             case TokenType.PLUS_EQUAL: operator = Token(TokenType.PLUS)
             case TokenType.MINUS_EQUAL: operator = Token(TokenType.MINUS)
@@ -54,7 +57,7 @@ class Assign(Expr):
         
         subGramar = Binary(Variable(self.name), operator, self.value)
         subBlock = subGramar.convert(projectFile, environment, sprite, block)
-        projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": subBlock})
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": subBlock.format()})
         return block
 
 class Binary(Expr):
@@ -116,9 +119,9 @@ class Binary(Expr):
         leftName = opcodeMap[opcode]["inputs"][0]
         rightName = opcodeMap[opcode]["inputs"][1]
 
-        projectFile.setBlockAttribute(sprite, block, "inputs", {leftName: left, rightName: right})
+        projectFile.setBlockAttribute(sprite, block, "inputs", {leftName: left.format(), rightName: right.format()})
 
-        return [2, block]
+        return ExprRef(block)
         
 class Grouping(Expr):
     def __init__(self, expression: Expr):
@@ -142,7 +145,7 @@ class Literal(Expr):
                 return f"{self.value}"
             
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
-        return [1, [10, str(self.value)]]
+        return LiteralRef(self.value)
         
 class Unary(Expr):
     def __init__(self, operator: Token, right: Expr):
@@ -166,11 +169,11 @@ class Unary(Expr):
         right = self.right.convert(projectFile, environment, sprite, block)
 
         if opcode == "operator_not":
-            projectFile.setBlockAttribute(sprite, block, "inputs", {"OPERAND": right})
+            projectFile.setBlockAttribute(sprite, block, "inputs", {"OPERAND": right.format()})
         elif opcode == "operator_subtract":
-            projectFile.setBlockAttribute(sprite, block, "inputs", {"NUM1": [1, [10, "0"]], "NUM2": right})
+            projectFile.setBlockAttribute(sprite, block, "inputs", {"NUM1": LiteralRef("0").format(), "NUM2": right.format()})
 
-        return [2, block]
+        return ExprRef(block)
     
 class Call(Expr):
     def __init__(self, callee: Expr, paren: Token, arguments: list[Expr]) -> None:
@@ -187,53 +190,55 @@ class Call(Expr):
         callee = self.callee.convert(projectFile, environment, sprite, previous)
 
         if isinstance(callee, ObjMethod):
-            if projectFile.isList(sprite, callee.object.lexeme):
-                opcode = ""
-                gramArgs = []
-                addValue = 0
-                listGram = Variable(callee.object)
-                match callee.name.lexeme:
-                    case "add": 
-                        opcode = "data_addtolist"
-                        gramArgs = self.arguments + [listGram]
-                    case "clear": 
-                        opcode = "data_deletealloflist"
-                        gramArgs: list[Expr] = [listGram]
-                    case "index":
-                        opcode = "data_itemnumoflist"
-                        gramArgs = self.arguments + [listGram]
-                        addValue = -1
-                    case "remove":
-                        opcode = "data_deleteoflist"
-                        gramArgs = [Binary(self.arguments[0], Token(TokenType.PLUS), Literal(1)), listGram]
-                        addValue = 1
-                    case "contains":
-                        opcode = "data_listcontainsitem"
-                        gramArgs = [listGram] + self.arguments
-                    case "insert":
-                        opcode = "data_insertatlist"
-                        gramArgs = [self.arguments[0], Binary(self.arguments[1], Token(TokenType.PLUS), Literal(1)), listGram]
-                    case _:
-                        error(self.paren, f"List operation {callee.name.lexeme} not supported.")
-                blockGramar = Call(Variable(Token(TokenType.IDENTIFIER, opcode, line=self.paren.line)), self.paren, gramArgs)
-                args = {"LIST": [callee.object.lexeme, projectFile.getListId(sprite, callee.object.lexeme)]}
-                if opcode in ["data_itemnumoflist"]:
-                    subBlock = projectFile.addBlock("operator_add", {}, {}, False, sprite, previous, False)
-                    block = blockGramar.convert(projectFile, environment, sprite, subBlock)
-                    projectFile.setBlockAttribute(sprite, subBlock, "next", None)
-                    projectFile.setBlockAttribute(sprite, subBlock, "inputs", {"NUM1": [2, block], "NUM2": [1, [10, str(addValue)]]})
-                    projectFile.setBlockAttribute(sprite, block, "fields", args) # type: ignore
-                    return [2, subBlock]
-                
-                block = blockGramar.convert(projectFile, environment, sprite, previous)
-                
-                if isinstance(block, list):
-                    if block[0] == 2:
-                        block = block[1]
-                                
-                projectFile.setBlockAttribute(sprite, block, "fields", args)
-                return [2, block]
-            error(self.paren, "Object in Method Call is not list: Other objects have not been implamented yet")
+            opcode = ""
+            gramArgs = []
+            addValue = 0
+            listGram = Variable(Token(TokenType.IDENTIFIER, callee.object.name))
+            match callee.name.lexeme:
+                case "add": 
+                    opcode = "data_addtolist"
+                    gramArgs = self.arguments + [listGram]
+                case "clear": 
+                    opcode = "data_deletealloflist"
+                    gramArgs: list[Expr] = [listGram]
+                case "index":
+                    opcode = "data_itemnumoflist"
+                    gramArgs = self.arguments + [listGram]
+                    addValue = -1
+                case "remove":
+                    opcode = "data_deleteoflist"
+                    gramArgs = [Binary(self.arguments[0], Token(TokenType.PLUS), Literal(1)), listGram]
+                    addValue = 1
+                case "contains":
+                    opcode = "data_listcontainsitem"
+                    gramArgs = [listGram] + self.arguments
+                case "insert":
+                    opcode = "data_insertatlist"
+                    gramArgs = [self.arguments[0], Binary(self.arguments[1], Token(TokenType.PLUS), Literal(1)), listGram]
+                case _:
+                    error(self.paren, f"List operation {callee.name.lexeme} not supported.")
+            blockGramar = Call(Variable(Token(TokenType.IDENTIFIER, opcode, line=self.paren.line)), self.paren, gramArgs)
+            args = {"LIST": callee.object.getReference()}
+            if opcode in ["data_itemnumoflist"]:
+                subBlock = projectFile.addBlock("operator_add", {}, {}, False, sprite, previous, False)
+                block = blockGramar.convert(projectFile, environment, sprite, subBlock)
+                projectFile.setBlockAttribute(sprite, subBlock, "next", None)
+                projectFile.setBlockAttribute(sprite, subBlock, "inputs", {"NUM1": block.format(), "NUM2": LiteralRef(addValue).format()})
+                projectFile.setBlockAttribute(sprite, block, "fields", args) # type: ignore
+                return ExprRef(subBlock)
+            
+            block = blockGramar.convert(projectFile, environment, sprite, previous)
+            
+            match block:
+                case ExprRef():
+                    blockName = block.getName()
+                    projectFile.setBlockAttribute(sprite, blockName, "fields", args)
+                    return ExprRef(blockName)
+                case str():
+                    projectFile.setBlockAttribute(sprite, block, "fields", args)
+                    return block
+                case _:
+                    error(self.paren, f"Internal Error: block return is not of type expected type, is instead {type(block)}")
 
         if not isinstance(callee, Token):
             error(self.paren, f"Function call must have callee as callable object, not '{callee}'")
@@ -253,23 +258,24 @@ class Call(Expr):
                 match funcInfo["inputtype"][index]:
                     case "text":
                         inputBlock = input.convert(projectFile, environment, sprite, block)
-                        if not isinstance(inputBlock, list):
-                            inputBlock = [2, inputBlock]
-                        inputs[funcInfo["inputs"][index]] = inputBlock
+                        ## TODO: fix
+                        #//if not isinstance(inputBlock, list):
+                        #    inputBlock = [2, inputBlock]
+                        inputs[funcInfo["inputs"][index]] = inputBlock.format()
                     case "dropdown":
                         inputReference = input.convert(projectFile, environment, sprite, block)
-                        inputReference = inputReference[1][1]
-                        if projectFile.isList(sprite, inputReference):
-                            inputReference = [inputReference, projectFile.getListId(sprite, inputReference)]
-                        arguments[funcInfo["inputs"][index]] = inputReference
+                        if isinstance(inputReference, (ListRef, VarRef)):
+                            arguments[funcInfo["inputs"][index]] = inputReference.getReference()
+                        else:
+                            error(self.paren, f"PANIC: Internal Error: WHAT IS SUPPOSED TO HAPPEN WITH 'inputReference' as type {type(inputReference)}?")
                     case "menu":
-                        ...
+                        error(self.paren, f"Scratch block menu not supported. Good luck, use a different block")
 
             projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
             projectFile.setBlockAttribute(sprite, block, "fields", arguments)
             projectFile.setBlockAttribute(sprite, block, "next", None)
             if funcInfo["blocktype"] in ["reporter", "boolean"]:
-                return [2, block]
+                return ExprRef(block)
             else:
                 return block
         
@@ -288,7 +294,7 @@ class Call(Expr):
 
         for index, argument in enumerate(self.arguments):
             input = argument.convert(projectFile, environment, sprite, block)
-            inputs[func["parameterIdList"][index]] = input
+            inputs[func["parameterIdList"][index]] = input.format()
 
         projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
         projectFile.setBlockAttribute(sprite, block, "mutation", mutation)
@@ -306,25 +312,19 @@ class ListIndex(Expr):
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         listReference = self.object.convert(projectFile, environment, sprite, previous)
-        listName = None
-        if isinstance(listReference, list):
-            if listReference[0] == 2:
-                if isinstance(listReference[1], list):
-                    if listReference[1][0] == 13:
-                        listName = listReference[1][1]
-        
-        if listName is None:
+
+        if not isinstance(listReference, ListRef):
             error(self.bracket, "Item before list index operation must be indexable")
             exit()
 
         block = projectFile.addBlock("data_itemoflist", {}, {}, False, sprite, previous, False)
         addBlock = projectFile.addBlock("operator_add", {}, {}, False, sprite, block, False)
         indexBlock = self.index.convert(projectFile, environment, sprite, addBlock)
-        projectFile.setBlockAttribute(sprite, block, "inputs", {"INDEX": [2, addBlock]})
-        projectFile.setBlockAttribute(sprite, block, "fields", {"LIST": [listName, projectFile.getListId(sprite, listName)]})
-        projectFile.setBlockAttribute(sprite, addBlock, "inputs", {"NUM1": indexBlock, "NUM2": [1, [10, "1"]]})
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"INDEX": ExprRef(addBlock).format()})
+        projectFile.setBlockAttribute(sprite, block, "fields", {"LIST": listReference.getReference()})
+        projectFile.setBlockAttribute(sprite, addBlock, "inputs", {"NUM1": indexBlock.format(), "NUM2": LiteralRef("1").format()})
         projectFile.setBlockAttribute(sprite, addBlock, "next", None)
-        return [2, block]
+        return ExprRef(block)
     
 class ListSetIndex(Expr):
     def __init__(self, object, assignment, value) -> None:
@@ -342,9 +342,11 @@ class ListSetIndex(Expr):
         if not isinstance(self.object.object, Variable):
             error(self.assignment, "Language does not support multidementional arrays")
             exit()
-        if not projectFile.isList(sprite, self.object.object.name.lexeme):
+        list = self.object.object.convert(projectFile, environment, sprite, previous)
+        if not isinstance(list, ListRef):
             error(self.assignment, "💔")
-        listName = self.object.object.name.lexeme
+            assert False
+        listName = list.name
         block = projectFile.addBlock("data_replaceitemoflist", {}, {"LIST": [listName, projectFile.getListId(sprite, listName)]}, False, sprite, previous)
         indexGram = Binary(self.object.index, Token(TokenType.PLUS), Literal(1))
         index = indexGram.convert(projectFile, environment, sprite, block)
@@ -362,11 +364,11 @@ class ListSetIndex(Expr):
             value = self.value.convert(projectFile, environment, sprite, valueBlock)
             listRef = self.object.convert(projectFile, environment, sprite, valueBlock)
             projectFile.setBlockAttribute(sprite, valueBlock, "next", None)
-            projectFile.setBlockAttribute(sprite, valueBlock, "inputs", {"NUM1": listRef, "NUM2": value})
-            value = [2, valueBlock]
+            projectFile.setBlockAttribute(sprite, valueBlock, "inputs", {"NUM1": listRef.format(), "NUM2": value.format()})
+            value = ExprRef(valueBlock)
 
         projectFile.setBlockAttribute(sprite, block, "next", None)
-        projectFile.setBlockAttribute(sprite, block, "inputs", {"INDEX": index, "ITEM": value})
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"INDEX": index.format(), "ITEM": value.format()})
         return block
         
 
@@ -380,15 +382,13 @@ class Get(Expr):
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         object = self.object.convert(projectFile, environment, sprite, previous)
-        if isinstance(object, list):
-            if object[0] == 2:
-                if isinstance(object, list):
-                    if object[1][0] == 13:
-                        match self.name.lexeme:
-                            case "length":
-                                block = projectFile.addBlock("data_lengthoflist", {}, {"LIST": [object[1][1], projectFile.getListId(sprite, object[1][1])]}, False, sprite, previous, False)
-                                return [2, block]
-                        return ObjMethod(Token(TokenType.IDENTIFIER, object[1][1], line=self.name.line), self.name)
+        if isinstance(object, ListRef):
+            match self.name.lexeme:
+                case "length":
+                    block = projectFile.addBlock("data_lengthoflist", {}, {"LIST": [object.name, object.id]}, False, sprite, previous, False)
+                    return ExprRef(block)
+            return ObjMethod(object, self.name)
+
         if not isinstance(object, Token):
             error(self.name, "Object Get must act upon an object")
             exit()
@@ -407,7 +407,7 @@ class Get(Expr):
                 case "timer": opcode = "sensing_timer" # mabey
             
             block = projectFile.addBlock(opcode, {}, {}, False, sprite, previous, False)
-            return [2, block]
+            return ExprRef(block)
 
         if projectFile.isSprite(object.lexeme):
             match self.name.lexeme:
@@ -476,13 +476,13 @@ class Variable(Expr):
         if environment.isFuncParam(self.name.lexeme):
             inputName = self.name.lexeme
             block = projectFile.addBlock("argument_reporter_boolean", {}, {"VALUE": [inputName]}, False, sprite, previous, mendPrevious=False)
-            return [2, block]
+            return ExprRef(block)
         
         if projectFile.isList(sprite, self.name.lexeme):
-            return [2, [13, self.name.lexeme, projectFile.getListId(sprite, self.name.lexeme)]]
+            return ListRef(self.name.lexeme, projectFile.getListId(sprite, self.name.lexeme))
         
         if projectFile.isVar(sprite, self.name.lexeme):
-            return [2, [12, self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)]]
+            return VarRef(self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme))
 
 class Stmt(Grammar):
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous: str | None) -> Any:
@@ -503,6 +503,8 @@ class Block(Stmt):
         bottomBlock = previous
         for statement in self.statements:
             block = statement.convert(projectFile, environment, sprite, bottomBlock)
+            if isinstance(block, (ExprRef, LiteralRef, ListRef, VarRef)):
+                continue
             if (not unpack(block, 1) == previous) and topBlock is None:
                 if unpack(block, 0) == 2:
                     topBlock = unpack(block, 1)
@@ -549,6 +551,9 @@ class Return(Stmt):
             value = self.value.getPrint()
         return f"{self.keyword.lexeme} {value}"
     
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        error(self.keyword, "Return keyword not implamented yet: don't use it!")
+    
 class Var(Stmt):
     def __init__(self, declarationType: Token, name: Token, initializer: Expr | None) -> None:
         self.declarationType: Token = declarationType
@@ -576,14 +581,13 @@ class Var(Stmt):
 
             value = self.initializer.convert(projectFile, environment, sprite, block)
 
-            if value[0] == 2:
-                literal = ""
+            if isinstance(value, LiteralRef):
+                literal = value.value
             else:
-                value[1][1] = str(value[1][1])
-                literal = value[1][1]
+                literal = ""
             
             projectFile.setVarDefault(sprite, self.name.lexeme, literal)
-            projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value})
+            projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": value.format()})
             return block
         
         if self.declarationType.type == TokenType.LIST:
@@ -597,7 +601,13 @@ class Var(Stmt):
             
             StmtClear = [Call(Get(Variable(self.name), Token(TokenType.IDENTIFIER, "clear", line=self.name.line)), Token(TokenType.LEFT_PAREN, line=self.name.line), [])]
             if not len(exprInitializer) == 0:
-                StmtInitializer = [Call(Get(Variable(self.name), Token(TokenType.IDENTIFIER, "add", line=self.name.line)), Token(TokenType.LEFT_PAREN, line=self.name.line), [expression]) for expression in exprInitializer]
+                StmtInitializer = [
+                    Call(
+                        Get(Variable(self.name), Token(TokenType.IDENTIFIER, "add", line=self.name.line)), 
+                        Token(TokenType.LEFT_PAREN, line=self.name.line), 
+                        [expression]
+                    ) for expression in exprInitializer
+                ]
                 initializerGrammar = Block(StmtClear + StmtInitializer) # type: ignore
             else:
                 initializerGrammar = Block(StmtClear) # type: ignore
@@ -684,7 +694,7 @@ class Function(Stmt):
         projectFile.setBlockAttribute(sprite, prototype, "inputs", prototypeInputs)
         projectFile.setBlockAttribute(sprite, block, "inputs", {"custom_block": [1, prototype]})
 
-        funcEnvironment = Environment(environment, {"name": self.name.lexeme, "argumentNames": names,})
+        funcEnvironment = Environment(environment, {"name": self.name.lexeme, "argumentNames": names})
         projectFile.createFunc(sprite, self.name.lexeme, proccode, ids, textParamData[0], warp)
 
         lastBlock = unpack(self.body.convert(projectFile, funcEnvironment, sprite, block), 1)
@@ -712,7 +722,7 @@ class IfStmt(Stmt):
         thenBranch = unpack(self.thenBranch.convert(projectFile, environment, sprite, block))
         thenBranch = [2, thenBranch]
         
-        inputs = {"CONDITION" : condition, "SUBSTACK": thenBranch}        
+        inputs = {"CONDITION" : condition.format(), "SUBSTACK": thenBranch}        
 
         if not self.elseBranch is None:
             elseBranch = unpack(self.elseBranch.convert(projectFile, environment, sprite, block))
@@ -738,7 +748,7 @@ class WhileStmt(Stmt):
         expression = expression.convert(projectFile, environment, sprite, block)
         statement = unpack(self.statement.convert(projectFile, environment, sprite, block))
         statement = [2, statement]
-        projectFile.setBlockAttribute(sprite, block, "inputs", {"CONDITION": expression, "SUBSTACK": statement})
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"CONDITION": expression.format(), "SUBSTACK": statement})
         projectFile.setBlockAttribute(sprite, block, "next", None)
         return block
         
