@@ -17,11 +17,14 @@ class Parser:
         self.currentSprite = None
         self.defaultSprite = defaultSprite
 
-    def isPathPackage(self, path):
+    def isPathPackage(self, path) -> Path | None:
         assert isinstance(__package__, str)
         ROOT_PACKAGE = __package__.split('.')[0]
         PROJECT_ROOT = Path(resources.files(ROOT_PACKAGE)) # type: ignore
-        print(PROJECT_ROOT / "packages")
+        filePath = PROJECT_ROOT / "packages" / path
+        if filePath.exists():
+            return filePath.resolve()
+        return None
 
     def packageImported(self, packageName, context=1|2) -> bool:
         match context:
@@ -37,6 +40,12 @@ class Parser:
         return False
     
     def updateRequirements(self, sprite, packageName):
+        if sprite is None:
+            if self.parent is None:
+                self.requires[packageName] = None
+                return
+            self.parent.updateRequirements(sprite, packageName)
+            return
         if self.currentSprite == sprite:
             self.requires[sprite][packageName] = None
             return
@@ -337,7 +346,9 @@ class Parser:
     def importStmt(self):
         token = self.getToken()
         filePathToken = self.consume(TokenType.STRING, "Expect path to import after import keyword.")
-        filePath: Path = self.directory.parent / Path(filePathToken.lexeme)
+        filePath = self.isPathPackage(filePathToken.lexeme)
+        if filePath is None:
+            filePath: Path = self.directory.parent / Path(filePathToken.lexeme)
         if token.type == TokenType.REQUIRE:
             if self.packageImported(str(filePath), 2):
                 self.consume(TokenType.SEMICOLON, "Expect semicolon after import keyword.")
@@ -451,8 +462,9 @@ class Parser:
     def importFileStmt(self):
         token = self.getToken()
         filePathToken = self.consume(TokenType.STRING, f"Expect path to import after {token.lexeme} keyword.")
-        self.isPathPackage(filePathToken.lexeme)
-        filePath: Path = self.directory.parent / Path(filePathToken.lexeme)
+        filePath = self.isPathPackage(filePathToken.lexeme)
+        if filePath is None:
+            filePath: Path = self.directory.parent / Path(filePathToken.lexeme)
         if token.type == TokenType.REQUIRE:
             if self.packageImported(str(filePath), 1):
                 return []

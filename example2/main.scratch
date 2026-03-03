@@ -2,16 +2,12 @@ sprite Stage {
     costume cat "cat.svg";
 }
 
-import "static.scratch";
-
 sprite cat {
     costume cat "cat.svg";
 
-    sleep(10);
-
-    //require "./../src/packages/static.scratch";
-    //
-    //func main(){
-    //    dptr thing = 10 * 2 / 4 + 3;
-    //}
+    require "static.scratch";
+    
+    func main(){
+        dptr thing = 10 * 2 / 4 + 3;
+    }
 }
