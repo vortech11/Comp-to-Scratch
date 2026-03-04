@@ -4,7 +4,7 @@ logger = logging.getLogger(__name__)
 
 from src.parser.scanner import Token, TokenType
 
-from src.parser.UniversalGrammar import Grammar, error
+from src.parser.UniversalGrammar import Grammar, error, warn
 from src.parser.ExpressionGrammar import *
 
 from src.fileGen.projectFile import ProjectFile
@@ -35,10 +35,11 @@ class Block(Stmt):
         return f"{'\n'.join(output)}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        subEnv: Environment = Environment(environment, environment.func)
         topBlock = None
         bottomBlock = previous
         for statement in self.statements:
-            block = statement.convert(projectFile, environment, sprite, bottomBlock)
+            block = statement.convert(projectFile, subEnv, sprite, bottomBlock)
             if isinstance(block, (ExprRef, LiteralRef, ListRef, VarRef)):
                 continue
             if (not unpack(block, 1) == previous) and topBlock is None:
@@ -47,6 +48,10 @@ class Block(Stmt):
                 else:
                     topBlock = unpack(block, 0)
             bottomBlock = unpack(block, 1)
+
+        for pointer in subEnv.smartPointers:
+            blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "deleteVar")), Token(TokenType.LEFT_PAREN), [Literal(pointer)])
+            bottomBlock = blockGram.convert(projectFile, subEnv, sprite, bottomBlock) # type: ignore
 
         if topBlock is None:
             if bottomBlock is previous:
@@ -150,7 +155,7 @@ class Var(Stmt):
 
             return initializerGrammar.convert(projectFile, environment, sprite, previous)
         
-        if self.declarationType.type == TokenType.DUMB_POINTER:
+        if self.declarationType.type in [TokenType.DUMB_POINTER, TokenType.SMART_POINTER]:
             if self.initializer is None:
                 initializer = Literal("")
             elif isinstance(self.initializer, list):
@@ -158,7 +163,15 @@ class Var(Stmt):
                 assert False
             else:
                 initializer = self.initializer
-            projectFile.createDumbPointer(sprite, self.name.lexeme)
+            
+            if self.declarationType.type == TokenType.DUMB_POINTER:
+                if environment.isSmartPointer(self.name.lexeme):
+                    warn(self.name, "Dumb pointer is being created with the same name as a smart pointer of higher scope!")
+                projectFile.createDumbPointer(sprite, self.name.lexeme)
+            else:
+                if projectFile.isDumbPointer(sprite, self.name.lexeme):
+                    warn(self.name, "Smart pointer is being created with the same name as a dumb pointer!")
+                environment.createSmartPointer(self.name.lexeme)
             blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "createVar")), Token(TokenType.LEFT_PAREN), [Literal(self.name.lexeme), initializer])
             block = blockGram.convert(projectFile, environment, sprite, previous)
             return block
@@ -172,6 +185,8 @@ class Delete(Stmt):
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         if not projectFile.isDumbPointer(sprite, self.var.lexeme):
+            if environment.isSmartPointer(self.var.lexeme):
+                error(self.var, "Cannot delete smart pointer!")
             error(self.var, "Cannot delete object that is not of type pointer.")
         blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "deleteVar")), Token(TokenType.LEFT_PAREN), [Literal(self.var.lexeme)])
         block = blockGram.convert(projectFile, environment, sprite, previous)

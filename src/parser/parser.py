@@ -294,7 +294,7 @@ class Parser:
 
         if self.match([TokenType.SEMICOLON]):
             pass
-        elif self.match([TokenType.VAR]):
+        elif self.match([TokenType.VAR, TokenType.DUMB_POINTER, TokenType.SMART_POINTER]):
             initializer = self.varDeclaration()
         else:
             initializer = self.expressionStatement()

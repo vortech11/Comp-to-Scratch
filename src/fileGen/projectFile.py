@@ -20,7 +20,7 @@ class ProjectFile:
 
         self.funcs = {}
 
-        self.dumbPointers: dict[list[str]] = {}
+        self.dumbPointers: dict[str, list[str]] = {}
 
         self.currentBlock = 0
     

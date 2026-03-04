@@ -29,7 +29,7 @@ class Assign(Expr):
         return f"{self.name.lexeme} = {self.value.getPrint()}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous):
-        if projectFile.isDumbPointer(sprite, self.name.lexeme):
+        if projectFile.isDumbPointer(sprite, self.name.lexeme) or environment.isSmartPointer(self.name.lexeme):
             match self.assignment.type:
                 case TokenType.EQUAL: operator = "setVar"
                 case TokenType.PLUS_EQUAL: operator = "addVar"
@@ -40,6 +40,9 @@ class Assign(Expr):
             gram = Call(Variable(Token(TokenType.IDENTIFIER, operator)), Token(TokenType.LEFT_PAREN), [Literal(self.name.lexeme), self.value])
             block = gram.convert(projectFile, environment, sprite, previous)
             return block
+        
+        if not projectFile.isVar(sprite, self.name.lexeme):
+            error(self.name, f"Variable '{self.name}' is not defined")
 
         block = projectFile.addBlock(
             "data_setvariableto", {}, 
@@ -483,7 +486,7 @@ class Variable(Expr):
         if projectFile.isList(sprite, varName):
             return ListRef(varName, projectFile.getListId(sprite, varName))
         
-        if projectFile.isDumbPointer(sprite, varName):
+        if projectFile.isDumbPointer(sprite, varName) or environment.isSmartPointer(varName):
             topBlock = projectFile.addBlock("data_itemoflist", {}, {"LIST": ["value", projectFile.getListId(sprite, "value")]}, False, sprite, previous, False)
             bottomBlock = projectFile.addBlock("data_itemnumoflist", {"ITEM": LiteralRef(varName).format()}, {"LIST": ["key", projectFile.getListId(sprite, "key")]}, False, sprite, previous, False)
             projectFile.setBlockAttribute(sprite, topBlock, "inputs", {"INDEX": BlockRef(bottomBlock).format()})
@@ -492,3 +495,4 @@ class Variable(Expr):
         if projectFile.isVar(sprite, varName):
             return VarRef(varName, projectFile.getVarId(sprite, varName))
 
+        error(self.name, f"Variable '{self.name.lexeme}' is not defined.")

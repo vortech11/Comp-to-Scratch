@@ -12,7 +12,7 @@ class Environment:
         """
         self.func: None | dict = funcSig
 
-        self.tempVars = {}
+        self.smartPointers = []
 
     def getFuncSig(self):
         if not self.func is None:
@@ -30,3 +30,15 @@ class Environment:
         if name in funcSig["argumentNames"]:
             return True
         return False
+
+    def isSmartPointer(self, name) -> bool:
+        if name in self.smartPointers:
+            return True
+        
+        if self.parent is None:
+            return False
+        
+        return self.parent.isSmartPointer(name)
+        
+    def createSmartPointer(self, name):
+        self.smartPointers.append(name)
