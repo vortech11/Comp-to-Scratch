@@ -10,7 +10,9 @@ sprite cat {
     func main(){
         var that = 3;
         dptr thing = 10 * 2 / 4 + 3;
-        //that = thing;
+        that = thing;
+        thing += 3;
+        print(thing);
         del thing;
     }
 }

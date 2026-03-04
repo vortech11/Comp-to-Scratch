@@ -1,1 +1,2149 @@
-{"targets": [{"isStage": true, "name": "Stage", "variables": {}, "lists": {}, "broadcasts": {}, "blocks": {}, "comments": {}, "currentCostume": 0, "costumes": [{"name": "cat", "dataFormat": "svg", "assetId": "ecb86074b52beb4ddabc9d5963d03d03", "md5ext": "ecb86074b52beb4ddabc9d5963d03d03.svg", "rotationCenterX": 1, "rotationCenterY": 1}], "sounds": [], "volume": 100, "layerOrder": 0, "tempo": 60, "videoTransparency": 50, "videoState": "on", "textToSpeechLanguage": null}, {"isStage": false, "name": "cat", "variables": {"ERRORTYPE12": ["ERRORTYPE", 0.0], "that69": ["that", 3.0]}, "lists": {"console2": ["console", []], "key10": ["key", []], "value11": ["value", []]}, "broadcasts": {}, "blocks": {"Block1": {"opcode": "procedures_definition", "next": "Block3", "parent": null, "inputs": {"custom_block": [1, "Block2"]}, "fields": {}, "shadow": false, "topLevel": true, "x": 0, "y": 0}, "Block2": {"opcode": "procedures_prototype", "next": null, "parent": "Block1", "inputs": {}, "fields": {}, "shadow": true, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "consoleClear ", "argumentids": "[]", "argumentnames": "[]", "argumentdefaults": "[]", "warp": "true"}}, "Block3": {"opcode": "data_deletealloflist", "next": null, "parent": "Block1", "inputs": {}, "fields": {"LIST": ["console", "console2"]}, "shadow": false, "topLevel": false}, "Block4": {"opcode": "procedures_definition", "next": "Block7", "parent": null, "inputs": {"custom_block": [1, "Block5"]}, "fields": {}, "shadow": false, "topLevel": true, "x": 0, "y": 0}, "Block5": {"opcode": "procedures_prototype", "next": null, "parent": "Block4", "inputs": {"input0": [1, "Block6"]}, "fields": {}, "shadow": true, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "print %s", "argumentids": "[\"input0\"]", "argumentnames": "[\"input\"]", "argumentdefaults": "[\"\"]", "warp": "true"}}, "Block6": {"opcode": "argument_reporter_string_number", "next": null, "parent": "Block5", "inputs": {}, "fields": {"VALUE": ["input", null]}, "shadow": true, "topLevel": false}, "Block7": {"opcode": "data_addtolist", "next": null, "parent": "Block4", "inputs": {"ITEM": [2, "Block8"]}, "fields": {"LIST": ["console", "console2"]}, "shadow": false, "topLevel": false}, "Block8": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block7", "inputs": {}, "fields": {"VALUE": ["input"]}, "shadow": false, "topLevel": false}, "Block9": {"opcode": "procedures_definition", "next": "Block11", "parent": null, "inputs": {"custom_block": [1, "Block10"]}, "fields": {}, "shadow": false, "topLevel": true, "x": 0, "y": 0}, "Block10": {"opcode": "procedures_prototype", "next": null, "parent": "Block9", "inputs": {}, "fields": {}, "shadow": true, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "RESET ", "argumentids": "[]", "argumentnames": "[]", "argumentdefaults": "[]", "warp": "true"}}, "Block11": {"opcode": "data_deletealloflist", "next": "Block12", "parent": "Block9", "inputs": {}, "fields": {"LIST": ["key", "key10"]}, "shadow": false, "topLevel": false}, "Block12": {"opcode": "data_deletealloflist", "next": "Block13", "parent": "Block11", "inputs": {}, "fields": {"LIST": ["value", "value11"]}, "shadow": false, "topLevel": false}, "Block13": {"opcode": "data_setvariableto", "next": null, "parent": "Block12", "inputs": {"VALUE": [1, [10, "0.0"]]}, "fields": {"VARIABLE": ["ERRORTYPE", "ERRORTYPE12"]}, "shadow": false, "topLevel": false}, "Block14": {"opcode": "procedures_definition", "next": "Block17", "parent": null, "inputs": {"custom_block": [1, "Block15"]}, "fields": {}, "shadow": false, "topLevel": true, "x": 0, "y": 0}, "Block15": {"opcode": "procedures_prototype", "next": null, "parent": "Block14", "inputs": {"errortype0": [1, "Block16"]}, "fields": {}, "shadow": true, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "ERROR %s", "argumentids": "[\"errortype0\"]", "argumentnames": "[\"errortype\"]", "argumentdefaults": "[\"\"]", "warp": "true"}}, "Block16": {"opcode": "argument_reporter_string_number", "next": null, "parent": "Block15", "inputs": {}, "fields": {"VALUE": ["errortype", null]}, "shadow": true, "topLevel": false}, "Block17": {"opcode": "data_setvariableto", "next": "Block19", "parent": "Block14", "inputs": {"VALUE": [2, "Block18"]}, "fields": {"VARIABLE": ["ERRORTYPE", "ERRORTYPE12"]}, "shadow": false, "topLevel": false}, "Block18": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block17", "inputs": {}, "fields": {"VALUE": ["errortype"]}, "shadow": false, "topLevel": false}, "Block19": {"opcode": "data_setvariableto", "next": "Block20", "parent": "Block17", "inputs": {"VALUE": [1, [10, "10.0"]]}, "fields": {"VARIABLE": ["ERRORTYPE", "ERRORTYPE12"]}, "shadow": false, "topLevel": false}, "Block20": {"opcode": "procedures_call", "next": null, "parent": "Block19", "inputs": {"input0": [2, [12, "ERRORTYPE", "ERRORTYPE12"]]}, "fields": {}, "shadow": false, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "print %s", "argumentids": "[\"input0\"]", "warp": "true"}}, "Block21": {"opcode": "procedures_definition", "next": "Block25", "parent": null, "inputs": {"custom_block": [1, "Block22"]}, "fields": {}, "shadow": false, "topLevel": true, "x": 0, "y": 0}, "Block22": {"opcode": "procedures_prototype", "next": null, "parent": "Block21", "inputs": {"varName0": [1, "Block23"], "varValue1": [1, "Block24"]}, "fields": {}, "shadow": true, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "createVar %s %s", "argumentids": "[\"varName0\",\"varValue1\"]", "argumentnames": "[\"varName\",\"varValue\"]", "argumentdefaults": "[\"\",\"\"]", "warp": "true"}}, "Block23": {"opcode": "argument_reporter_string_number", "next": null, "parent": "Block22", "inputs": {}, "fields": {"VALUE": ["varName", null]}, "shadow": true, "topLevel": false}, "Block24": {"opcode": "argument_reporter_string_number", "next": null, "parent": "Block22", "inputs": {}, "fields": {"VALUE": ["varValue", null]}, "shadow": true, "topLevel": false}, "Block25": {"opcode": "control_if_else", "next": null, "parent": "Block21", "inputs": {"CONDITION": [2, "Block26"], "SUBSTACK": [2, "Block28"], "SUBSTACK2": [2, "Block29"]}, "fields": {}, "shadow": false, "topLevel": false}, "Block26": {"opcode": "data_listcontainsitem", "next": null, "parent": "Block25", "inputs": {"ITEM": [2, "Block27"]}, "fields": {"LIST": ["key", "key10"]}, "shadow": false, "topLevel": false}, "Block27": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block26", "inputs": {}, "fields": {"VALUE": ["varName"]}, "shadow": false, "topLevel": false}, "Block28": {"opcode": "procedures_call", "next": null, "parent": "Block25", "inputs": {"errortype0": [1, [10, "Var already exists"]]}, "fields": {}, "shadow": false, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "ERROR %s", "argumentids": "[\"errortype0\"]", "warp": "true"}}, "Block29": {"opcode": "data_addtolist", "next": "Block31", "parent": "Block25", "inputs": {"ITEM": [2, "Block30"]}, "fields": {"LIST": ["key", "key10"]}, "shadow": false, "topLevel": false}, "Block30": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block29", "inputs": {}, "fields": {"VALUE": ["varName"]}, "shadow": false, "topLevel": false}, "Block31": {"opcode": "data_addtolist", "next": null, "parent": "Block29", "inputs": {"ITEM": [2, "Block32"]}, "fields": {"LIST": ["value", "value11"]}, "shadow": false, "topLevel": false}, "Block32": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block31", "inputs": {}, "fields": {"VALUE": ["varValue"]}, "shadow": false, "topLevel": false}, "Block33": {"opcode": "procedures_definition", "next": "Block36", "parent": null, "inputs": {"custom_block": [1, "Block34"]}, "fields": {}, "shadow": false, "topLevel": true, "x": 0, "y": 0}, "Block34": {"opcode": "procedures_prototype", "next": null, "parent": "Block33", "inputs": {"varName0": [1, "Block35"]}, "fields": {}, "shadow": true, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "deleteVar %s", "argumentids": "[\"varName0\"]", "argumentnames": "[\"varName\"]", "argumentdefaults": "[\"\"]", "warp": "true"}}, "Block35": {"opcode": "argument_reporter_string_number", "next": null, "parent": "Block34", "inputs": {}, "fields": {"VALUE": ["varName", null]}, "shadow": true, "topLevel": false}, "Block36": {"opcode": "control_if_else", "next": null, "parent": "Block33", "inputs": {"CONDITION": [2, "Block37"], "SUBSTACK": [2, "Block39"], "SUBSTACK2": [2, "Block45"]}, "fields": {}, "shadow": false, "topLevel": false}, "Block37": {"opcode": "data_listcontainsitem", "next": null, "parent": "Block36", "inputs": {"ITEM": [2, "Block38"]}, "fields": {"LIST": ["key", "key10"]}, "shadow": false, "topLevel": false}, "Block38": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block37", "inputs": {}, "fields": {"VALUE": ["varName"]}, "shadow": false, "topLevel": false}, "Block39": {"opcode": "data_deleteoflist", "next": "Block42", "parent": "Block36", "inputs": {"INDEX": [2, "Block40"]}, "fields": {"LIST": ["value", "value11"]}, "shadow": false, "topLevel": false}, "Block40": {"opcode": "data_itemnumoflist", "next": null, "parent": "Block39", "inputs": {"ITEM": [2, "Block41"]}, "fields": {"LIST": ["key", "key10"]}, "shadow": false, "topLevel": false}, "Block41": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block40", "inputs": {}, "fields": {"VALUE": ["varName"]}, "shadow": false, "topLevel": false}, "Block42": {"opcode": "data_deleteoflist", "next": null, "parent": "Block39", "inputs": {"INDEX": [2, "Block43"]}, "fields": {"LIST": ["key", "key10"]}, "shadow": false, "topLevel": false}, "Block43": {"opcode": "data_itemnumoflist", "next": null, "parent": "Block42", "inputs": {"ITEM": [2, "Block44"]}, "fields": {"LIST": ["key", "key10"]}, "shadow": false, "topLevel": false}, "Block44": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block43", "inputs": {}, "fields": {"VALUE": ["varName"]}, "shadow": false, "topLevel": false}, "Block45": {"opcode": "procedures_call", "next": null, "parent": "Block36", "inputs": {"errortype0": [1, [10, "Var does not exist"]]}, "fields": {}, "shadow": false, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "ERROR %s", "argumentids": "[\"errortype0\"]", "warp": "true"}}, "Block46": {"opcode": "procedures_definition", "next": "Block50", "parent": null, "inputs": {"custom_block": [1, "Block47"]}, "fields": {}, "shadow": false, "topLevel": true, "x": 0, "y": 0}, "Block47": {"opcode": "procedures_prototype", "next": null, "parent": "Block46", "inputs": {"varName0": [1, "Block48"], "varValue1": [1, "Block49"]}, "fields": {}, "shadow": true, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "setVar %s %s", "argumentids": "[\"varName0\",\"varValue1\"]", "argumentnames": "[\"varName\",\"varValue\"]", "argumentdefaults": "[\"\",\"\"]", "warp": "true"}}, "Block48": {"opcode": "argument_reporter_string_number", "next": null, "parent": "Block47", "inputs": {}, "fields": {"VALUE": ["varName", null]}, "shadow": true, "topLevel": false}, "Block49": {"opcode": "argument_reporter_string_number", "next": null, "parent": "Block47", "inputs": {}, "fields": {"VALUE": ["varValue", null]}, "shadow": true, "topLevel": false}, "Block50": {"opcode": "control_if_else", "next": null, "parent": "Block46", "inputs": {"CONDITION": [2, "Block51"], "SUBSTACK": [2, "Block53"], "SUBSTACK2": [2, "Block57"]}, "fields": {}, "shadow": false, "topLevel": false}, "Block51": {"opcode": "data_listcontainsitem", "next": null, "parent": "Block50", "inputs": {"ITEM": [2, "Block52"]}, "fields": {"LIST": ["key", "key10"]}, "shadow": false, "topLevel": false}, "Block52": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block51", "inputs": {}, "fields": {"VALUE": ["varName"]}, "shadow": false, "topLevel": false}, "Block53": {"opcode": "data_replaceitemoflist", "next": null, "parent": "Block50", "inputs": {"INDEX": [2, "Block54"], "ITEM": [2, "Block56"]}, "fields": {"LIST": ["value", "value11"]}, "shadow": false, "topLevel": false}, "Block54": {"opcode": "data_itemnumoflist", "next": null, "parent": "Block53", "inputs": {"ITEM": [2, "Block55"]}, "fields": {"LIST": ["key", "key10"]}, "shadow": false, "topLevel": false}, "Block55": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block54", "inputs": {}, "fields": {"VALUE": ["varName"]}, "shadow": false, "topLevel": false}, "Block56": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block53", "inputs": {}, "fields": {"VALUE": ["varValue"]}, "shadow": false, "topLevel": false}, "Block57": {"opcode": "procedures_call", "next": null, "parent": "Block50", "inputs": {"errortype0": [1, [10, "Var does not exist"]]}, "fields": {}, "shadow": false, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "ERROR %s", "argumentids": "[\"errortype0\"]", "warp": "true"}}, "Block58": {"opcode": "procedures_definition", "next": "Block62", "parent": null, "inputs": {"custom_block": [1, "Block59"]}, "fields": {}, "shadow": false, "topLevel": true, "x": 0, "y": 0}, "Block59": {"opcode": "procedures_prototype", "next": null, "parent": "Block58", "inputs": {"varName0": [1, "Block60"], "varValue1": [1, "Block61"]}, "fields": {}, "shadow": true, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "changeVar %s %s", "argumentids": "[\"varName0\",\"varValue1\"]", "argumentnames": "[\"varName\",\"varValue\"]", "argumentdefaults": "[\"\",\"\"]", "warp": "true"}}, "Block60": {"opcode": "argument_reporter_string_number", "next": null, "parent": "Block59", "inputs": {}, "fields": {"VALUE": ["varName", null]}, "shadow": true, "topLevel": false}, "Block61": {"opcode": "argument_reporter_string_number", "next": null, "parent": "Block59", "inputs": {}, "fields": {"VALUE": ["varValue", null]}, "shadow": true, "topLevel": false}, "Block62": {"opcode": "procedures_call", "next": null, "parent": "Block58", "inputs": {"varName0": [2, "Block63"], "varValue1": [2, "Block64"]}, "fields": {}, "shadow": false, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "setVar %s %s", "argumentids": "[\"varName0\",\"varValue1\"]", "warp": "true"}}, "Block63": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block62", "inputs": {}, "fields": {"VALUE": ["varName"]}, "shadow": false, "topLevel": false}, "Block64": {"opcode": "operator_add", "next": null, "parent": "Block62", "inputs": {"NUM1": [2, "Block65"], "NUM2": [2, "Block68"]}, "fields": {}, "shadow": false, "topLevel": false}, "Block65": {"opcode": "data_itemoflist", "next": null, "parent": "Block64", "inputs": {"INDEX": [2, "Block66"]}, "fields": {"LIST": ["value", "value11"]}, "shadow": false, "topLevel": false}, "Block66": {"opcode": "data_itemnumoflist", "next": null, "parent": "Block65", "inputs": {"ITEM": [2, "Block67"]}, "fields": {"LIST": ["key", "key10"]}, "shadow": false, "topLevel": false}, "Block67": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block66", "inputs": {}, "fields": {"VALUE": ["varName"]}, "shadow": false, "topLevel": false}, "Block68": {"opcode": "argument_reporter_boolean", "next": null, "parent": "Block64", "inputs": {}, "fields": {"VALUE": ["varValue"]}, "shadow": false, "topLevel": false}, "Block69": {"opcode": "event_whenflagclicked", "next": "Block70", "parent": null, "inputs": {}, "fields": {}, "shadow": false, "topLevel": true, "x": 0, "y": 0}, "Block70": {"opcode": "data_setvariableto", "next": "Block71", "parent": "Block69", "inputs": {"VALUE": [1, [10, "3.0"]]}, "fields": {"VARIABLE": ["that", "that69"]}, "shadow": false, "topLevel": false}, "Block71": {"opcode": "procedures_call", "next": "Block75", "parent": "Block70", "inputs": {"varName0": [1, [10, "thing"]], "varValue1": [2, "Block72"]}, "fields": {}, "shadow": false, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "createVar %s %s", "argumentids": "[\"varName0\",\"varValue1\"]", "warp": "true"}}, "Block72": {"opcode": "operator_add", "next": null, "parent": "Block71", "inputs": {"NUM1": [2, "Block73"], "NUM2": [1, [10, "3.0"]]}, "fields": {}, "shadow": false, "topLevel": false}, "Block73": {"opcode": "operator_divide", "next": null, "parent": "Block72", "inputs": {"NUM1": [2, "Block74"], "NUM2": [1, [10, "4.0"]]}, "fields": {}, "shadow": false, "topLevel": false}, "Block74": {"opcode": "operator_multiply", "next": null, "parent": "Block73", "inputs": {"NUM1": [1, [10, "10.0"]], "NUM2": [1, [10, "2.0"]]}, "fields": {}, "shadow": false, "topLevel": false}, "Block75": {"opcode": "procedures_call", "next": null, "parent": "Block71", "inputs": {"varName0": [1, [10, "thing"]]}, "fields": {}, "shadow": false, "topLevel": false, "mutation": {"tagName": "mutation", "children": [], "proccode": "deleteVar %s", "argumentids": "[\"varName0\"]", "warp": "true"}}, "Block76": {"opcode": "event_whenflagclicked", "next": "Block77", "parent": null, "inputs": {}, "fields": {}, "shadow": false, "topLevel": true, "x": 0, "y": 0}, "Block77": {"opcode": "motion_movesteps", "next": null, "parent": "Block76", "inputs": {"STEPS": [1, [10, "3.0"]]}, "fields": {}, "shadow": false, "topLevel": false}}, "comments": {}, "currentCostume": 0, "costumes": [{"name": "cat", "dataFormat": "svg", "assetId": "ecb86074b52beb4ddabc9d5963d03d03", "md5ext": "ecb86074b52beb4ddabc9d5963d03d03.svg", "rotationCenterX": 1, "rotationCenterY": 1}], "sounds": [], "volume": 100, "layerOrder": 1, "visible": true, "x": 0, "y": 0, "size": 100, "direction": 90, "draggable": false, "rotationStyle": "all around"}], "monitors": [], "extensions": [], "meta": {"semver": "3.0.0", "vm": "12.7.0", "agent": "Scratch Compiler v0.3.0b"}}
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "cat",
+                    "dataFormat": "svg",
+                    "assetId": "ecb86074b52beb4ddabc9d5963d03d03",
+                    "md5ext": "ecb86074b52beb4ddabc9d5963d03d03.svg",
+                    "rotationCenterX": 1,
+                    "rotationCenterY": 1
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "cat",
+            "variables": {
+                "ERRORTYPE12": [
+                    "ERRORTYPE",
+                    0.0
+                ],
+                "that101": [
+                    "that",
+                    3.0
+                ]
+            },
+            "lists": {
+                "console2": [
+                    "console",
+                    []
+                ],
+                "key10": [
+                    "key",
+                    []
+                ],
+                "value11": [
+                    "value",
+                    []
+                ]
+            },
+            "broadcasts": {},
+            "blocks": {
+                "Block1": {
+                    "opcode": "procedures_definition",
+                    "next": "Block3",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Block2"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block2": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Block1",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "consoleClear ",
+                        "argumentids": "[]",
+                        "argumentnames": "[]",
+                        "argumentdefaults": "[]",
+                        "warp": "true"
+                    }
+                },
+                "Block3": {
+                    "opcode": "data_deletealloflist",
+                    "next": null,
+                    "parent": "Block1",
+                    "inputs": {},
+                    "fields": {
+                        "LIST": [
+                            "console",
+                            "console2"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block4": {
+                    "opcode": "procedures_definition",
+                    "next": "Block7",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Block5"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block5": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Block4",
+                    "inputs": {
+                        "input0": [
+                            1,
+                            "Block6"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "print %s",
+                        "argumentids": "[\"input0\"]",
+                        "argumentnames": "[\"input\"]",
+                        "argumentdefaults": "[\"\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block6": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block5",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "input",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block7": {
+                    "opcode": "data_addtolist",
+                    "next": null,
+                    "parent": "Block4",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block8"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "console",
+                            "console2"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block8": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block7",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "input"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block9": {
+                    "opcode": "procedures_definition",
+                    "next": "Block11",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Block10"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block10": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Block9",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "RESET ",
+                        "argumentids": "[]",
+                        "argumentnames": "[]",
+                        "argumentdefaults": "[]",
+                        "warp": "true"
+                    }
+                },
+                "Block11": {
+                    "opcode": "data_deletealloflist",
+                    "next": "Block12",
+                    "parent": "Block9",
+                    "inputs": {},
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block12": {
+                    "opcode": "data_deletealloflist",
+                    "next": "Block13",
+                    "parent": "Block11",
+                    "inputs": {},
+                    "fields": {
+                        "LIST": [
+                            "value",
+                            "value11"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block13": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "Block12",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "0.0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "ERRORTYPE",
+                            "ERRORTYPE12"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block14": {
+                    "opcode": "procedures_definition",
+                    "next": "Block17",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Block15"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block15": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Block14",
+                    "inputs": {
+                        "errortype0": [
+                            1,
+                            "Block16"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "ERROR %s",
+                        "argumentids": "[\"errortype0\"]",
+                        "argumentnames": "[\"errortype\"]",
+                        "argumentdefaults": "[\"\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block16": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block15",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "errortype",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block17": {
+                    "opcode": "data_setvariableto",
+                    "next": "Block19",
+                    "parent": "Block14",
+                    "inputs": {
+                        "VALUE": [
+                            2,
+                            "Block18"
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "ERRORTYPE",
+                            "ERRORTYPE12"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block18": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block17",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "errortype"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block19": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "Block17",
+                    "inputs": {
+                        "input0": [
+                            2,
+                            [
+                                12,
+                                "ERRORTYPE",
+                                "ERRORTYPE12"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "print %s",
+                        "argumentids": "[\"input0\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block20": {
+                    "opcode": "procedures_definition",
+                    "next": "Block24",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Block21"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block21": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Block20",
+                    "inputs": {
+                        "varName0": [
+                            1,
+                            "Block22"
+                        ],
+                        "varValue1": [
+                            1,
+                            "Block23"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "createVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "argumentnames": "[\"varName\",\"varValue\"]",
+                        "argumentdefaults": "[\"\",\"\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block22": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block21",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block23": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block21",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block24": {
+                    "opcode": "control_if_else",
+                    "next": null,
+                    "parent": "Block20",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "Block25"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "Block27"
+                        ],
+                        "SUBSTACK2": [
+                            2,
+                            "Block28"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block25": {
+                    "opcode": "data_listcontainsitem",
+                    "next": null,
+                    "parent": "Block24",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block26"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block26": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block25",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block27": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "Block24",
+                    "inputs": {
+                        "errortype0": [
+                            1,
+                            [
+                                10,
+                                "Var already exists"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "ERROR %s",
+                        "argumentids": "[\"errortype0\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block28": {
+                    "opcode": "data_addtolist",
+                    "next": "Block30",
+                    "parent": "Block24",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block29"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block29": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block28",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block30": {
+                    "opcode": "data_addtolist",
+                    "next": null,
+                    "parent": "Block28",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block31"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "value",
+                            "value11"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block31": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block30",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block32": {
+                    "opcode": "procedures_definition",
+                    "next": "Block35",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Block33"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block33": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Block32",
+                    "inputs": {
+                        "varName0": [
+                            1,
+                            "Block34"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "deleteVar %s",
+                        "argumentids": "[\"varName0\"]",
+                        "argumentnames": "[\"varName\"]",
+                        "argumentdefaults": "[\"\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block34": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block33",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block35": {
+                    "opcode": "control_if_else",
+                    "next": null,
+                    "parent": "Block32",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "Block36"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "Block38"
+                        ],
+                        "SUBSTACK2": [
+                            2,
+                            "Block44"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block36": {
+                    "opcode": "data_listcontainsitem",
+                    "next": null,
+                    "parent": "Block35",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block37"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block37": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block36",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block38": {
+                    "opcode": "data_deleteoflist",
+                    "next": "Block41",
+                    "parent": "Block35",
+                    "inputs": {
+                        "INDEX": [
+                            2,
+                            "Block39"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "value",
+                            "value11"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block39": {
+                    "opcode": "data_itemnumoflist",
+                    "next": null,
+                    "parent": "Block38",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block40"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block40": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block39",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block41": {
+                    "opcode": "data_deleteoflist",
+                    "next": null,
+                    "parent": "Block38",
+                    "inputs": {
+                        "INDEX": [
+                            2,
+                            "Block42"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block42": {
+                    "opcode": "data_itemnumoflist",
+                    "next": null,
+                    "parent": "Block41",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block43"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block43": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block42",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block44": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "Block35",
+                    "inputs": {
+                        "errortype0": [
+                            1,
+                            [
+                                10,
+                                "Var does not exist"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "ERROR %s",
+                        "argumentids": "[\"errortype0\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block45": {
+                    "opcode": "procedures_definition",
+                    "next": "Block49",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Block46"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block46": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Block45",
+                    "inputs": {
+                        "varName0": [
+                            1,
+                            "Block47"
+                        ],
+                        "varValue1": [
+                            1,
+                            "Block48"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "setVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "argumentnames": "[\"varName\",\"varValue\"]",
+                        "argumentdefaults": "[\"\",\"\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block47": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block46",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block48": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block46",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block49": {
+                    "opcode": "control_if_else",
+                    "next": null,
+                    "parent": "Block45",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "Block50"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "Block52"
+                        ],
+                        "SUBSTACK2": [
+                            2,
+                            "Block56"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block50": {
+                    "opcode": "data_listcontainsitem",
+                    "next": null,
+                    "parent": "Block49",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block51"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block51": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block50",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block52": {
+                    "opcode": "data_replaceitemoflist",
+                    "next": null,
+                    "parent": "Block49",
+                    "inputs": {
+                        "INDEX": [
+                            2,
+                            "Block53"
+                        ],
+                        "ITEM": [
+                            2,
+                            "Block55"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "value",
+                            "value11"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block53": {
+                    "opcode": "data_itemnumoflist",
+                    "next": null,
+                    "parent": "Block52",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block54"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block54": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block53",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block55": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block52",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block56": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "Block49",
+                    "inputs": {
+                        "errortype0": [
+                            1,
+                            [
+                                10,
+                                "Var does not exist"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "ERROR %s",
+                        "argumentids": "[\"errortype0\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block57": {
+                    "opcode": "procedures_definition",
+                    "next": "Block61",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Block58"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block58": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Block57",
+                    "inputs": {
+                        "varName0": [
+                            1,
+                            "Block59"
+                        ],
+                        "varValue1": [
+                            1,
+                            "Block60"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "addVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "argumentnames": "[\"varName\",\"varValue\"]",
+                        "argumentdefaults": "[\"\",\"\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block59": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block58",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block60": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block58",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block61": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "Block57",
+                    "inputs": {
+                        "varName0": [
+                            2,
+                            "Block62"
+                        ],
+                        "varValue1": [
+                            2,
+                            "Block63"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "setVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block62": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block61",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block63": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "Block61",
+                    "inputs": {
+                        "NUM1": [
+                            2,
+                            "Block64"
+                        ],
+                        "NUM2": [
+                            2,
+                            "Block67"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block64": {
+                    "opcode": "data_itemoflist",
+                    "next": null,
+                    "parent": "Block63",
+                    "inputs": {
+                        "INDEX": [
+                            2,
+                            "Block65"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "value",
+                            "value11"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block65": {
+                    "opcode": "data_itemnumoflist",
+                    "next": null,
+                    "parent": "Block64",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block66"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block66": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block65",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block67": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block63",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block68": {
+                    "opcode": "procedures_definition",
+                    "next": "Block72",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Block69"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block69": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Block68",
+                    "inputs": {
+                        "varName0": [
+                            1,
+                            "Block70"
+                        ],
+                        "varValue1": [
+                            1,
+                            "Block71"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "minusVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "argumentnames": "[\"varName\",\"varValue\"]",
+                        "argumentdefaults": "[\"\",\"\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block70": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block69",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block71": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block69",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block72": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "Block68",
+                    "inputs": {
+                        "varName0": [
+                            2,
+                            "Block73"
+                        ],
+                        "varValue1": [
+                            2,
+                            "Block74"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "setVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block73": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block72",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block74": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "Block72",
+                    "inputs": {
+                        "NUM1": [
+                            2,
+                            "Block75"
+                        ],
+                        "NUM2": [
+                            2,
+                            "Block78"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block75": {
+                    "opcode": "data_itemoflist",
+                    "next": null,
+                    "parent": "Block74",
+                    "inputs": {
+                        "INDEX": [
+                            2,
+                            "Block76"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "value",
+                            "value11"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block76": {
+                    "opcode": "data_itemnumoflist",
+                    "next": null,
+                    "parent": "Block75",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block77"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block77": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block76",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block78": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block74",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block79": {
+                    "opcode": "procedures_definition",
+                    "next": "Block83",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Block80"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block80": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Block79",
+                    "inputs": {
+                        "varName0": [
+                            1,
+                            "Block81"
+                        ],
+                        "varValue1": [
+                            1,
+                            "Block82"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "multVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "argumentnames": "[\"varName\",\"varValue\"]",
+                        "argumentdefaults": "[\"\",\"\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block81": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block80",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block82": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block80",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block83": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "Block79",
+                    "inputs": {
+                        "varName0": [
+                            2,
+                            "Block84"
+                        ],
+                        "varValue1": [
+                            2,
+                            "Block85"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "setVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block84": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block83",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block85": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "Block83",
+                    "inputs": {
+                        "NUM1": [
+                            2,
+                            "Block86"
+                        ],
+                        "NUM2": [
+                            2,
+                            "Block89"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block86": {
+                    "opcode": "data_itemoflist",
+                    "next": null,
+                    "parent": "Block85",
+                    "inputs": {
+                        "INDEX": [
+                            2,
+                            "Block87"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "value",
+                            "value11"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block87": {
+                    "opcode": "data_itemnumoflist",
+                    "next": null,
+                    "parent": "Block86",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block88"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block88": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block87",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block89": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block85",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block90": {
+                    "opcode": "procedures_definition",
+                    "next": "Block94",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Block91"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block91": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Block90",
+                    "inputs": {
+                        "varName0": [
+                            1,
+                            "Block92"
+                        ],
+                        "varValue1": [
+                            1,
+                            "Block93"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "divVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "argumentnames": "[\"varName\",\"varValue\"]",
+                        "argumentdefaults": "[\"\",\"\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block92": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block91",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block93": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "Block91",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Block94": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "Block90",
+                    "inputs": {
+                        "varName0": [
+                            2,
+                            "Block95"
+                        ],
+                        "varValue1": [
+                            2,
+                            "Block96"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "setVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block95": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block94",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block96": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "Block94",
+                    "inputs": {
+                        "NUM1": [
+                            2,
+                            "Block97"
+                        ],
+                        "NUM2": [
+                            2,
+                            "Block100"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block97": {
+                    "opcode": "data_itemoflist",
+                    "next": null,
+                    "parent": "Block96",
+                    "inputs": {
+                        "INDEX": [
+                            2,
+                            "Block98"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "value",
+                            "value11"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block98": {
+                    "opcode": "data_itemnumoflist",
+                    "next": null,
+                    "parent": "Block97",
+                    "inputs": {
+                        "ITEM": [
+                            2,
+                            "Block99"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block99": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block98",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varName"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block100": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "Block96",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "varValue"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block101": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "Block102",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 0
+                },
+                "Block102": {
+                    "opcode": "data_setvariableto",
+                    "next": "Block103",
+                    "parent": "Block101",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "3.0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "that",
+                            "that101"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block103": {
+                    "opcode": "procedures_call",
+                    "next": "Block107",
+                    "parent": "Block102",
+                    "inputs": {
+                        "varName0": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ],
+                        "varValue1": [
+                            2,
+                            "Block104"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "createVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block104": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "Block103",
+                    "inputs": {
+                        "NUM1": [
+                            2,
+                            "Block105"
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                10,
+                                "3.0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block105": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "Block104",
+                    "inputs": {
+                        "NUM1": [
+                            2,
+                            "Block106"
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                10,
+                                "4.0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block106": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "Block105",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                10,
+                                "10.0"
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                10,
+                                "2.0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block107": {
+                    "opcode": "data_setvariableto",
+                    "next": "Block110",
+                    "parent": "Block103",
+                    "inputs": {
+                        "VALUE": [
+                            2,
+                            "Block108"
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "that",
+                            "that101"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block108": {
+                    "opcode": "data_itemoflist",
+                    "next": null,
+                    "parent": "Block107",
+                    "inputs": {
+                        "INDEX": [
+                            2,
+                            "Block109"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "value",
+                            "value11"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block109": {
+                    "opcode": "data_itemnumoflist",
+                    "next": null,
+                    "parent": "Block107",
+                    "inputs": {
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block110": {
+                    "opcode": "procedures_call",
+                    "next": "Block111",
+                    "parent": "Block107",
+                    "inputs": {
+                        "varName0": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ],
+                        "varValue1": [
+                            1,
+                            [
+                                10,
+                                "3.0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "addVar %s %s",
+                        "argumentids": "[\"varName0\",\"varValue1\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block111": {
+                    "opcode": "procedures_call",
+                    "next": "Block114",
+                    "parent": "Block110",
+                    "inputs": {
+                        "input0": [
+                            2,
+                            "Block112"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "print %s",
+                        "argumentids": "[\"input0\"]",
+                        "warp": "true"
+                    }
+                },
+                "Block112": {
+                    "opcode": "data_itemoflist",
+                    "next": null,
+                    "parent": "Block111",
+                    "inputs": {
+                        "INDEX": [
+                            2,
+                            "Block113"
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "value",
+                            "value11"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block113": {
+                    "opcode": "data_itemnumoflist",
+                    "next": null,
+                    "parent": "Block111",
+                    "inputs": {
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "key",
+                            "key10"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Block114": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "Block111",
+                    "inputs": {
+                        "varName0": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "deleteVar %s",
+                        "argumentids": "[\"varName0\"]",
+                        "warp": "true"
+                    }
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "cat",
+                    "dataFormat": "svg",
+                    "assetId": "ecb86074b52beb4ddabc9d5963d03d03",
+                    "md5ext": "ecb86074b52beb4ddabc9d5963d03d03.svg",
+                    "rotationCenterX": 1,
+                    "rotationCenterY": 1
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "12.7.0",
+        "agent": "Scratch Compiler v0.3.0b"
+    }
+}

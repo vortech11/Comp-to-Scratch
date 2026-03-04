@@ -9,7 +9,6 @@ export{
 
     func ERROR(errortype){
         ERRORTYPE = errortype;
-        ERRORTYPE = 10;
         print(ERRORTYPE);
     }
 
@@ -43,7 +42,19 @@ export{
         }
     }
 
-    func changeVar(varName, varValue){
+    func addVar(varName, varValue){
         setVar(varName, data_itemoflist(data_itemnumoflist(varName, key), value) + varValue);
+    }
+
+    func minusVar(varName, varValue){
+        setVar(varName, data_itemoflist(data_itemnumoflist(varName, key), value) - varValue);
+    }
+
+    func multVar(varName, varValue){
+        setVar(varName, data_itemoflist(data_itemnumoflist(varName, key), value) * varValue);
+    }
+
+    func divVar(varName, varValue){
+        setVar(varName, data_itemoflist(data_itemnumoflist(varName, key), value) / varValue);
     }
 }

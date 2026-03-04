@@ -29,6 +29,18 @@ class Assign(Expr):
         return f"{self.name.lexeme} = {self.value.getPrint()}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous):
+        if projectFile.isDumbPointer(sprite, self.name.lexeme):
+            match self.assignment.type:
+                case TokenType.EQUAL: operator = "setVar"
+                case TokenType.PLUS_EQUAL: operator = "addVar"
+                case TokenType.MINUS_EQUAL: operator = "minusVar"
+                case TokenType.STAR_EQUAL: operator = "multVar"
+                case TokenType.SLASH_EQUAL: operator = "divVar"
+                case _: operator = "setVar"
+            gram = Call(Variable(Token(TokenType.IDENTIFIER, operator)), Token(TokenType.LEFT_PAREN), [Literal(self.name.lexeme), self.value])
+            block = gram.convert(projectFile, environment, sprite, previous)
+            return block
+
         block = projectFile.addBlock(
             "data_setvariableto", {}, 
             {"VARIABLE": VarRef(self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme)).getReference()}, 
@@ -454,27 +466,29 @@ class Variable(Expr):
         return f"{self.name}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
-        if self.name.lexeme in opcodeMap:
+        varName = self.name.lexeme
+        if varName in opcodeMap:
             return self.name
         
-        if projectFile.isSprite(self.name.lexeme):
+        if projectFile.isSprite(varName):
             return self.name
         
-        if projectFile.doesFuncExist(sprite, self.name.lexeme):
+        if projectFile.doesFuncExist(sprite, varName):
             return self.name
         
-        if environment.isFuncParam(self.name.lexeme):
-            inputName = self.name.lexeme
-            block = projectFile.addBlock("argument_reporter_boolean", {}, {"VALUE": [inputName]}, False, sprite, previous, mendPrevious=False)
+        if environment.isFuncParam(varName):
+            block = projectFile.addBlock("argument_reporter_boolean", {}, {"VALUE": [varName]}, False, sprite, previous, mendPrevious=False)
             return ExprRef(block)
         
-        if projectFile.isList(sprite, self.name.lexeme):
-            return ListRef(self.name.lexeme, projectFile.getListId(sprite, self.name.lexeme))
+        if projectFile.isList(sprite, varName):
+            return ListRef(varName, projectFile.getListId(sprite, varName))
         
-        if projectFile.isDumbPointer(sprite, self.name.lexeme):
-            varName = self.name.lexeme
-            #gram = Call(Call(Variable(Token(TokenType.IDENTIFIER, "key")), Token(TokenType.LEFT_PAREN), ))
-        
-        if projectFile.isVar(sprite, self.name.lexeme):
-            return VarRef(self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme))
+        if projectFile.isDumbPointer(sprite, varName):
+            topBlock = projectFile.addBlock("data_itemoflist", {}, {"LIST": ["value", projectFile.getListId(sprite, "value")]}, False, sprite, previous, False)
+            bottomBlock = projectFile.addBlock("data_itemnumoflist", {"ITEM": LiteralRef(varName).format()}, {"LIST": ["key", projectFile.getListId(sprite, "key")]}, False, sprite, previous, False)
+            projectFile.setBlockAttribute(sprite, topBlock, "inputs", {"INDEX": BlockRef(bottomBlock).format()})
+            return BlockRef(topBlock)
+
+        if projectFile.isVar(sprite, varName):
+            return VarRef(varName, projectFile.getVarId(sprite, varName))
 
