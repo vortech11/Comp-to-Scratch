@@ -369,6 +369,11 @@ class Parser:
         exports = [fileStmt.body for fileStmt in fullGramar if isinstance(fileStmt, Export)]
 
         return Block(exports)
+    
+    def deleteStatement(self):
+        varName = self.consume(TokenType.IDENTIFIER, "Expect pointer name after del keyword.")
+        self.consume(TokenType.SEMICOLON, "Expect semicolon after varname in del statement.")
+        return Delete(varName)
 
     def statement(self):
         match self.getToken().type:
@@ -388,6 +393,8 @@ class Parser:
                 return self.forStatement()
             case TokenType.IMPORT | TokenType.REQUIRE:
                 return self.importStmt()
+            case TokenType.DEL:
+                return self.deleteStatement()
             case _:
                 return self.expressionStatement()
     

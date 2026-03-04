@@ -74,6 +74,8 @@ class TokenType(Enum):
     EXPORT = auto()
     REQUIRE = auto()
 
+    DEL = auto()
+
 keywords = {
     "and": TokenType.AND,
     "class": TokenType.CLASS,
@@ -100,6 +102,7 @@ keywords = {
     "require": TokenType.REQUIRE,
     "ptr": TokenType.SMART_POINTER,
     "dptr": TokenType.DUMB_POINTER,
+    "del": TokenType.DEL,
 }
 
 class Token:

@@ -158,9 +158,24 @@ class Var(Stmt):
                 assert False
             else:
                 initializer = self.initializer
+            projectFile.createDumbPointer(sprite, self.name.lexeme)
             blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "createVar")), Token(TokenType.LEFT_PAREN), [Literal(self.name.lexeme), initializer])
             block = blockGram.convert(projectFile, environment, sprite, previous)
             return block
+
+class Delete(Stmt):
+    def __init__(self, var: Token):
+        self.var: Token = var
+    
+    def getPrint(self) -> str:
+        return f"del {self.var}"
+    
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        if not projectFile.isDumbPointer(sprite, self.var.lexeme):
+            error(self.var, "Cannot delete object that is not of type pointer.")
+        blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "deleteVar")), Token(TokenType.LEFT_PAREN), [Literal(self.var.lexeme)])
+        block = blockGram.convert(projectFile, environment, sprite, previous)
+        return block
 
 class Function(Stmt):
     def __init__(self, name: Token, params: list[Token], body: Stmt) -> None:

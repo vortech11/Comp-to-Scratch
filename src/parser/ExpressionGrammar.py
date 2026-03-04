@@ -471,6 +471,10 @@ class Variable(Expr):
         if projectFile.isList(sprite, self.name.lexeme):
             return ListRef(self.name.lexeme, projectFile.getListId(sprite, self.name.lexeme))
         
+        if projectFile.isDumbPointer(sprite, self.name.lexeme):
+            varName = self.name.lexeme
+            #gram = Call(Call(Variable(Token(TokenType.IDENTIFIER, "key")), Token(TokenType.LEFT_PAREN), ))
+        
         if projectFile.isVar(sprite, self.name.lexeme):
             return VarRef(self.name.lexeme, projectFile.getVarId(sprite, self.name.lexeme))
 

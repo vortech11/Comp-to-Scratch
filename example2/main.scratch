@@ -8,6 +8,9 @@ sprite cat {
     require "static.scratch";
     
     func main(){
+        var that = 3;
         dptr thing = 10 * 2 / 4 + 3;
+        //that = thing;
+        del thing;
     }
 }

@@ -18,9 +18,9 @@ class ProjectFile:
 
         self.files: dict = {}
 
-        self.funcs = {
+        self.funcs = {}
 
-        }
+        self.dumbPointers: dict[list[str]] = {}
 
         self.currentBlock = 0
     
@@ -71,6 +71,7 @@ class ProjectFile:
         self.fileDict["targets"].append(sprite)
         self.spriteList.append(name)
         self.funcs[name] = {}
+        self.dumbPointers[name] = []
 
     def addBlock(self, opcode: str, inputs: dict, fields: dict, shadow: bool, sprite: str, previous=None, mendPrevious=True):
         self.currentBlock += 1
@@ -152,6 +153,12 @@ class ProjectFile:
 
     def setListDefault(self, sprite: str, name: str, value):
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["lists"][self.getVarId(sprite, name)] = [name, value]
+
+    def createDumbPointer(self, sprite: str, name: str):
+        self.dumbPointers[sprite].append(name)
+    
+    def isDumbPointer(self, sprite: str, name: str):
+        return name in self.dumbPointers[sprite]
 
     def getVarId(self, sprite: str, name: str) -> str:
         for key, value in self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"].items():
