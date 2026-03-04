@@ -346,9 +346,11 @@ class Parser:
     def importStmt(self):
         token = self.getToken()
         filePathToken = self.consume(TokenType.STRING, "Expect path to import after import keyword.")
-        filePath = self.isPathPackage(filePathToken.lexeme)
-        if filePath is None:
+        possiblePackage = self.isPathPackage(filePathToken.lexeme)
+        if possiblePackage is None:
             filePath: Path = self.directory.parent / Path(filePathToken.lexeme)
+        else:
+            filePath = possiblePackage
         if token.type == TokenType.REQUIRE:
             if self.packageImported(str(filePath), 2):
                 self.consume(TokenType.SEMICOLON, "Expect semicolon after import keyword.")
@@ -462,9 +464,11 @@ class Parser:
     def importFileStmt(self):
         token = self.getToken()
         filePathToken = self.consume(TokenType.STRING, f"Expect path to import after {token.lexeme} keyword.")
-        filePath = self.isPathPackage(filePathToken.lexeme)
-        if filePath is None:
+        possiblePackage = self.isPathPackage(filePathToken.lexeme)
+        if possiblePackage is None:
             filePath: Path = self.directory.parent / Path(filePathToken.lexeme)
+        else:
+            filePath = possiblePackage
         if token.type == TokenType.REQUIRE:
             if self.packageImported(str(filePath), 1):
                 return []
