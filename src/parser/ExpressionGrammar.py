@@ -19,6 +19,23 @@ class Expr(Grammar):
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous: str | None) -> Any:
         ...
 
+mathFuncs = {
+    "abs": "abs",
+    "floor": "floor",
+    "ceil": "ceiling",
+    "sqrt": "sqrt",
+    "sin": "sin",
+    "cos": "cos",
+    "tan": "tan",
+    "asin": "asin",
+    "acos": "acos",
+    "atan": "atan",
+    "ln": "ln",
+    "log": "log",
+    "ePow": "e ^",
+    "tenPow": "10 ^",
+}
+
 class Assign(Expr):
     def __init__(self, name: Token, assignment: Token, value: Expr) -> None:
         self.name: Token = name
@@ -264,22 +281,11 @@ class Call(Expr):
         if not isinstance(callee, Token):
             error(self.paren, f"Function call must have callee as callable object, not '{callee}'")
             exit()
-        mathFuncs = {
-            "abs": "abs",
-            "floor": "floor",
-            "ceil": "ceiling",
-            "sqrt": "sqrt",
-            "sin": "sin",
-            "cos": "cos",
-            "tan": "tan",
-            "asin": "asin",
-            "acos": "acos",
-            "atan": "atan",
-            "ln": "ln",
-            "log": "log",
-            "ePow": "e ^",
-            "tenPow": "10 ^",
-        }
+        if callee.lexeme in mathFuncs:
+            opcode = "operator_mathop"
+            blockGram = Call(Variable(Token(TokenType.IDENTIFIER, opcode)), Token(TokenType.LEFT_PAREN), [Literal(mathFuncs[callee.lexeme])] + self.arguments)
+            block = blockGram.convert(projectFile, environment, sprite, previous)
+            return block
         if callee.lexeme in opcodeMap:
             funcInfo = opcodeMap[callee.lexeme]
             if len(self.arguments) > len(funcInfo["inputs"]):
@@ -302,6 +308,8 @@ class Call(Expr):
                     case "dropdown":
                         inputReference = input.convert(projectFile, environment, sprite, block)
                         if isinstance(inputReference, (ListRef, VarRef)):
+                            arguments[funcInfo["inputs"][index]] = inputReference.getReference()
+                        elif isinstance(inputReference, LiteralRef):
                             arguments[funcInfo["inputs"][index]] = inputReference.getReference()
                         else:
                             error(self.paren, f"PANIC: Internal Error: WHAT IS SUPPOSED TO HAPPEN WITH 'inputReference' as type {type(inputReference)}?")
@@ -519,6 +527,9 @@ class Variable(Expr):
             return self.name
         
         if projectFile.doesFuncExist(sprite, varName):
+            return self.name
+        
+        if varName in mathFuncs:
             return self.name
         
         if environment.isFuncParam(varName):

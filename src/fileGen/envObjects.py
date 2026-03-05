@@ -8,6 +8,9 @@ class ObjMethod:
 class LiteralRef:
     def __init__(self, value) -> None:
         self.value = value
+
+    def getReference(self):
+        return [str(self.value), None]
     
     def format(self):
         return [1, [10, str(self.value)]]

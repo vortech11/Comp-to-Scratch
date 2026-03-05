@@ -10,6 +10,7 @@ sprite cat {
     
     func main(){
         ptr num << pow(10, 3);
+        num = sqrt(num);
         print(num);
     }
 }
