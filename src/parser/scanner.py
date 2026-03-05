@@ -78,6 +78,8 @@ class TokenType(Enum):
 
     LEFT_ARROW = auto()
 
+    LOOP = auto()
+
 keywords = {
     "and": TokenType.AND,
     "class": TokenType.CLASS,
@@ -105,6 +107,7 @@ keywords = {
     "ptr": TokenType.SMART_POINTER,
     "dptr": TokenType.DUMB_POINTER,
     "del": TokenType.DEL,
+    "loop": TokenType.LOOP,
 }
 
 class Token:

@@ -342,6 +342,14 @@ class Parser:
         
         return body
     
+    def loopStatement(self):
+        self.consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.")
+        condition: Expr = self.expression()
+        self.consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.", -1)
+        body: Stmt = self.statement()
+
+        return LoopStmt(condition, body)
+    
     def returnStatement(self):
         keyword: Token = self.getToken()
         value: Expr | None = None
@@ -400,6 +408,8 @@ class Parser:
                 return self.whileStatement()
             case TokenType.FOR:
                 return self.forStatement()
+            case TokenType.LOOP:
+                return self.loopStatement()
             case TokenType.IMPORT | TokenType.REQUIRE:
                 return self.importStmt()
             case TokenType.DEL:

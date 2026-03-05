@@ -57,8 +57,4 @@ export{
     func divVar(varName, varValue){
         setVar(varName, data_itemoflist(data_itemnumoflist(varName, key), value) / varValue);
     }
-
-    func main(){
-        RESET();
-    }
 }

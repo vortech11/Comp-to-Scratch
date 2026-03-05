@@ -381,8 +381,24 @@ class WhileStmt(Stmt):
         projectFile.setBlockAttribute(sprite, block, "inputs", {"CONDITION": expression.format(), "SUBSTACK": statement})
         projectFile.setBlockAttribute(sprite, block, "next", None)
         return block
-        
-    
+
+class LoopStmt(Stmt):
+    def __init__(self, expression: Expr, statement: Stmt):
+        self.expression: Expr = expression
+        self.statement: Stmt = statement
+
+    def getPrint(self) -> str:
+        return f"loop ({self.expression.getPrint()}) {{{self.statement.getPrint()}}}"
+
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        block = projectFile.addBlock("control_repeat", {}, {}, False, sprite, previous)
+        expression = self.expression.convert(projectFile, environment, sprite, block)
+        statement = unpack(self.statement.convert(projectFile, environment, sprite, block))
+        statement = [2, statement]
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"TIMES": expression.format(), "SUBSTACK": statement})
+        projectFile.setBlockAttribute(sprite, block, "next", None)
+        return block
+
 class CostumeStmt(Stmt):
     def __init__(self, name: Token, path: Token) -> None:
         self.name: Token = name

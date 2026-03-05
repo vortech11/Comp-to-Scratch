@@ -6,15 +6,10 @@ sprite cat {
     costume cat "cat.svg";
 
     require "static.scratch";
-
-    func myFunction(thing, what){
-        return thing + what;
-    }
+    require "math.scratch";
     
     func main(){
-        ptr huh << myFunction(10, 20);
-        print(huh);
-        huh << myFunction(100, 1);
-        print(huh);
+        ptr num << pow(10, 3);
+        print(num);
     }
 }
