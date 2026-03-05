@@ -264,6 +264,22 @@ class Call(Expr):
         if not isinstance(callee, Token):
             error(self.paren, f"Function call must have callee as callable object, not '{callee}'")
             exit()
+        mathFuncs = {
+            "abs": "abs",
+            "floor": "floor",
+            "ceil": "ceiling",
+            "sqrt": "sqrt",
+            "sin": "sin",
+            "cos": "cos",
+            "tan": "tan",
+            "asin": "asin",
+            "acos": "acos",
+            "atan": "atan",
+            "ln": "ln",
+            "log": "log",
+            "ePow": "e ^",
+            "tenPow": "10 ^",
+        }
         if callee.lexeme in opcodeMap:
             funcInfo = opcodeMap[callee.lexeme]
             if len(self.arguments) > len(funcInfo["inputs"]):
