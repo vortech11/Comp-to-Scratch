@@ -65,6 +65,22 @@ class Assign(Expr):
         projectFile.setBlockAttribute(sprite, block, "inputs", {"VALUE": subBlock.format()})
         return block
 
+class SetPointerFunc(Expr):
+    def __init__(self, name: Token, func: Expr):
+        self.name: Token = name
+        self.func: Expr = func
+
+    def getPrint(self) -> str:
+        return f"{self.name} {self.func.getPrint()}"
+    
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        if not isinstance(self.func, Call):
+            error(self.name, "Cannot set pointer value to object not of type FunctionCall")
+            exit()
+        funcGram = Call(self.func.callee, self.func.paren, self.func.arguments + [Literal(self.name.lexeme)])
+        funcBlock = funcGram.convert(projectFile, environment, sprite, previous) # type: ignore
+        return funcBlock
+
 class Binary(Expr):
     def __init__(self, left: Expr, operator: Token, right: Expr):
         self.left: Expr = left
@@ -285,7 +301,12 @@ class Call(Expr):
                 return block
         
         func = projectFile.getFunc(sprite, callee.lexeme)
-        block = projectFile.addBlock("procedures_call", {}, {}, False, sprite, previous)
+        firstBlock = previous
+        #for returnName in func["returnVariables"]:
+        #    blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "createVar")), Token(TokenType.LEFT_PAREN), [Literal(returnName), Literal("")])
+        #    firstBlock = blockGram.convert(projectFile, environment, sprite, firstBlock)
+
+        block = projectFile.addBlock("procedures_call", {}, {}, False, sprite, firstBlock)
 
         mutation = {
             "tagName": "mutation",
@@ -304,7 +325,12 @@ class Call(Expr):
         projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
         projectFile.setBlockAttribute(sprite, block, "mutation", mutation)
 
-        return block
+        lastBlock = block
+        #for returnName in func["returnVariables"]:
+        #    blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "deleteVar")), Token(TokenType.LEFT_PAREN), [Literal(returnName)])
+        #    lastBlock = blockGram.convert(projectFile, environment, sprite, lastBlock) # type: ignore
+
+        return lastBlock
 
 class ListIndex(Expr):
     def __init__(self, object, bracket, index) -> None:

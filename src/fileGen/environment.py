@@ -31,6 +31,13 @@ class Environment:
             return True
         return False
 
+    def setFuncData(self, name, argumentNames):
+        if not self.func is None:
+            self.func["name"] = name
+            self.func["argumentNames"] = argumentNames
+        if not self.parent is None:
+            self.parent.setFuncData(name, argumentNames)
+
     def isSmartPointer(self, name) -> bool:
         if name in self.smartPointers:
             return True

@@ -19,6 +19,13 @@ with open("src/OpcodeMap.json") as map:
 def unpack(value, index=0):
     return value[index] if isinstance(value, (tuple, list)) else value
 
+def formatFuncArgs(ids: list[str], names: list[str], defaults: list[str]):
+    textParamData = []
+    for paramlist in [ids, names, defaults]:
+        #paramlist = ["false" if item is False else "true" if item is True else item for item in paramlist]
+        textParamData.append(f"[{",".join([f"\"{item}\"" for item in paramlist])}]")
+    return textParamData
+
 
 class Stmt(Grammar):
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous: str | None) -> Any:
@@ -93,8 +100,68 @@ class Return(Stmt):
         return f"{self.keyword.lexeme} {value}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
-        error(self.keyword, "Return keyword not implamented yet: don't use it!")
+        #error(self.keyword, "Return keyword not implamented yet: don't use it!")
+        if environment.func is None:
+            error(self.keyword, "Current func is None")
+            assert False
+
+        currentFuncName = environment.func["name"]
+        funcSig = projectFile.funcs[sprite][currentFuncName]
+        argumentIdList = funcSig["parameterIdList"]
+        argumentNameList = funcSig["parameterNameList"]
+        argumentDefaultList = funcSig["perameterDefaultList"]
+        nextIndex = len(argumentIdList)
+        inputName = "return"
+        fullInputName = f"{inputName}{nextIndex}"
+        argumentIdList.append(fullInputName)
+        argumentNameList.append(inputName)
+        argumentDefaultList.append("")
+        funcSig["proccode"] += " %s"
+        funcSig["parameterIdList"] = argumentIdList
+        funcSig["parameterNameList"] = argumentNameList
+        funcSig["perameterDefaultList"] = argumentDefaultList
+        funcSig["returnVariables"].append(fullInputName)
+        textParamData = formatFuncArgs(argumentIdList, argumentNameList, argumentDefaultList)
+        funcSig["parameterIdText"] = textParamData[0]
+        projectFile.funcs[sprite][currentFuncName] = funcSig
+        mutation = {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": funcSig["proccode"],
+            "argumentids": textParamData[0],
+            "argumentnames": textParamData[1],
+            "argumentdefaults": textParamData[2],
+            "warp": funcSig["warp"]
+        }
+        projectFile.setBlockAttribute(sprite, funcSig["blockName"], "mutation", mutation)
+        environment.setFuncData(currentFuncName, argumentNameList)
+
+        if self.value is None:
+            return previous
+        
+        blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "setVar")), Token(TokenType.LEFT_PAREN), [Variable(Token(TokenType.IDENTIFIER, inputName)), self.value])
+        block = blockGram.convert(projectFile, environment, sprite, previous)
+        return block
+
+class DefPointerFunc(Stmt):
+    def __init__(self, declarationType: Token, name: Token, func: Expr):
+        self.declarationType: Token = declarationType
+        self.name: Token = name
+        self.func: Expr = func
+
+    def getPrint(self) -> str:
+        return f"{self.declarationType} {self.name} {self.func.getPrint()}"
     
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        varGram = Var(self.declarationType, self.name, Literal(""))
+        varBlock = varGram.convert(projectFile, environment, sprite, previous)
+        if not isinstance(self.func, Call):
+            error(self.name, "Cannot set pointer value to object not of type FunctionCall")
+            exit()
+        funcGram = Call(self.func.callee, self.func.paren, self.func.arguments + [Literal(self.name.lexeme)])
+        funcBlock = funcGram.convert(projectFile, environment, sprite, varBlock) # type: ignore
+        return funcBlock
+
 class Var(Stmt):
     def __init__(self, declarationType: Token, name: Token, initializer: Expr | None) -> None:
         self.declarationType: Token = declarationType
@@ -238,10 +305,7 @@ class Function(Stmt):
             inputBlock = projectFile.addBlock("argument_reporter_string_number", {}, {"VALUE": [name, None]}, True, sprite, prototype, mendPrevious=False)
             prototypeInputs[inputId] = [1, inputBlock]
 
-        textParamData = []
-        for paramlist in [ids, names, defaults]:
-            #paramlist = ["false" if item is False else "true" if item is True else item for item in paramlist]
-            textParamData.append(f"[{",".join([f"\"{item}\"" for item in paramlist])}]")
+        textParamData = formatFuncArgs(ids, names, defaults)
 
         proccode = f"{self.name.lexeme} {" ".join(inputTypes)}"
         warp = "true"
@@ -261,7 +325,7 @@ class Function(Stmt):
         projectFile.setBlockAttribute(sprite, block, "inputs", {"custom_block": [1, prototype]})
 
         funcEnvironment = Environment(environment, {"name": self.name.lexeme, "argumentNames": names})
-        projectFile.createFunc(sprite, self.name.lexeme, proccode, ids, textParamData[0], warp)
+        projectFile.createFunc(sprite, self.name.lexeme, proccode, ids, names, defaults, textParamData[0], warp, prototype, [])
 
         lastBlock = unpack(self.body.convert(projectFile, funcEnvironment, sprite, block), 1)
         return previous

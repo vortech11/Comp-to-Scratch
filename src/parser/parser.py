@@ -114,6 +114,15 @@ class Parser:
                 return Set(expr.object, expr.name, value)
             
             self.error(assignment, "Invalid assignment target.")
+        
+        elif self.match([TokenType.LEFT_ARROW]):
+            assignment: Token = self.getToken()
+            self.advance()
+            func = self.funcCall()
+            if isinstance(expr, Variable):
+                name = expr.name
+                return SetPointerFunc(name, func)
+            self.error(assignment, "Invalid assignment target.") 
             
         return expr
     
@@ -416,6 +425,12 @@ class Parser:
                         self.advance()
                 else:
                     initializer = []
+        elif self.match([TokenType.LEFT_ARROW]):
+            self.advance()
+            if declarationType.type in [TokenType.DUMB_POINTER, TokenType.SMART_POINTER]:
+                func = self.funcCall()
+                self.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
+                return DefPointerFunc(declarationType, name, func)
         
         self.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
         return Var(declarationType, name, initializer) # type: ignore

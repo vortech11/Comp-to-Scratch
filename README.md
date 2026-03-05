@@ -21,7 +21,7 @@ Compared to the main branch, this rewrite is not yet feature complete.
 ### Things yet to implament:
 
 * `Static` Variables (To be renamed to ptr or something of the like)
-    * Function returns
+    * Default importing
 * Sounds
 * More asset stuff
 * Documentation

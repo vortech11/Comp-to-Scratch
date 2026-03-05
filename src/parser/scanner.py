@@ -76,6 +76,8 @@ class TokenType(Enum):
 
     DEL = auto()
 
+    LEFT_ARROW = auto()
+
 keywords = {
     "and": TokenType.AND,
     "class": TokenType.CLASS,
@@ -234,6 +236,9 @@ class Scanner:
                 if self.getNextChar() == "=":
                     self.advance()
                     self.addToken(TokenType.LESS_EQUAL)
+                elif self.getNextChar() == "<":
+                    self.advance()
+                    self.addToken(TokenType.LEFT_ARROW)
                 else:
                     self.addToken(TokenType.LESS)
             

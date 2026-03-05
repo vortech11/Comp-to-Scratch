@@ -184,12 +184,29 @@ class ProjectFile:
                 return True
         return False
 
-    def createFunc(self, sprite, name, proccode, parameterIdList, parameterIdText, warp):
+    def createFunc(
+            self, 
+            sprite: str, 
+            name: str, 
+            proccode: str, 
+            parameterIdList: list[str], 
+            parameterNameList: list[str], 
+            parameterDefaultList: list[str], 
+            parameterIdText: str, 
+            warp: str, 
+            blockName: str, 
+            returnVariables: list[str]
+        ):
+        
         self.funcs[sprite][name] = {
             "proccode": proccode, 
             "parameterIdList": parameterIdList, 
+            "parameterNameList": parameterNameList,
+            "perameterDefaultList": parameterDefaultList, 
             "parameterIdText": parameterIdText,
-            "warp": warp
+            "warp": warp,
+            "blockName": blockName, # Reference to the prototype portion
+            "returnVariables": returnVariables 
         }
     
     def doesFuncExist(self, sprite, funcName):
