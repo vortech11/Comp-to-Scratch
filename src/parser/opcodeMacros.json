@@ -5,5 +5,7 @@
     "say": "looks_say",
     "penDown": "pen_penDown",
     "penUp": "pen_penUp",
-    "setPenSize": "pen_setPenSizeTo"
+    "setPenSize": "pen_setPenSizeTo",
+    "len(?=(\\s*\\())": "operator_length",
+    "round": "operator_round"
 }

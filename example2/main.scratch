@@ -9,8 +9,9 @@ sprite cat {
     require "math.scratch";
     
     func main(){
-        ptr num << pow(10, 3);
+        ptr num << pow(10, 2);
         num = sqrt(num);
         print(num);
+        print(len(num));
     }
 }
