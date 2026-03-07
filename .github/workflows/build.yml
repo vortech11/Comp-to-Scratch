@@ -48,9 +48,9 @@ jobs:
           name: build-${{ matrix.os }}
           path: |
             *.exe
-            scratch-linux-*
-            scratch-windows-*
-            scratch-darwin-*
+            scratch-Linux-*
+            scratch-Windows-*
+            scratch-Darwin-*
   
   release:
     needs: build
