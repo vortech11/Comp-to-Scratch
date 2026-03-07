@@ -10,7 +10,7 @@
 #   nuitka-project: --output-filename=scratch-linux-x86_64
 # nuitka-project-elif: {OS} in {"Windows"}:
 #   nuitka-project: --output-filename=scratch-windows-x86_64.exe
-# nuitka-project-elif: {OS} in {"Darwin"}:
+# nuitka-project-else:
 #   nuitka-project: --output-filename=scratch-darwin-x86_64
 # nuitka-project: --linux-icon=./scratch-docs/docs/assets/cat.png
 # nuitka-project: --windows-icon-from-ico=./scratch-docs/docs/assets/cat.ico
@@ -30,7 +30,7 @@ from src.parser.parser import Parser
 from src.fileGen.converter import FileGenerator
 from src.parser.StatementGrammar import formatAST
 
-scratchCompVersion = "2.0.15"
+scratchCompVersion = "2.0.16"
 outputFolderName = "build"
 
 def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict):
