@@ -25,7 +25,7 @@ from src.parser.parser import Parser
 from src.fileGen.converter import FileGenerator
 from src.parser.StatementGrammar import formatAST
 
-scratchCompVersion = "2.0.7S"
+scratchCompVersion = "2.0.10"
 outputFolderName = "build"
 
 def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict):
