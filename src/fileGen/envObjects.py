@@ -1,10 +1,5 @@
 from src.parser.scanner import Token
 
-class ObjMethod:
-    def __init__(self, object: ListRef, name: Token) -> None:
-        self.object: ListRef = object
-        self.name = name
-
 class LiteralRef:
     def __init__(self, value) -> None:
         self.value = value
@@ -71,3 +66,8 @@ class StackBlockRef:
         if blockIndex == 0:
             return [2, self.topBlock]
         return [2, self.bottomBlock]
+
+class ObjMethod:
+    def __init__(self, object: ListRef, name: Token) -> None:
+        self.object: ListRef = object
+        self.name = name

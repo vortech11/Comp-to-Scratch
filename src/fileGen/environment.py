@@ -1,7 +1,7 @@
 
 
 class Environment:
-    def __init__(self, parent: Environment | None, funcSig: dict | None) -> None:
+    def __init__(self, parent, funcSig: dict | None) -> None:
         self.parent: Environment | None = parent
 
         """

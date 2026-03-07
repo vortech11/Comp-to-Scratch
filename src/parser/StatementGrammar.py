@@ -1,4 +1,6 @@
 from json import load
+from pathlib import Path
+import importlib.resources as resources
 import logging
 logger = logging.getLogger(__name__)
 
@@ -13,8 +15,18 @@ from src.fileGen.envObjects import *
 
 from typing import Any
 
-with open("src/OpcodeMap.json") as map:
-    opcodeMap = load(map)
+opcodeMap: dict = {}
+
+def loadAliases():
+    global opcodeMap
+    assert isinstance(__package__, str)
+    ROOT_PACKAGE = __package__.split('.')[0]
+    PROJECT_ROOT = Path(resources.files(ROOT_PACKAGE)) # type: ignore
+    filePath = PROJECT_ROOT / "OpcodeMap.json"
+    with open(filePath) as file:
+        opcodeMap = load(file)
+
+loadAliases()
 
 def unpack(value, index=0):
     return value[index] if isinstance(value, (tuple, list)) else value

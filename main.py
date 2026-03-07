@@ -1,3 +1,12 @@
+# nuitka-project: --mode=app
+# nuitka-project: --python-flag=safe_path
+# nuitka-project: --python-flag=no_site
+# nuitka-project: --python-flag=isolated
+# nuitka-project: --python-flag=dont_write_bytecode
+# nuitka-project: --include-package=src
+# nuitka-project: --include-package-data=src
+# nuitka-project: --remove-output
+
 import json
 from zipfile import ZipFile
 from pathlib import Path
@@ -41,9 +50,14 @@ def main():
     logging.basicConfig(level=loggingLevel)
     logger.info("Started")
 
-    assert len(sys.argv) > 1, "No file Selected!"
+    if len(sys.argv) == 0:
+        print("No file Selected!")
+        exit()
 
-    assert Path(sys.argv[1]).exists(), f"File '{sys.argv[1]}' does not exist."
+    if not Path(sys.argv[1]).exists():
+        print(f"File '{sys.argv[1]}' does not exist.")
+        exit()
+    
     filePath: Path = Path(sys.argv[1]).resolve()
 
     (filePath.parent / outputFolderName).mkdir(exist_ok=True)

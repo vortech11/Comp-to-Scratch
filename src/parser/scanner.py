@@ -1,12 +1,24 @@
 from enum import Enum, auto
+from pathlib import Path
+import importlib.resources as resources
 import logging
 logger = logging.getLogger(__name__)
 
 from re import sub
 from json import load
 
-with open("src/parser/opcodeMacros.json") as file:
-    aliases = load(file)
+aliases: dict = {}
+
+def loadAliases():
+    global aliases
+    assert isinstance(__package__, str)
+    ROOT_PACKAGE = __package__.split('.')[0]
+    PROJECT_ROOT = Path(resources.files(ROOT_PACKAGE)) # type: ignore
+    filePath = PROJECT_ROOT / "parser/opcodeMacros.json"
+    with open(filePath) as file:
+        aliases = load(file)
+
+loadAliases()
 
 from pathlib import Path
 
