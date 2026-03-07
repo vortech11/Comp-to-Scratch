@@ -8,8 +8,7 @@
 # nuitka-project: --remove-output
 # nuitka-project: --output-filename=scratch-{OS}-{Arch}
 # nuitka-project: --linux-icon=./scratch-docs/docs/assets/cat.png
-# nuitka-project: --windows-icon=./scratch-docs/docs/assets/cat.ico
-# nuitka-project: --macos-app-icon=./scratch-docs/docs/assets/cat.icns
+# nuitka-project: --windows-icon-from-ico=./scratch-docs/docs/assets/cat.png
 
 import json
 from zipfile import ZipFile
