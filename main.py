@@ -6,7 +6,12 @@
 # nuitka-project: --include-package=src
 # nuitka-project: --include-package-data=src
 # nuitka-project: --remove-output
-# nuitka-project: --output-filename=scratch-{OS}-{Arch}
+# nuitka-project-if: {OS} in {"Linux"}:
+#   nuitka-project: --output-filename=scratch-linux-x86_64.exe
+# nuitka-project-elif: {OS} in {"Windows"}:
+#   nuitka-project: --output-filename=scratch-windows-x86_64.exe
+# nuitka-project-elif: {OS} in {"Darwin"}:
+#   nuitka-project: --output-filename=scratch-darwin-x86_64.exe
 # nuitka-project: --linux-icon=./scratch-docs/docs/assets/cat.png
 # nuitka-project: --windows-icon-from-ico=./scratch-docs/docs/assets/cat.ico
 
