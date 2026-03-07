@@ -135,6 +135,10 @@ class ProjectFile:
                 "md5ext": ""
             }
         )
+    
+    def addDefaultCostume(self, sprite: str, path: str, name: str="", rotationCenter: tuple=(1, 1)):
+        if len(self.fileDict["targets"][self.getSpriteIndex(sprite)]["costumes"]) == 0:
+            self.addCostume(sprite, name, path, rotationCenter)
 
     def getBlock(self, sprite: str, name: str) -> dict:
         return self.fileDict["targets"][self.getSpriteIndex(sprite)]["blocks"][name]

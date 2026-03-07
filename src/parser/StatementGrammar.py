@@ -17,12 +17,15 @@ from typing import Any
 
 opcodeMap: dict = {}
 
-def loadAliases():
-    global opcodeMap
+def getProjectRoot() -> Path:
     assert isinstance(__package__, str)
     ROOT_PACKAGE = __package__.split('.')[0]
     PROJECT_ROOT = Path(resources.files(ROOT_PACKAGE)) # type: ignore
-    filePath = PROJECT_ROOT / "OpcodeMap.json"
+    return PROJECT_ROOT
+
+def loadAliases():
+    global opcodeMap
+    filePath = getProjectRoot() / "OpcodeMap.json"
     with open(filePath) as file:
         opcodeMap = load(file)
 
@@ -419,8 +422,15 @@ class CostumeStmt(Stmt):
     def getPrint(self) -> str:
         return f"costume {self.name} {self.path}"
     
+    def updateToDefault(self, path: str) -> str:
+        filePath = getProjectRoot() / "Default-Assets" / path
+        if filePath.exists():
+            return str(filePath)
+        return path
+
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous):
-        projectFile.addCostume(sprite, self.name.lexeme, self.path.lexeme, (1, 1))
+        filePath = self.updateToDefault(self.path.lexeme)
+        projectFile.addCostume(sprite, self.name.lexeme, filePath, (1, 1))
         return previous
 
 class FileStmt(Grammar):
@@ -440,6 +450,7 @@ class Sprite(FileStmt):
         projectFile.addSprite(self.name.lexeme, isStage)
         spriteEnvironment = Environment(None, None)
         self.body.convert(projectFile, spriteEnvironment, self.name.lexeme, None)
+        projectFile.addDefaultCostume(self.name.lexeme, str(getProjectRoot() / "Default-Assets" / "blank.svg"), "blank")
 
 class Export(FileStmt):
     def __init__(self, body) -> None:

@@ -1,6 +1,4 @@
-sprite Stage {
-    costume cat "cat.svg";
-}
+sprite Stage {}
 
 sprite cat {
     costume cat "cat.svg";
