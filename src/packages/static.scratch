@@ -7,46 +7,54 @@ export{
         var ERRORTYPE = 0;
     }
 
-    func ERROR(errortype: text){
+    func ERROR(errortype){
         ERRORTYPE = errortype;
         print(ERRORTYPE);
     }
 
-    func createVar(varName: text, varValue: text){
-        if (contains(key, varName)){
+    func createVar(varName, varValue){
+        if (key.contains(varName)){
             ERROR("Var already exists");
         }
         else{
-            key.push(varName);
-            value.push(varValue);
+            key.add(varName);
+            value.add(varValue);
         }
     }
 
-    func deleteVar(varName: text){
-        if (contains(key, varName)){
-            value.remove(indexOf(key, varName));
-            key.remove(indexOf(key, varName));
+    func deleteVar(varName){
+        if (key.contains(varName)){
+            data_deleteoflist(data_itemnumoflist(varName, key), value);
+            data_deleteoflist(data_itemnumoflist(varName, key), key);
         }
         else{
             ERROR("Var does not exist");
         }
     }
 
-    func setVar(varName: text, varValue: text){
-        if (contains(key, varName)){
-            if (contains(key, varValue)){
-                value[indexOf(key, varName)] = value[indexOf(key, varValue)];
-            }
-            else{
-                value[indexOf(key, varName)] = varValue;
-            }
+    func setVar(varName, varValue){
+        if (key.contains(varName)){
+            data_replaceitemoflist(data_itemnumoflist(varName, key), value, varValue);
+            //value[key.index(varName)] = varValue;
         }
         else{
             ERROR("Var does not exist");
         }
     }
 
-    func changeVar(varName: text, varValue: text){
-        setVar(varName, value[indexOf(key, varName)] + varValue);
+    func addVar(varName, varValue){
+        setVar(varName, data_itemoflist(data_itemnumoflist(varName, key), value) + varValue);
+    }
+
+    func minusVar(varName, varValue){
+        setVar(varName, data_itemoflist(data_itemnumoflist(varName, key), value) - varValue);
+    }
+
+    func multVar(varName, varValue){
+        setVar(varName, data_itemoflist(data_itemnumoflist(varName, key), value) * varValue);
+    }
+
+    func divVar(varName, varValue){
+        setVar(varName, data_itemoflist(data_itemnumoflist(varName, key), value) / varValue);
     }
 }

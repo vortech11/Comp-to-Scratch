@@ -1,0 +1,15 @@
+sprite Stage {}
+
+sprite cat {
+    costume cat "cat.svg";
+
+    require "static.scratch";
+    require "math.scratch";
+    
+    func main(){
+        ptr num << pow(10, 2);
+        num = sqrt(num);
+        print(num);
+        print(len(num));
+    }
+}

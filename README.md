@@ -1,15 +1,25 @@
 # Compiling to scratch
 
-## **⚠️ NOTICE: Branch No Longer Supported ⚠️**
-
-This branch is no longer in development in favor for the [AST](https://github.com/vortech11/Comp-to-Scratch/tree/AST) Branch. Once full feature pairity is achieved, this and all of the stupid features part of it will be archived. Until then, if you have a bug with this branch, I cannot help you.
-
-## Overview
-
 Dragging and dropping is cool and all, but do you know what is faster? Typing. Therefore I set out to recreate the scratch experience with text: my own little programming language.
 
 Turns out the scratch's sb3 file format is just a renamed zip file which contains images and a project.json file that contains all of the information for a project. Therefore, to make scratch programming language, you just need to do the steps in reverse!
 
-## Documentation Incuding Installation
+# This Branch
 
-Documentation can be found [here](https://vortech11.github.io/Comp-to-Scratch/)
+Within this branch is a complete rewrite of the entire codebase following the systems I developed in my repo [Here](https://github.com/vortech11/Interpreted-Lang) 
+
+The major difference between this version and the first one is the use of an Abstract Syntax Tree (AST). 
+
+With the first version I did not know what I was doing and implamented a serious abomination of a data type. 
+
+By using objects, it makes things so much easier.
+
+# Features
+
+Compared to the main branch, this rewrite is not yet feature complete.
+
+### Things yet to implament:
+
+* Sounds
+* Image auto centering
+* Documentation

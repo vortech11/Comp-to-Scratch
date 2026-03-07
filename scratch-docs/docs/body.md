@@ -1,3 +1,4 @@
+!!! warning "This part of the documentation was writen for an older and depricated version of the compiler. Until we rewrite this portion of the documentation, you are on your own."
 # Structure of Scratch Script
 
 Scratch Script is created to embody the functionality of base Scratch, so there must be some way to implement sprites.

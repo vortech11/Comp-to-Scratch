@@ -1,0 +1,8 @@
+
+sprite thing2 {
+    costume cat "cat.svg";
+}
+
+export {
+    motion_movesteps(10);
+}

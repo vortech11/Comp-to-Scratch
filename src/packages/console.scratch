@@ -3,7 +3,7 @@ export {
         list console = [];
     }
 
-    func print(input: text){
-        console.push(input);
+    func print(input){
+        console.add(input);
     }
 }

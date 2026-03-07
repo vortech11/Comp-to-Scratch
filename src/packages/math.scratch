@@ -1,8 +1,8 @@
 export {
-    func pow(base: text, power: text){
-        static output = base;
+    func pow(base, power){
+        ptr output = base;
         loop(power - 1){
-            output = output * base;
+            output *= base;
         }
         return output;
     }

@@ -1,47 +1,81 @@
+# nuitka-project: --mode=app
+# nuitka-project: --python-flag=safe_path
+# nuitka-project: --python-flag=no_site
+# nuitka-project: --python-flag=isolated
+# nuitka-project: --python-flag=dont_write_bytecode
+# nuitka-project: --include-package=src
+# nuitka-project: --include-package-data=src
+# nuitka-project: --remove-output
+# nuitka-project-if: {OS} in {"Linux"}:
+#   nuitka-project: --output-filename=scratch
+# nuitka-project-else:
+#   nuitka-project-if: {OS} in {"Windows"}:
+#       nuitka-project: --output-filename=scratch.exe
+
 import json
-import zipfile
+from zipfile import ZipFile
 from pathlib import Path
-from src.interpreter import fillCommands
+from shutil import copyfile
 import sys
 import warnings
 import logging
 logger = logging.getLogger(__name__)
-from src.parser import genTokens
 
-def main():
-    logging.basicConfig(level=logging.INFO)
-    logger.info("Started")
-    scratchCompVersion = "0.3.0"
+from src.parser.fileReader import loadFile
+from src.parser.scanner import Scanner
+from src.parser.parser import Parser
+from src.fileGen.converter import FileGenerator
+from src.parser.StatementGrammar import formatAST
 
-    outputFolderName = "build"
+scratchCompVersion = "0.3.0b"
+outputFolderName = "build"
 
-    assert len(sys.argv) > 1, "No file Selected!"
+def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict):
+    filesToBeCompressed: list[Path] = []
 
-    assert Path(sys.argv[1]).exists(), f"File '{sys.argv[1]}' does not exist."
-
-    (Path(sys.argv[1]).parent / outputFolderName).mkdir(exist_ok=True)
-
-    output = {"targets":[], "monitors":[], "extensions":[], "meta":{
-                    "semver": "3.0.0",
-                    "vm": "11.0.0-beta.2",
-                    "agent": "Scratch Compiler v" + scratchCompVersion
-                }
-            }
-
-    filesToBeCompressed = [outputFolderName + "/project.json"]
-
-    blockIndex = 1
-
-    tokens = genTokens(sys.argv[1])
-    output["targets"], filesToBeCompressed = fillCommands(Path(sys.argv[1]).resolve(), tokens, filesToBeCompressed, outputFolderName, blockIndex, [{}, {}])
-
-    output = json.dumps(output)
-    with open(Path(sys.argv[1]).parent / outputFolderName / "project.json", "w") as file:
+    output = json.dumps(fileContents)
+    with open(filePath.parent / outputFolderName / "project.json", "w") as file:
         file.write(output)
 
-    with zipfile.ZipFile(Path(sys.argv[1]).parent / outputFolderName / "test.sb3", "w") as myzip:
+    filesToBeCompressed.append(Path(outputFolderName) / "project.json")
+
+    for fromPath, toPath in filesToCoppy.items():
+        path = filePath.parent / outputFolderName / toPath
+        copyfile(filePath.parent / fromPath, path)
+        filesToBeCompressed.append(path)
+
+
+    with ZipFile(filePath.parent / outputFolderName / "test.sb3", "w") as myzip:
         for file in filesToBeCompressed:
-            myzip.write(Path(sys.argv[1]).parent / file, Path(file).name)
+            myzip.write(filePath.parent / file, Path(file).name)
+
+def main():
+    loggingLevel = logging.INFO
+    #loggingLevel = logging.DEBUG
+    logging.basicConfig(level=loggingLevel)
+    logger.info("Started")
+
+    if len(sys.argv) == 0:
+        print("No file Selected!")
+        exit()
+
+    if not Path(sys.argv[1]).exists():
+        print(f"File '{sys.argv[1]}' does not exist.")
+        exit()
+    
+    filePath: Path = Path(sys.argv[1]).resolve()
+
+    (filePath.parent / outputFolderName).mkdir(exist_ok=True)
+
+    fileText = loadFile(filePath)
+    scanner = Scanner(fileText, str(filePath))
+    tokens = scanner.scanTokens()
+    parser = Parser(tokens, filePath)
+    fileAST = parser.parse()
+    logger.debug(formatAST(fileAST))
+    generator = FileGenerator(fileAST)
+    project = generator.generate()
+    saveFile(filePath, project.fileDict, project.files)
             
     logger.info("Finished")
             
