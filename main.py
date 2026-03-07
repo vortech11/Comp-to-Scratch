@@ -6,11 +6,10 @@
 # nuitka-project: --include-package=src
 # nuitka-project: --include-package-data=src
 # nuitka-project: --remove-output
-# nuitka-project-if: {OS} in {"Linux"}:
-#   nuitka-project: --output-filename=scratch-linux-x86_64
-# nuitka-project-else:
-#   nuitka-project-if: {OS} in {"Windows"}:
-#       nuitka-project: --output-filename=scratch-windows-x86_64.exe
+# nuitka-project: --output-filename=scratch-{OS}-{Arch}
+# nuitka-project: --linux-icon=./scratch-docs/docs/assets/cat.png
+# nuitka-project: --windows-icon=./scratch-docs/docs/assets/cat.ico
+# nuitka-project: --macos-app-icon=./scratch-docs/docs/assets/cat.icns
 
 import json
 from zipfile import ZipFile
@@ -27,7 +26,7 @@ from src.parser.parser import Parser
 from src.fileGen.converter import FileGenerator
 from src.parser.StatementGrammar import formatAST
 
-scratchCompVersion = "2.0.1"
+scratchCompVersion = "2.0.2"
 outputFolderName = "build"
 
 def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict):
