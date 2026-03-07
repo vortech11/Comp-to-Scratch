@@ -6,6 +6,11 @@
 # nuitka-project: --include-package=src
 # nuitka-project: --include-package-data=src
 # nuitka-project: --remove-output
+# nuitka-project-if: {OS} in {"Linux"}:
+#   nuitka-project: --output-filename=scratch
+# nuitka-project-else:
+#   nuitka-project-if: {OS} in {"Windows"}:
+#       nuitka-project: --output-filename=scratch.exe
 
 import json
 from zipfile import ZipFile

@@ -9,9 +9,7 @@ Scratch script's syntax looks similar to the `java` programming language, howeve
 The following is an example `.scratch` file that makes the cat step through the items in a list:
 
 ```js linenums="0"
-sprite Stage{
-    costume empty "blank.svg";
-}
+sprite Stage{}
 
 sprite cat{
     costume catCostume "cat.svg";

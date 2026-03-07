@@ -1,3 +1,4 @@
+!!! warning "This part of the documentation was writen for an older and depricated version of the compiler. Until we rewrite this portion of the documentation, you are on your own."
 # Importing Scripts
 
 Similarly to the `#include` keyword in C, the `import` keyword in Scratch Script "runs" the file specified ""linking"" the files together. In actuality, this process is achieved by different means in both cases.

@@ -1,3 +1,4 @@
+!!! warning "This part of the documentation was writen for an older and depricated version of the compiler. Until we rewrite this portion of the documentation, you are on your own."
 # Sprite Scripts
 
 The scripts of a sprite are the meat and potatoes of a project. Each function or command equates to one or more scratch blocks that gets created on compile. 
