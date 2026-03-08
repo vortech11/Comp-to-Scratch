@@ -25,13 +25,15 @@ import warnings
 import logging
 logger = logging.getLogger(__name__)
 
+from sys import exit
+
 from src.parser.fileReader import loadFile
 from src.parser.scanner import Scanner
 from src.parser.parser import Parser
 from src.fileGen.converter import FileGenerator
 from src.parser.StatementGrammar import formatAST
 
-scratchCompVersion = "2.0.17"
+scratchCompVersion = "2.0.18"
 outputFolderName = "build"
 
 def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict):
@@ -53,21 +55,61 @@ def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict):
         for file in filesToBeCompressed:
             myzip.write(filePath.parent / file, Path(file).name)
 
+comandLineOptions: dict = {
+    "-v --version": "Gets the version of the compiler.",
+    "-help": "Prints the list of commands and arguments for the compiler.",
+}
+
+comandKeyLength = max([len(key) for key in comandLineOptions.keys()])
+
+def printHelp():
+    print(f"Usage: scratch [option] ... [filename]")
+    print(f"Options:")
+    for arg, description in comandLineOptions.items():
+        print(f"{arg:<{comandKeyLength}} : {description}")
+
+def printVersion():
+    print(f"Scratch Script Compiler v{scratchCompVersion}")
+
 def main():
     loggingLevel = logging.INFO
     #loggingLevel = logging.DEBUG
     logging.basicConfig(level=loggingLevel)
-    logger.info("Started")
 
+    sys.argv = sys.argv[1::]
     if len(sys.argv) == 0:
-        print("No file Selected!")
+        printVersion()
+        printHelp()
         exit()
 
-    if not Path(sys.argv[1]).exists():
-        print(f"File '{sys.argv[1]}' does not exist.")
+    fileName = sys.argv[-1]
+    if fileName[0] == "-":
+        fileName = None
+        compilerOptions = [sys.argv[-1]]
+    else:
+        compilerOptions = sys.argv[:-1]
+    
+    for option in compilerOptions:
+        match option:
+            case "-v" | "--version":
+                printVersion()
+                exit()
+            case "-help":
+                printHelp()
+                exit()
+
+    if fileName is None:
+        print(f"File name not specified.")
+        print(f"Try running 'scratch [filename]'")
+        exit()
+
+    if not Path(sys.argv[0]).exists():
+        print(f"File '{sys.argv[0]}' does not exist.")
         exit()
     
-    filePath: Path = Path(sys.argv[1]).resolve()
+    logger.info("Started")
+    
+    filePath: Path = Path(sys.argv[0]).resolve()
 
     (filePath.parent / outputFolderName).mkdir(exist_ok=True)
 

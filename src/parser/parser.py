@@ -1,6 +1,9 @@
 from src.parser.StatementGrammar import *
-from src.parser.scanner import Scanner
+from src.parser.scanner import Scanner, Token, TokenType
 from src.parser.fileReader import loadFile
+
+from src.ErrorHandler import parseError as error
+
 from pathlib import Path
 import importlib.resources as resources
 import logging
@@ -76,22 +79,12 @@ class Parser:
         if matching and advance: 
             self.advance()
         return matching
-
-    def error(self, token: Token, message: str):
-        lexeme = None
-        if token.type == TokenType.EOF:
-            lexeme = "at end"
-        else:
-            lexeme = f"at '{token.lexeme}'"
-        logger.error(f"From {token.filePath.name} on line {token.line} {lexeme}: {message}")
-        logger.error("Error found in parsing file. Exiting...")
-        exit()
     
     def consume(self, type: TokenType, message, offset=0, advance=True):
         if self.match([type], advance, offset):
             return self.getToken()
         
-        self.error(self.getNextToken(), message)
+        error(self.getNextToken(), message)
         return Token(TokenType.NULL, "", None, 0)
     
     def expression(self):
@@ -113,7 +106,7 @@ class Parser:
             elif isinstance(expr, Get):
                 return Set(expr.object, expr.name, value)
             
-            self.error(assignment, "Invalid assignment target.")
+            error(assignment, "Invalid assignment target.")
         
         elif self.match([TokenType.LEFT_ARROW]):
             assignment: Token = self.getToken()
@@ -122,7 +115,7 @@ class Parser:
             if isinstance(expr, Variable):
                 name = expr.name
                 return SetPointerFunc(name, func)
-            self.error(assignment, "Invalid assignment target.") 
+            error(assignment, "Invalid assignment target.") 
             
         return expr
     
@@ -249,7 +242,7 @@ class Parser:
             case TokenType.IDENTIFIER: return Variable(self.getToken())
             
             case _: 
-                self.error(self.getToken(), "Expect expression")
+                error(self.getToken(), "Expect expression")
                 return Expr()
     
     def printStatement(self):

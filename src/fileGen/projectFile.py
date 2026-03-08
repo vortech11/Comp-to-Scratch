@@ -1,5 +1,6 @@
 from hashlib import md5
 from pathlib import Path
+from sys import exit
 
 class ProjectFile:
     def __init__(self) -> None:
@@ -217,5 +218,6 @@ class ProjectFile:
         return funcName in self.funcs[sprite]
     
     def getFunc(self, sprite, funcName):
-        assert self.doesFuncExist(sprite, funcName)
+        if not self.doesFuncExist(sprite, funcName):
+            exit()
         return self.funcs[sprite][funcName]

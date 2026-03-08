@@ -4,9 +4,12 @@ import importlib.resources as resources
 import logging
 logger = logging.getLogger(__name__)
 
+from sys import exit
 from src.parser.scanner import Token, TokenType
 
-from src.parser.UniversalGrammar import Grammar, error
+from src.parser.UniversalGrammar import Grammar
+
+from src.ErrorHandler import convError as error
 
 from src.fileGen.projectFile import ProjectFile
 from src.fileGen.environment import Environment

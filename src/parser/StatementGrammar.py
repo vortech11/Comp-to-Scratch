@@ -1,4 +1,5 @@
 from json import load
+from sys import exit
 from pathlib import Path
 import importlib.resources as resources
 import logging
@@ -6,8 +7,11 @@ logger = logging.getLogger(__name__)
 
 from src.parser.scanner import Token, TokenType
 
-from src.parser.UniversalGrammar import Grammar, error, warn
+from src.parser.UniversalGrammar import Grammar
 from src.parser.ExpressionGrammar import *
+
+from src.ErrorHandler import convError as error
+from src.ErrorHandler import warn
 
 from src.fileGen.projectFile import ProjectFile
 from src.fileGen.environment import Environment

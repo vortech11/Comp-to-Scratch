@@ -1,6 +1,7 @@
 from enum import Enum, auto
 from pathlib import Path
 import importlib.resources as resources
+from sys import exit
 import logging
 logger = logging.getLogger(__name__)
 
