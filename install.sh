@@ -69,4 +69,4 @@ fi
 
 echo ""
 echo "Run:"
-echo "  $BINARY_NAME --help"
+echo "  $BINARY_NAME -help"

@@ -1,0 +1,13 @@
+sprite Stage {}
+
+sprite cat {
+    costume cat "cat.svg";
+
+    //require "static.scratch";
+    require "triangle.scratch";
+    
+    func main(){
+        setPenColor("#27dc57");
+        drawTri(0, 0, 0, 20, 20, 0, 0, 1);
+    }
+}

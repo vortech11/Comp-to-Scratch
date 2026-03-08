@@ -314,7 +314,7 @@ class Call(Expr):
             arguments = {}
             for index, input in enumerate(self.arguments):
                 match funcInfo["inputtype"][index]:
-                    case "text":
+                    case "text" | "color":
                         inputBlock = input.convert(projectFile, environment, sprite, block)
                         ## TODO: fix
                         #//if not isinstance(inputBlock, list):

@@ -6,6 +6,7 @@
     "penDown": "pen_penDown",
     "penUp": "pen_penUp",
     "setPenSize": "pen_setPenSizeTo",
+    "setPenColor": "pen_setPenColorToColor",
     "len(?=(\\s*\\())": "operator_length",
     "round": "operator_round"
 }
