@@ -163,9 +163,9 @@ class Return(Stmt):
         return block
 
 class DefPointerFunc(Stmt):
-    def __init__(self, declarationType: Token, name: Token, func: Expr):
+    def __init__(self, declarationType: Token, name: Token | Expr, func: Expr):
         self.declarationType: Token = declarationType
-        self.name: Token = name
+        self.name: Token | Expr = name
         self.func: Expr = func
 
     def getPrint(self) -> str:
@@ -175,16 +175,23 @@ class DefPointerFunc(Stmt):
         varGram = Var(self.declarationType, self.name, Literal(""))
         varBlock = varGram.convert(projectFile, environment, sprite, previous)
         if not isinstance(self.func, Call):
-            error(self.name, "Cannot set pointer value to object not of type FunctionCall")
+            error(self.declarationType, "Cannot set pointer value to object not of type FunctionCall")
             exit()
-        funcGram = Call(self.func.callee, self.func.paren, self.func.arguments + [Literal(self.name.lexeme)])
+        if isinstance(self.name, Token):
+            name = Literal(self.name.lexeme)
+        elif isinstance(self.name, PointerDereference):
+            name = self.name.expression
+        else:
+            error(self.declarationType, "Panic! Internal Error: I don't know what is supposed to happen here.")
+            exit()
+        funcGram = Call(self.func.callee, self.func.paren, self.func.arguments + [name])
         funcBlock = funcGram.convert(projectFile, environment, sprite, varBlock) # type: ignore
         return funcBlock
 
 class Var(Stmt):
-    def __init__(self, declarationType: Token, name: Token, initializer: Expr | None) -> None:
+    def __init__(self, declarationType: Token, name: Token | Expr, initializer: Expr | None) -> None:
         self.declarationType: Token = declarationType
-        self.name: Token = name
+        self.name: Token | Expr = name
         self.initializer: Expr | list[Expr] | None = initializer
         
     def getPrint(self) -> str:
@@ -194,9 +201,49 @@ class Var(Stmt):
             value = ", ".join([value.getPrint() for value in self.initializer])
         else:
             value = self.initializer.getPrint()
-        return f"var {self.name} {value}"
+        if isinstance(self.name, Expr):
+            name = self.name.getPrint()
+        else:
+            name = self.name.lexeme
+        
+        return f"var {name} {value}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        if self.declarationType.type in [TokenType.DUMB_POINTER, TokenType.SMART_POINTER]:
+            if self.initializer is None:
+                initializer = Literal("")
+            elif isinstance(self.initializer, list):
+                error(self.declarationType, "Initializer to pointer declaration cannot be list")
+                assert False
+            else:
+                initializer = self.initializer
+            
+            if isinstance(self.name, Token):
+                name = Literal(self.name.lexeme)
+            
+                if self.declarationType.type == TokenType.DUMB_POINTER:
+                    if environment.isSmartPointer(self.name.lexeme):
+                        warn(self.declarationType, "Dumb pointer is being created with the same name as a smart pointer of higher scope!")
+                    projectFile.createDumbPointer(sprite, self.name.lexeme)
+                else:
+                    if projectFile.isDumbPointer(sprite, self.name.lexeme):
+                        warn(self.declarationType, "Smart pointer is being created with the same name as a dumb pointer!")
+                    environment.createSmartPointer(self.name.lexeme)
+            elif isinstance(self.name, PointerDereference):
+                if self.declarationType.type == TokenType.SMART_POINTER:
+                    error(self.declarationType, "Cannot create smart pointer with variable name.")
+                name = self.name.expression
+            else:
+                error(self.declarationType, "Panic! Internal Error: I don't know what is supposed to happen here.")
+                exit()
+            blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "createVar")), Token(TokenType.LEFT_PAREN), [name, initializer])
+            block = blockGram.convert(projectFile, environment, sprite, previous)
+            return block
+
+        if isinstance(self.name, Expr):
+            error(self.declarationType, "Cannot declare a design time variable of a variable name.")
+            exit()
+
         if self.declarationType.type == TokenType.VAR:
             if isinstance(self.initializer, list):
                 error(self.name, "For var declaration, initializer cannot be list. Use list data type for list values")
@@ -241,40 +288,29 @@ class Var(Stmt):
 
             return initializerGrammar.convert(projectFile, environment, sprite, previous)
         
-        if self.declarationType.type in [TokenType.DUMB_POINTER, TokenType.SMART_POINTER]:
-            if self.initializer is None:
-                initializer = Literal("")
-            elif isinstance(self.initializer, list):
-                error(self.name, "Initializer to pointer declaration cannot be list")
-                assert False
-            else:
-                initializer = self.initializer
-            
-            if self.declarationType.type == TokenType.DUMB_POINTER:
-                if environment.isSmartPointer(self.name.lexeme):
-                    warn(self.name, "Dumb pointer is being created with the same name as a smart pointer of higher scope!")
-                projectFile.createDumbPointer(sprite, self.name.lexeme)
-            else:
-                if projectFile.isDumbPointer(sprite, self.name.lexeme):
-                    warn(self.name, "Smart pointer is being created with the same name as a dumb pointer!")
-                environment.createSmartPointer(self.name.lexeme)
-            blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "createVar")), Token(TokenType.LEFT_PAREN), [Literal(self.name.lexeme), initializer])
-            block = blockGram.convert(projectFile, environment, sprite, previous)
-            return block
+        
 
 class Delete(Stmt):
-    def __init__(self, var: Token):
-        self.var: Token = var
+    def __init__(self, var: Token | Expr):
+        self.var: Token | Expr = var
     
     def getPrint(self) -> str:
         return f"del {self.var}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
-        if not projectFile.isDumbPointer(sprite, self.var.lexeme):
-            if environment.isSmartPointer(self.var.lexeme):
-                error(self.var, "Cannot delete smart pointer!")
-            error(self.var, "Cannot delete object that is not of type pointer.")
-        blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "deleteVar")), Token(TokenType.LEFT_PAREN), [Literal(self.var.lexeme)])
+        if isinstance(self.var, Token):
+            if not projectFile.isDumbPointer(sprite, self.var.lexeme):
+                if environment.isSmartPointer(self.var.lexeme):
+                    error(self.var, "Cannot delete smart pointer!")
+                error(self.var, "Cannot delete object that is not of type pointer.")
+            name = Literal(self.var.lexeme)
+        else:
+            if isinstance(self.var, PointerDereference):
+                name = self.var.expression
+            else:
+                error(Token(TokenType.IDENTIFIER), "Panic! Internal Error: I don't know what is supposed to happen here.")
+                exit()
+        blockGram = Call(Variable(Token(TokenType.IDENTIFIER, "deleteVar")), Token(TokenType.LEFT_PAREN), [name])
         block = blockGram.convert(projectFile, environment, sprite, previous)
         return block
 

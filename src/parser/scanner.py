@@ -88,6 +88,7 @@ class TokenType(Enum):
     REQUIRE = auto()
 
     DEL = auto()
+    AND_SYMBOL = auto()
 
     LEFT_ARROW = auto()
 
@@ -210,6 +211,7 @@ class Scanner:
             case ',': self.addToken(TokenType.COMMA)
             case '.': self.addToken(TokenType.DOT)
             case ';': self.addToken(TokenType.SEMICOLON)
+            case '&': self.addToken(TokenType.AND_SYMBOL)
             
             case '+': 
                 if self.getNextChar() == "=":

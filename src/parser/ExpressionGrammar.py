@@ -52,16 +52,18 @@ mathFuncs = {
 }
 
 class Assign(Expr):
-    def __init__(self, name: Token, assignment: Token, value: Expr) -> None:
-        self.name: Token = name
+    def __init__(self, name: Token | Expr, assignment: Token, value: Expr) -> None:
+        self.name: Token | Expr = name
         self.assignment: Token = assignment
         self.value: Expr = value
     
     def getPrint(self) -> str:
-        return f"{self.name.lexeme} = {self.value.getPrint()}"
+        if isinstance(self.name, Token):
+            return f"{self.name.lexeme} = {self.value.getPrint()}"
+        return f"{self.name.getPrint()} = {self.value.getPrint()}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous):
-        if projectFile.isDumbPointer(sprite, self.name.lexeme) or environment.isSmartPointer(self.name.lexeme):
+        if isinstance(self.name, Expr) or projectFile.isDumbPointer(sprite, self.name.lexeme) or environment.isSmartPointer(self.name.lexeme):
             match self.assignment.type:
                 case TokenType.EQUAL: operator = "setVar"
                 case TokenType.PLUS_EQUAL: operator = "addVar"
@@ -69,7 +71,11 @@ class Assign(Expr):
                 case TokenType.STAR_EQUAL: operator = "multVar"
                 case TokenType.SLASH_EQUAL: operator = "divVar"
                 case _: operator = "setVar"
-            gram = Call(Variable(Token(TokenType.IDENTIFIER, operator)), Token(TokenType.LEFT_PAREN), [Literal(self.name.lexeme), self.value])
+            if isinstance(self.name, Token):
+                name = Literal(self.name.lexeme)
+            else:
+                name = self.name
+            gram = Call(Variable(Token(TokenType.IDENTIFIER, operator)), Token(TokenType.LEFT_PAREN), [name, self.value])
             block = gram.convert(projectFile, environment, sprite, previous)
             return block
         
@@ -98,8 +104,8 @@ class Assign(Expr):
         return block
 
 class SetPointerFunc(Expr):
-    def __init__(self, name: Token, func: Expr):
-        self.name: Token = name
+    def __init__(self, name: Token | Expr, func: Expr):
+        self.name: Token | Expr = name
         self.func: Expr = func
 
     def getPrint(self) -> str:
@@ -107,9 +113,17 @@ class SetPointerFunc(Expr):
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         if not isinstance(self.func, Call):
-            error(self.name, "Cannot set pointer value to object not of type FunctionCall")
+            if isinstance(self.name, Token):
+                token = self.name
+            else:
+                token = Token(TokenType.IDENTIFIER)
+            error(token, "Cannot set pointer value to object not of type FunctionCall")
             exit()
-        funcGram = Call(self.func.callee, self.func.paren, self.func.arguments + [Literal(self.name.lexeme)])
+        if isinstance(self.name, Token):
+            name = Literal(self.name.lexeme)
+        else:
+            name = self.name
+        funcGram = Call(self.func.callee, self.func.paren, self.func.arguments + [name])
         funcBlock = funcGram.convert(projectFile, environment, sprite, previous) # type: ignore
         return funcBlock
 
@@ -526,6 +540,21 @@ class This(Expr):
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
         return self.keyword
 
+class PointerDereference(Expr):
+    def __init__(self, expression: Expr):
+        self.expression: Expr = expression
+    
+    def getPrint(self) -> str:
+        return f"*{self.expression.getPrint}"
+    
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        topBlock = projectFile.addBlock("data_itemoflist", {}, {"LIST": ["value", projectFile.getListId(sprite, "value")]}, False, sprite, previous, False)
+        bottomBlock = projectFile.addBlock("data_itemnumoflist", {}, {"LIST": ["key", projectFile.getListId(sprite, "key")]}, False, sprite, previous, False)
+        varName = self.expression.convert(projectFile, environment, sprite, previous)
+        projectFile.setBlockAttribute(sprite, bottomBlock, "inputs", {"ITEM": varName.format()})
+        projectFile.setBlockAttribute(sprite, topBlock, "inputs", {"INDEX": BlockRef(bottomBlock).format()})
+        return BlockRef(topBlock)
+
 class Variable(Expr):
     def __init__(self, name: Token) -> None:
         self.name = name
@@ -555,12 +584,10 @@ class Variable(Expr):
             return ListRef(varName, projectFile.getListId(sprite, varName))
         
         if projectFile.isDumbPointer(sprite, varName) or environment.isSmartPointer(varName):
-            topBlock = projectFile.addBlock("data_itemoflist", {}, {"LIST": ["value", projectFile.getListId(sprite, "value")]}, False, sprite, previous, False)
-            bottomBlock = projectFile.addBlock("data_itemnumoflist", {"ITEM": LiteralRef(varName).format()}, {"LIST": ["key", projectFile.getListId(sprite, "key")]}, False, sprite, previous, False)
-            projectFile.setBlockAttribute(sprite, topBlock, "inputs", {"INDEX": BlockRef(bottomBlock).format()})
-            return BlockRef(topBlock)
+            return PointerDereference(Literal(varName)).convert(projectFile, environment, sprite, previous)
 
         if projectFile.isVar(sprite, varName):
             return VarRef(varName, projectFile.getVarId(sprite, varName))
 
         error(self.name, f"Variable '{self.name.lexeme}' is not defined.")
+

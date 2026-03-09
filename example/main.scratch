@@ -3,11 +3,18 @@ sprite Stage {}
 sprite cat {
     costume cat "cat.svg";
 
-    //require "static.scratch";
-    require "triangle.scratch";
-    
+    require "static.scratch";
+
     func main(){
-        setPenColor("#27dc57");
-        drawTri(0, 0, 0, 20, 20, 0, 0, 1);
+        var numberOfVars = 10;
+        for (ptr i = 0; i < numberOfVars; i += 1){
+            dptr *(join("variable", i)) = i;
+        }
+
+        sleep(3);
+
+        for (ptr i = 0; i < numberOfVars; i += 1){
+            del *(join("variable", i));
+        }
     }
 }

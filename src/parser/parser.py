@@ -105,6 +105,8 @@ class Parser:
                 return ListSetIndex(expr, assignment, value)
             elif isinstance(expr, Get):
                 return Set(expr.object, expr.name, value)
+            elif isinstance(expr, PointerDereference):
+                return Assign(expr.expression, assignment, value)
             
             error(assignment, "Invalid assignment target.")
         
@@ -114,6 +116,9 @@ class Parser:
             func = self.funcCall()
             if isinstance(expr, Variable):
                 name = expr.name
+                return SetPointerFunc(name, func)
+            elif isinstance(expr, PointerDereference):
+                name = expr.expression
                 return SetPointerFunc(name, func)
             error(assignment, "Invalid assignment target.") 
             
@@ -240,7 +245,15 @@ class Parser:
             
             case TokenType.THIS: return This(self.getToken())
             case TokenType.IDENTIFIER: return Variable(self.getToken())
-            
+            case TokenType.STAR: 
+                self.advance()
+                expr: Expr = self.logical_or()
+                #print(self.getToken())
+                return PointerDereference(expr)
+            case TokenType.AND_SYMBOL:
+                variable = self.consume(TokenType.IDENTIFIER, "Expect variable name after '&' operator.")
+                return Literal(variable.lexeme)
+
             case _: 
                 error(self.getToken(), "Expect expression")
                 return Expr()
@@ -381,7 +394,10 @@ class Parser:
         return Block(exports)
     
     def deleteStatement(self):
-        varName = self.consume(TokenType.IDENTIFIER, "Expect pointer name after del keyword.")
+        if self.match([TokenType.STAR]):
+            varName = self.logical_or()
+        else:
+            varName = self.consume(TokenType.IDENTIFIER, "Expect pointer name after del keyword.")
         self.consume(TokenType.SEMICOLON, "Expect semicolon after varname in del statement.")
         return Delete(varName)
 
@@ -412,7 +428,10 @@ class Parser:
     
     def varDeclaration(self):
         declarationType: Token = self.getToken()
-        name: Token = self.consume(TokenType.IDENTIFIER, "Expect variable name.")
+        if self.match([TokenType.STAR]):
+            name = self.logical_or()
+        else:
+            name = self.consume(TokenType.IDENTIFIER, "Expect variable name.")
         
         initializer: Expr | list[Expr] | None = None
         if self.match([TokenType.EQUAL]):
