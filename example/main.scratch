@@ -1,20 +1,8 @@
 sprite Stage {}
 
 sprite cat {
-    costume cat "cat.svg";
+    costume cat "goofball.png";
+    costume otherCat "cat.svg" 100, 3;
+    sound What "ahh.mp3";
 
-    require "static.scratch";
-
-    func main(){
-        var numberOfVars = 10;
-        for (ptr i = 0; i < numberOfVars; i += 1){
-            dptr *(join("variable", i)) = i;
-        }
-
-        sleep(3);
-
-        for (ptr i = 0; i < numberOfVars; i += 1){
-            del *(join("variable", i));
-        }
-    }
 }

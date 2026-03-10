@@ -455,8 +455,33 @@ class LoopStmt(Stmt):
         return block
 
 class CostumeStmt(Stmt):
-    def __init__(self, name: Token, path: Token) -> None:
+    def __init__(self, name: Token, relative: Token, path: Token, centerX: int | None, centerY: int | None) -> None:
         self.name: Token = name
+        self.relative: Token = relative
+        self.path: Token = path
+        self.centerX: int | None = centerX
+        self.centerY: int | None = centerY
+
+    def getPrint(self) -> str:
+        return f"costume {self.name} {self.path}"
+    
+    def updateToDefault(self, path: str) -> str:
+        filePath = getProjectRoot() / "Default-Assets" / path
+        if filePath.exists():
+            return str(filePath)
+        return path
+
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous):
+        filePath = self.updateToDefault(self.relative.lexeme)
+        if filePath == self.relative.lexeme:
+            filePath = self.path.lexeme
+        projectFile.addCostume(sprite, self.name.lexeme, filePath, (self.centerX, self.centerY))
+        return previous
+
+class SoundStmt(Stmt):
+    def __init__(self, name: Token, relative: Token, path: Token) -> None:
+        self.name: Token = name
+        self.relative: Token = relative
         self.path: Token = path
 
     def getPrint(self) -> str:
@@ -469,8 +494,10 @@ class CostumeStmt(Stmt):
         return path
 
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite, previous):
-        filePath = self.updateToDefault(self.path.lexeme)
-        projectFile.addCostume(sprite, self.name.lexeme, filePath, (1, 1))
+        filePath = self.updateToDefault(self.relative.lexeme)
+        if filePath == self.relative.lexeme:
+            filePath = self.path.lexeme
+        projectFile.addSound(sprite, self.name.lexeme, filePath)
         return previous
 
 class FileStmt(Grammar):

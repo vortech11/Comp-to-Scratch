@@ -2,6 +2,8 @@ from src.parser.StatementGrammar import *
 from src.parser.scanner import Scanner, Token, TokenType
 from src.parser.fileReader import loadFile
 
+from copy import copy
+
 from src.ErrorHandler import parseError as error
 
 from pathlib import Path
@@ -480,9 +482,28 @@ class Parser:
     def costumeDeclaration(self):
         name: Token = self.consume(TokenType.IDENTIFIER, "Expect name of costume.")
         path: Token = self.consume(TokenType.STRING, "Expect costume path after costume name.")
+        absolute = copy(path)
+        absolute.lexeme = str((self.directory.parent / Path(path.lexeme)).resolve())
+        centerX = None
+        centerY = None
+        if not self.getNextToken().type == TokenType.SEMICOLON:
+            centerX = self.consume(TokenType.NUMBER, "Expect numerical center x position of costume after costume path.")
+            centerX = int(centerX.lexeme)
+            self.consume(TokenType.COMMA, "Expect comma after costume center x.")
+            centerY = self.consume(TokenType.NUMBER, "Expect numerical center y position of costume after costume center x.")
+            centerY = int(centerY.lexeme)
         self.consume(TokenType.SEMICOLON, "Expect semicolon after costume path.")
 
-        return CostumeStmt(name, path)
+        return CostumeStmt(name, path, absolute, centerX, centerY)
+    
+    def soundDeclaration(self):
+        name: Token = self.consume(TokenType.IDENTIFIER, "Expect name of costume.")
+        path: Token = self.consume(TokenType.STRING, "Expect costume path after costume name.")
+        absolute = copy(path)
+        absolute.lexeme = str((self.directory.parent / Path(path.lexeme)).resolve())
+        self.consume(TokenType.SEMICOLON, "Expect semicolon after costume path.")
+
+        return SoundStmt(name, path, absolute)
     
     def declaration(self):
         match self.getToken().type:
@@ -492,6 +513,8 @@ class Parser:
                 return self.varDeclaration()
             case TokenType.COSTUME:
                 return self.costumeDeclaration()
+            case TokenType.SOUND:
+                return self.soundDeclaration()
             case _:
                 return self.statement()
             

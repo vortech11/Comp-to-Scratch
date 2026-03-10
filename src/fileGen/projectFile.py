@@ -1,6 +1,51 @@
 from hashlib import md5
 from pathlib import Path
 from sys import exit
+from PIL import Image
+import xml.etree.ElementTree as ET
+from tinytag import TinyTag
+
+
+# Thank you AI for this horible piece of code you have given me. It means a lot.
+def get_svg_dimensions(filename):
+    """Parses an SVG file and returns its width and height from attributes."""
+    # Define the SVG namespace
+    namespace = {'svg': 'http://www.w3.org/2000/svg'}
+
+    try:
+        tree = ET.parse(filename)
+        root = tree.getroot()
+        # Try to get width and height from attributes, handling potential units (e.g., 'px', 'pt')
+        width_str = root.get('width')
+        height_str = root.get('height')
+
+        if width_str and height_str:
+            # Remove non-numeric characters like 'px' or 'pt' for simple cases
+            width = float(''.join(filter(lambda x: x.isdigit() or x == '.', width_str)))
+            height = float(''.join(filter(lambda x: x.isdigit() or x == '.', height_str)))
+            return width, height
+        else:
+            # If width/height attributes are missing, check viewBox
+            viewbox_str = root.get('viewBox')
+            if viewbox_str:
+                _, _, width, height = map(float, viewbox_str.split())
+                return width, height
+            else:
+                return "Dimensions not explicitly defined in width/height or viewBox attributes."
+
+    except ET.ParseError as e:
+        return f"Error parsing SVG file: {e}"
+    except ValueError as e:
+        return f"Error converting dimensions to float: {e}"
+
+def get_audio_data(filename):
+    tag = TinyTag.get(filename)
+    sample_rate = tag.samplerate
+    if tag.duration and sample_rate:
+        sample_count = int(tag.duration * sample_rate)
+        return sample_rate, sample_count
+    print(f"Error: Audio file {filename} does not have duration/rate")
+    exit()
 
 class ProjectFile:
     def __init__(self) -> None:
@@ -106,10 +151,26 @@ class ProjectFile:
         spriteIndex = self.getSpriteIndex(sprite)
         self.fileDict["targets"][spriteIndex]["blocks"][blockName][attribute] = value
     
-    def addCostume(self, sprite: str, name: str, path: str, rotationCenter:tuple):
+    def addCostume(self, sprite: str, name: str, path: str, rotationCenter: tuple):
         assetId = self.genHash(path)
         suffix = Path(path).suffix
         dataFormat = suffix.removeprefix(".")
+
+        if rotationCenter[0] is None:
+            if dataFormat == "svg":
+                svgCenter = get_svg_dimensions(path)
+                if isinstance(svgCenter, str):
+                    print(f"WARNING: {svgCenter}; setting image center to (0, 0).")
+                    rotationCenter = (0, 0)
+                else:
+                    rotationCenter = get_svg_dimensions(path)[0] / 2, get_svg_dimensions(path)[1] / 2  # type: ignore
+            else:
+                try:
+                    with Image.open(path) as img:
+                        rotationCenter = img.size[0] / 2, img.size[1] / 2
+                except IOError:
+                    print(f"WARNING: Error attempting to get center of file {path}; setting image center to (0, 0).")
+                    rotationCenter = (0, 0)
 
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["costumes"].append(
             {
@@ -124,18 +185,25 @@ class ProjectFile:
 
         self.files[str(Path(path))] = Path(assetId + suffix)
     
-    def addSound(self, sprite, name, dataFormat, rate, sampleCount):
+    def addSound(self, sprite: str, name: str, path: str):
+        assetId = self.genHash(path)
+        suffix = Path(path).suffix
+        dataFormat = suffix.removeprefix(".")
+
+        rate, sampleCount = get_audio_data(path)
+
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["sounds"].append(
             {
                 "name": name,
-                "assetId": "",
+                "assetId": assetId,
                 "dataFormat": dataFormat,
-                "format": "",
                 "rate": rate,
                 "sampleCount": sampleCount,
-                "md5ext": ""
+                "md5ext": assetId + suffix
             }
         )
+
+        self.files[str(Path(path))] = Path(assetId + suffix)
     
     def addDefaultCostume(self, sprite: str, path: str, name: str="", rotationCenter: tuple=(1, 1)):
         if len(self.fileDict["targets"][self.getSpriteIndex(sprite)]["costumes"]) == 0:
