@@ -10,7 +10,7 @@
 #   nuitka-project-if: {Arch} in {"x86_64"}:
 #     nuitka-project: --output-filename=scratch-linux-x86_64
 #   nuitka-project-if: {Arch} in ("arm64", "aarch64"):
-#     nuitka-project: --output-filename=scratch-linux-arm64
+#     nuitka-project: --output-filename=scratch-linux-aarch64
 # nuitka-project-if: {OS} in {"Windows"}:
 #   nuitka-project: --output-filename=scratch-windows-x86_64.exe
 # nuitka-project-if: {OS} in {"Darwin"}:
