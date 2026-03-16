@@ -10,6 +10,5 @@ Compared to the main branch, this rewrite is not yet feature complete.
 
 ### Things yet to implament:
 
-* Sounds
-* Image auto centering
 * Documentation
+* Extra import i/o
