@@ -11,7 +11,8 @@ jobs:
     strategy:
       matrix:
         os: [
-          ubuntu-latest, 
+          ubuntu-latest,
+          ubuntu-24.04-arm,
           windows-latest, 
           #macos-latest
           ]
