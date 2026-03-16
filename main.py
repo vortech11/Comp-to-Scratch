@@ -7,7 +7,10 @@
 # nuitka-project: --include-package-data=src
 # nuitka-project: --remove-output
 # nuitka-project-if: {OS} in {"Linux"}:
-#   nuitka-project: --output-filename=scratch-linux-x86_64
+#   nuitka-project-if: {Arch} in {x86_64}:
+#     nuitka-project: --output-filename=scratch-linux-x86_64
+#   nuitka-project-else:
+#     nuitka-project: --output-filename=scratch-linux-arm64
 # nuitka-project-else:
 #   nuitka-project-if: {OS} in {"Windows"}:
 #       nuitka-project: --output-filename=scratch-windows-x86_64.exe
