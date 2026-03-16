@@ -11,11 +11,10 @@
 #     nuitka-project: --output-filename=scratch-linux-x86_64
 #   nuitka-project-if: {Arch} in {"arm64"}:
 #     nuitka-project: --output-filename=scratch-linux-arm64
-# nuitka-project-else:
-#   nuitka-project-if: {OS} in {"Windows"}:
-#       nuitka-project: --output-filename=scratch-windows-x86_64.exe
-#   nuitka-project-else:
-#       nuitka-project: --output-filename=scratch-darwin-x86_64
+# nuitka-project-if: {OS} in {"Windows"}:
+#   nuitka-project: --output-filename=scratch-windows-x86_64.exe
+# nuitka-project-if: {OS} in {"Darwin"}:
+#   nuitka-project: --output-filename=scratch-darwin-x86_64
 # nuitka-project: --linux-icon=./scratch-docs/docs/assets/cat.png
 # nuitka-project: --windows-icon-from-ico=./scratch-docs/docs/assets/cat.ico
 
