@@ -38,7 +38,7 @@ from src.parser.StatementGrammar import formatAST
 scratchCompVersion = "2.1.0"
 outputFolderName = "build"
 
-def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict):
+def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict, projectName: str):
     filesToBeCompressed: list[Path] = []
 
     output = json.dumps(fileContents)
@@ -53,13 +53,14 @@ def saveFile(filePath: Path, fileContents: dict, filesToCoppy: dict):
         filesToBeCompressed.append(path)
 
 
-    with ZipFile(filePath.parent / outputFolderName / "test.sb3", "w") as myzip:
+    with ZipFile(filePath.parent / outputFolderName / f"{projectName}.sb3", "w") as myzip:
         for file in filesToBeCompressed:
             myzip.write(filePath.parent / file, Path(file).name)
 
 comandLineOptions: dict = {
     "-v --version": "Gets the version of the compiler.",
     "-help": "Prints the list of commands and arguments for the compiler.",
+    "-name [ projectName ]": "Sets the name of the project."
 }
 
 comandKeyLength = max([len(key) for key in comandLineOptions.keys()])
@@ -85,13 +86,17 @@ def main():
         exit()
 
     fileName = sys.argv[-1]
-    if fileName[0] == "-":
+    if len(sys.argv) == 1 and fileName[0] == "-":
         fileName = None
         compilerOptions = [sys.argv[-1]]
     else:
         compilerOptions = sys.argv[:-1]
     
-    for option in compilerOptions:
+    projectName = None
+
+    i = 0
+    while i < len(compilerOptions):
+        option = compilerOptions[i]
         match option:
             case "-v" | "--version":
                 printVersion()
@@ -99,19 +104,26 @@ def main():
             case "-help":
                 printHelp()
                 exit()
+            case "-name":
+                i += 1
+                projectName = compilerOptions[i]
+        i += 1
 
     if fileName is None:
         print(f"File name not specified.")
         print(f"Try running 'scratch [filename]'")
         exit()
 
-    if not Path(sys.argv[0]).exists():
-        print(f"File '{sys.argv[0]}' does not exist.")
+    if not Path(fileName).exists():
+        print(f"File '{fileName}' does not exist.")
         exit()
     
     logger.info("Started")
     
-    filePath: Path = Path(sys.argv[0]).resolve()
+    filePath: Path = Path(fileName).resolve()
+
+    if projectName == None:
+        projectName = filePath.stem
 
     (filePath.parent / outputFolderName).mkdir(exist_ok=True)
 
@@ -123,8 +135,8 @@ def main():
     logger.debug(formatAST(fileAST))
     generator = FileGenerator(fileAST)
     project = generator.generate()
-    saveFile(filePath, project.fileDict, project.files)
-            
+    saveFile(filePath, project.fileDict, project.files, projectName)
+    
     logger.info("Finished")
             
 if __name__ == "__main__":
