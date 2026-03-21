@@ -343,7 +343,10 @@ class Call(Expr):
                         else:
                             error(self.paren, f"PANIC: Internal Error: WHAT IS SUPPOSED TO HAPPEN WITH 'inputReference' as type {type(inputReference)}?")
                     case "menu":
-                        error(self.paren, f"Scratch block menu not supported. Good luck, use a different block")
+                        inputReference = input.convert(projectFile, environment, sprite, block)
+                        if isinstance(inputReference, LiteralRef):
+                            error(self.paren, f"Scratch block menu with text input is not supported. Good luck, use a different input")
+                        inputs[funcInfo["inputs"][index]] = inputReference.format()
 
             projectFile.setBlockAttribute(sprite, block, "inputs", inputs)
             projectFile.setBlockAttribute(sprite, block, "fields", arguments)

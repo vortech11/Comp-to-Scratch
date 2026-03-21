@@ -2,7 +2,7 @@ sprite Stage {}
 
 sprite cat {
     costume cat "goofball.png";
-    costume otherCat "cat.svg" 100, 3;
-    sound What "ahh.mp3";
+    costume thing "tokamak.jpg";
+    setCostume(join("cat", ""));
 
 }

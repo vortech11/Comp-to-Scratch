@@ -9,5 +9,6 @@
     "setPenColor": "pen_setPenColorToColor",
     "len(?=(\\s*\\())": "operator_length",
     "round": "operator_round",
-    "join": "operator_join"
+    "join": "operator_join",
+    "setCostume": "looks_switchcostumeto"
 }
