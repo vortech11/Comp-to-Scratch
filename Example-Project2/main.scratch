@@ -3,7 +3,7 @@ sprite Stage {}
 sprite cat {
     costume cat "cat.svg";
 
-    require "static.scratch";
+    require "std.scratch";
     require "math.scratch";
     
     func main(){

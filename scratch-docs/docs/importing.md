@@ -1,4 +1,3 @@
-!!! warning "This part of the documentation was writen for an older and depricated version of the compiler. Until we rewrite this portion of the documentation, you are on your own."
 # Importing Scripts
 
 Similarly to the `#include` keyword in C, the `import` keyword in Scratch Script "runs" the file specified ""linking"" the files together. In actuality, this process is achieved by different means in both cases.
@@ -13,7 +12,7 @@ The import keyword can be used in two contexts:
 
 ### Importing within a script
 
-If the `import` keyword is used within the script of a sprite, the import will look for the `export` keyword within the .scratch file.
+If the `import` keyword is used within the body of a sprite, the import will look for the `export` keyword within the .scratch file.
 
 Once it has found the `export` keyword, it will run all of the commands within it.
 
@@ -21,11 +20,9 @@ To assign stacks, the original stack will "jump" over the import and will contin
 
 ```py title="main.scratch"
 sprite cat {
-    script {
-        start();
-        import "otherfile.scratch";
-        move(3);
-    }
+    move(4);
+    import "otherfile.scratch";
+    move(3);
 }
 ```
 
@@ -37,7 +34,7 @@ export {
 
 The resulting stacks would be:
 
-start(); move(3);
+move(4); move(3);
 
 and...
 
@@ -51,8 +48,7 @@ If the `import` keyword is used outside of the script of a sprite, the import wi
 import "otherfile.scratch";
 
 sprite cat {
-    script {
-        start();
+    def main(){
         move(3);
     }
 }
@@ -60,9 +56,7 @@ sprite cat {
 
 ```py title="otherfile.scratch"
 sprite cat2 {
-    script{
-        move(7);
-    }
+    move(7);
 }
 ```
 
@@ -74,17 +68,18 @@ This achieves the same thing as if you put the sprite in the base project.
 
 The require keyword is a one time import.
 
-If the .scratch file has not been imported yet, it imports it.
+If the `.scratch` file has not been imported yet, it imports it.
 
-If the .scratch file has been imported before, it does not import the file.
+If the `.scratch` file has been imported before, it does not import the file.
 
 ```py title="main.scratch"
 sprite cat{
-    script {
-        require "otherfile.scratch";
-    }
+    require "otherfile.scratch";
+    require "otherfile.scratch";
 }
 ```
+
+The resulting cat sprite would only have one coppy of the export of the "otherfile.scratch".
 
 ## File Path
 
@@ -108,12 +103,12 @@ import "subfolder/example.scratch";
 
 ## Standard Packages
 
-Standard Packages are files that are part of compiler and are used for base functionality such as static variables.
+Standard Packages are files that are part of compiler and are used for base functionality such as pointers.
 
 Importing standard packages are the exact same as importing regular .scratch files.
 
 ```py
-import "static.scratch";
+import "std.scratch";
 ```
 
-For most cases however, this is done automatically.
+This is required for some functionality.

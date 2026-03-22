@@ -1,7 +1,8 @@
-!!! warning "This part of the documentation was writen for an older and depricated version of the compiler. Until we rewrite this portion of the documentation, you are on your own."
 # Quirks of the compiler
 
-Because this is my first language ever written, it contains weird and unintended functionality.
+As of version 2.0.0, The quality of the syntax is durastically improved.
+
+However, it could still be useful to take note of the syntax at times.
 
 ## Whitespace
 
