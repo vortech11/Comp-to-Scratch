@@ -6,9 +6,8 @@ Turns out the scratch's sb3 file format is just a renamed zip file which contain
 
 # Features
 
-Compared to the main branch, this rewrite is not yet feature complete.
+This compiler can compile a c-like syntax to a .sb3 file with higher level feature implamentation. 
 
-### Things yet to implament:
+### Things planed to implament:
 
-* Documentation
 * Extra import i/o
