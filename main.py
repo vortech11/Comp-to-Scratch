@@ -26,6 +26,7 @@ import sys
 import warnings
 import logging
 logger = logging.getLogger(__name__)
+from time import perf_counter
 
 from sys import exit
 
@@ -77,7 +78,10 @@ def printVersion():
 def main():
     loggingLevel = logging.INFO
     #loggingLevel = logging.DEBUG
-    logging.basicConfig(level=loggingLevel)
+    logging.basicConfig(
+        level=loggingLevel,
+        format='%(levelname)s - %(message)s'
+    )
 
     sys.argv = sys.argv[1::]
     if len(sys.argv) == 0:
@@ -119,6 +123,7 @@ def main():
         exit()
     
     logger.info("Started")
+    startTime = perf_counter()
     
     filePath: Path = Path(fileName).resolve()
 
@@ -137,7 +142,10 @@ def main():
     project = generator.generate()
     saveFile(filePath, project.fileDict, project.files, projectName)
     
+    endTime = perf_counter()
+    totalTime = endTime - startTime
     logger.info("Finished")
+    logger.info(f"Compile took {totalTime:.4f} seconds")
             
 if __name__ == "__main__":
     main()
