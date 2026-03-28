@@ -1,9 +1,14 @@
 sprite Stage {}
 
 sprite cat {
-    costume cat "goofball.png";
-    costume thing "tokamak.jpg" 10, 3;
-    setCostume(join("cat", ""));
-    list thing = [10, 23];
-    thing[3] += 1;
+    require "time.scratch";
+    require "console.scratch";
+
+    func main(){
+        consoleClear();
+        while (true){
+            console.remove(0);
+            print(DT);
+        }
+    }
 }

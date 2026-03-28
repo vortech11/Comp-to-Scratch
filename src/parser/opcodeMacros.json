@@ -1,14 +1,15 @@
 {
-    "move": "motion_movesteps",
-    "setxy": "motion_gotoxy",
-    "sleep": "control_wait",
-    "say": "looks_say",
-    "penDown": "pen_penDown",
-    "penUp": "pen_penUp",
-    "setPenSize": "pen_setPenSizeTo",
-    "setPenColor": "pen_setPenColorToColor",
-    "len(?=(\\s*\\())": "operator_length",
-    "round": "operator_round",
-    "join": "operator_join",
-    "setCostume": "looks_switchcostumeto"
+    "(?<=\\s)move": "motion_movesteps",
+    "(?<=\\s)setxy": "motion_gotoxy",
+    "(?<=\\s)sleep": "control_wait",
+    "(?<=\\s)say": "looks_say",
+    "(?<=\\s)penDown": "pen_penDown",
+    "(?<=\\s)penUp": "pen_penUp",
+    "(?<=\\s)setPenSize": "pen_setPenSizeTo",
+    "(?<=\\s)setPenColor": "pen_setPenColorToColor",
+    "(?<=\\s)len(?=(\\s*\\())": "operator_length",
+    "(?<=\\s)round": "operator_round",
+    "(?<=\\s)join": "operator_join",
+    "(?<=\\s)setCostume": "looks_switchcostumeto",
+    "(?<=\\s)currentDateTime": "sensing_dayssince2000"
 }

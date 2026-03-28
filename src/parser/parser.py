@@ -300,6 +300,11 @@ class Parser:
         self.consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.", -1)
         body: Stmt = self.statement()
 
+        if isinstance(condition, Grouping):
+            if isinstance(condition.expression, Literal):
+                if condition.expression.value == True:
+                    return ForeverStmt(body)
+
         return WhileStmt(condition, body)
     
     def forStatement(self):
@@ -457,7 +462,23 @@ class Parser:
                 return DefPointerFunc(declarationType, name, func)
         
         self.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
-        return Var(declarationType, name, initializer) # type: ignore
+        return Var(None, declarationType, name, initializer) # type: ignore
+    
+    def constVarDeclaration(self):
+        constant: Token = self.getToken()
+        declarationType: Token = self.consume(TokenType.VAR, "Currently the only type of variable that can be constant is a normal variable.")
+        if self.match([TokenType.STAR]):
+            error(self.getToken(), "Cannot create constant pointer with variable name. Try again with a normal name.")
+            exit()
+        else:
+            name = self.consume(TokenType.IDENTIFIER, "Expect variable name.")
+        
+        self.consume(TokenType.EQUAL, "Expect equal with ininitializer after variable name in constant variable declaration.")
+        self.advance()
+        initializer: Expr = self.primary()
+        
+        self.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
+        return Var(constant, declarationType, name, initializer)
     
     def funcDeclaration(self, kind: str):
         name: Token = self.consume(TokenType.IDENTIFIER, f"Expect {kind} name.")
@@ -511,6 +532,8 @@ class Parser:
                 return self.funcDeclaration("function")
             case TokenType.VAR | TokenType.LIST | TokenType.DUMB_POINTER | TokenType.SMART_POINTER:
                 return self.varDeclaration()
+            case TokenType.CONSTANT:
+                return self.constVarDeclaration()
             case TokenType.COSTUME:
                 return self.costumeDeclaration()
             case TokenType.SOUND:

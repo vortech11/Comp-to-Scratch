@@ -69,6 +69,8 @@ class ProjectFile:
         self.dumbPointers: dict[str, list[str]] = {}
 
         self.currentBlock = 0
+
+        self.consts: dict[str, dict] = {}
     
     def getBlockName(self, blockNum=None) -> str:
         if blockNum is None:
@@ -118,6 +120,7 @@ class ProjectFile:
         self.spriteList.append(name)
         self.funcs[name] = {}
         self.dumbPointers[name] = []
+        self.consts[name] = {}
 
     def addBlock(self, opcode: str, inputs: dict, fields: dict, shadow: bool, sprite: str, previous=None, mendPrevious=True):
         self.currentBlock += 1
@@ -217,6 +220,15 @@ class ProjectFile:
 
     def createVar(self, sprite: str, name: str, value):
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"][f"{name}{self.currentBlock}"] = [name, value]
+
+    def createConst(self, sprite: str, name: str, value):
+        self.consts[sprite][name] = value
+    
+    def isConst(self, sprite: str, name: str):
+        return name in self.consts[sprite]
+    
+    def getConstValue(self, sprite: str, name: str):
+        return self.consts[sprite][name]
 
     def setVarDefault(self, sprite: str, name: str, value):
         self.fileDict["targets"][self.getSpriteIndex(sprite)]["variables"][self.getVarId(sprite, name)] = [name, value]

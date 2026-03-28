@@ -172,7 +172,7 @@ class DefPointerFunc(Stmt):
         return f"{self.declarationType} {self.name} {self.func.getPrint()}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
-        varGram = Var(self.declarationType, self.name, Literal(""))
+        varGram = Var(None, self.declarationType, self.name, Literal(""))
         varBlock = varGram.convert(projectFile, environment, sprite, previous)
         if not isinstance(self.func, Call):
             error(self.declarationType, "Cannot set pointer value to object not of type FunctionCall")
@@ -189,12 +189,17 @@ class DefPointerFunc(Stmt):
         return funcBlock
 
 class Var(Stmt):
-    def __init__(self, declarationType: Token, name: Token | Expr, initializer: Expr | None) -> None:
+    def __init__(self, constant: Token | None, declarationType: Token, name: Token | Expr, initializer: Expr | None) -> None:
+        self.constant: Token | None = constant
         self.declarationType: Token = declarationType
         self.name: Token | Expr = name
-        self.initializer: Expr | list[Expr] | None = initializer
+        self.initializer: Expr | list[Expr] | Literal | None = initializer
         
     def getPrint(self) -> str:
+        if self.constant is None:
+            constant = ""
+        else:
+            constant = self.constant.lexeme
         if self.initializer == None:
             value = None
         elif isinstance(self.initializer, list):
@@ -206,9 +211,21 @@ class Var(Stmt):
         else:
             name = self.name.lexeme
         
-        return f"var {name} {value}"
+        return f"{constant} {self.declarationType.lexeme} {name} {value}"
     
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        if not self.constant is None:
+            if not isinstance(self.name, Token):
+                error(self.constant, "Name of constant cannot be an expression.")
+                exit()
+            if not isinstance(self.initializer, Literal):
+                error(self.constant, "Initializer of constant variable must be a literal.")
+                exit()
+            #if isinstance(self.initializer.value, bool):
+            #    error(self.constant, "Initializer of constant variable cannot be boolean.")
+            projectFile.createConst(sprite, self.name.lexeme, self.initializer.value)
+            return previous
+
         if self.declarationType.type in [TokenType.DUMB_POINTER, TokenType.SMART_POINTER]:
             if self.initializer is None:
                 initializer = Literal("")
@@ -451,6 +468,21 @@ class LoopStmt(Stmt):
         statement = unpack(self.statement.convert(projectFile, environment, sprite, block))
         statement = [2, statement]
         projectFile.setBlockAttribute(sprite, block, "inputs", {"TIMES": expression.format(), "SUBSTACK": statement})
+        projectFile.setBlockAttribute(sprite, block, "next", None)
+        return block
+
+class ForeverStmt(Stmt):
+    def __init__(self, statement: Stmt):
+        self.statement: Stmt = statement
+
+    def getPrint(self) -> str:
+        return f"forever {{{self.statement.getPrint()}}}"
+
+    def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        block = projectFile.addBlock("control_forever", {}, {}, False, sprite, previous)
+        statement = unpack(self.statement.convert(projectFile, environment, sprite, block))
+        statement = [2, statement]
+        projectFile.setBlockAttribute(sprite, block, "inputs", {"SUBSTACK": statement})
         projectFile.setBlockAttribute(sprite, block, "next", None)
         return block
 

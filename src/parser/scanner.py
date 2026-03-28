@@ -83,6 +83,8 @@ class TokenType(Enum):
     DUMB_POINTER = auto()
     SMART_POINTER = auto()
 
+    CONSTANT = auto()
+
     IMPORT = auto()
     EXPORT = auto()
     REQUIRE = auto()
@@ -122,6 +124,7 @@ keywords = {
     "dptr": TokenType.DUMB_POINTER,
     "del": TokenType.DEL,
     "loop": TokenType.LOOP,
+    "const": TokenType.CONSTANT,
 }
 
 class Token:

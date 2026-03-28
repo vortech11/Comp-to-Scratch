@@ -1,0 +1,20 @@
+export{
+    var DT;
+    const var SECOND_SCALE = 86400;
+    var TIME_Current_Time;
+    var TIME_Old_Time;
+
+
+    func TIME_update_DeltaTime(){
+        TIME_Current_Time = currentDateTime() * SECOND_SCALE;
+        DT = abs(TIME_Current_Time - TIME_Old_Time);
+        TIME_Old_Time = TIME_Current_Time;
+    }
+
+    func main(){
+        TIME_Old_Time = currentDateTime() * SECOND_SCALE;
+        while (true){
+            TIME_update_DeltaTime();
+        }
+    }
+}

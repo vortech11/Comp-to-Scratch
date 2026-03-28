@@ -212,6 +212,20 @@ class Literal(Expr):
                 return f"{self.value}"
             
     def convert(self, projectFile: ProjectFile, environment: Environment, sprite: str, previous):
+        if isinstance(self.value, bool):
+            if self.value is True:
+                value = Literal("1")
+            else:
+                value = Literal("0")
+            gram = Binary(Literal("1"), Token(TokenType.EQUAL_EQUAL), value)
+            block = gram.convert(projectFile, environment, sprite, previous)
+            if not isinstance(block, ExprRef):
+                error(Token(TokenType.IDENTIFIER), "Internal Error; Struggling with boolean literal, try again.")
+            return block
+        
+        if isinstance(self.value, float):
+            self.value = f"{self.value:g}"
+
         return LiteralRef(self.value)
         
 class Unary(Expr):
@@ -578,6 +592,9 @@ class Variable(Expr):
         
         if varName in mathFuncs:
             return self.name
+        
+        if projectFile.isConst(sprite, varName):
+            return Literal(projectFile.getConstValue(sprite, varName)).convert(projectFile, environment, sprite, previous)
         
         if environment.isFuncParam(varName):
             block = projectFile.addBlock("argument_reporter_boolean", {}, {"VALUE": [varName]}, False, sprite, previous, mendPrevious=False)
